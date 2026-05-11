@@ -1,0 +1,26 @@
+{
+  "name": "@noracx/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NORAC X — sitio público (Astro 5)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "typecheck": "astro check",
+    "lint": "echo 'lint pendiente' && exit 0",
+    "clean": "rimraf dist .astro"
+  },
+  "dependencies": {
+    "astro": "^5.14.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@tailwindcss/vite": "^4.1.16",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^4.1.16",
+    "typescript": "^5.7.2"
+  }
+}

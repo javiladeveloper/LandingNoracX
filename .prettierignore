@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+.astro/
+.turbo/
+.wrangler/
+pnpm-lock.yaml
+*.min.*
+coverage/

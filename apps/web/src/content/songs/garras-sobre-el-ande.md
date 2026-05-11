@@ -1,13 +1,13 @@
 ---
 title: 'Garras sobre el Ande'
 trackNumber: 1
-spotifyId: null
+spotifyId: '6lCSivLdv0Xdgy8nTlY04O'
 duration: '4:34'
 genre: 'Power Metal'
 year: 2026
 featured: true
 themes:
-  es: 'Protesta social, opresión gubernamental, y el orgullo indomable del pueblo peruano levantándose desde las montañas.'
-  en: 'Social protest, governmental oppression, and the unbreakable pride of the Peruvian people rising from the mountains.'
-quote: 'Garras de cóndor que rasgan la noche, voz del pueblo que nunca se rompe.'
+  es: 'Protesta contra una clase política que firma tu hambre y criminaliza al que reclama. Memoria del cholo serrano usado y descartado. Un llamado: cuando despierte el valle, va a caer el poder.'
+  en: 'Protest against a political class that signs off your hunger and criminalizes anyone who pushes back. Memory of the Andean indigenous, used and discarded. A call: when the valley awakens, power will fall.'
+quote: 'Cuando despierte el valle, va a caer el poder.'
 ---

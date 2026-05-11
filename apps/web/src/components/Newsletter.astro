@@ -1,0 +1,49 @@
+---
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDict(lang).newsletter;
+---
+
+<section class="newsletter reveal">
+  <div class="section-label">
+    <span>{t.label}</span>
+    <span class="section-number">/ 04</span>
+  </div>
+  <h2 class="section-title" set:html={t.title}></h2>
+  <p class="section-intro newsletter-intro">{t.intro}</p>
+
+  <form class="newsletter-form" id="newsletter-form" data-thanks={t.thanks}>
+    <input
+      type="email"
+      class="newsletter-input"
+      name="email"
+      placeholder={t.placeholder}
+      required
+      autocomplete="email"
+    />
+    <button type="submit" class="btn btn-primary">
+      <span>{t.btn}</span>
+    </button>
+  </form>
+  <p class="newsletter-note">{t.note}</p>
+</section>
+
+<script>
+  // Placeholder hasta que conectemos POST /api/subscribe (Fase 2)
+  const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = form.querySelector<HTMLInputElement>('input[type="email"]');
+      const email = input?.value ?? '';
+      const thanks = form.dataset.thanks ?? '';
+      alert(thanks + email);
+      if (input) input.value = '';
+    });
+  }
+</script>

@@ -1,0 +1,48 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDict(lang).lyrics;
+
+const allQuotes = await getCollection('quotes');
+const ordered = allQuotes.sort((a, b) => a.data.order - b.data.order);
+
+// Resolver título del song origen para cada quote
+const rows = await Promise.all(
+  ordered.map(async (q) => {
+    const song = await getEntry(q.data.source);
+    return {
+      order: q.data.order,
+      text: q.data.text[lang],
+      source: song?.data.title.toUpperCase() ?? '',
+    };
+  }),
+);
+---
+
+<section class="lyrics-wall reveal">
+  <div class="lyrics-wall-head">
+    <div class="section-label">
+      <span>{t.label}</span>
+      <span class="section-number">/ 03</span>
+    </div>
+    <h2 class="section-title" set:html={t.title}></h2>
+  </div>
+
+  <div class="lyrics-list">
+    {
+      rows.map((row) => (
+        <div class="lyric-row">
+          <span class="lyric-number">{row.order.toString().padStart(2, '0')}</span>
+          <div class="lyric-text">{row.text}</div>
+          <span class="lyric-source">{row.source}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>

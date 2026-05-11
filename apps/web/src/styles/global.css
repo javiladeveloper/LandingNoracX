@@ -435,6 +435,113 @@ main {
 }
 
 /* =========================================================
+   FOLLOW DROPDOWN (hero CTA)
+   ========================================================= */
+.follow-dropdown {
+  position: relative;
+  display: inline-block;
+}
+.follow-dropdown summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+.follow-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+.follow-dropdown summary::marker {
+  display: none;
+}
+.follow-chevron {
+  transition: transform 0.25s ease-out;
+  opacity: 0.8;
+}
+.follow-dropdown[open] .follow-chevron {
+  transform: rotate(180deg);
+}
+.follow-menu {
+  position: absolute;
+  /* Abre hacia arriba para no chocar contra .hero { overflow: hidden } */
+  bottom: calc(100% + 8px);
+  left: 0;
+  min-width: 240px;
+  background: var(--ash);
+  border: 1px solid var(--border-bright);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 -16px 48px rgba(0, 0, 0, 0.7),
+    0 0 32px rgba(179, 7, 7, 0.15);
+  animation: followMenuIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes followMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.follow-menu a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.follow-menu a:last-child {
+  border-bottom: none;
+}
+.follow-menu a:hover {
+  background: var(--smoke);
+  color: var(--ember);
+}
+.follow-menu svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--blood-bright);
+  flex-shrink: 0;
+  transition: fill 0.2s;
+}
+.follow-menu a:hover svg {
+  fill: var(--ember);
+}
+.follow-menu-group + .follow-menu-group {
+  border-top: 1px solid var(--border-bright);
+}
+.follow-menu-label {
+  padding: 12px 18px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--blood-bright);
+}
+.follow-menu-label::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: var(--blood-bright);
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+/* =========================================================
    MARQUEE
    ========================================================= */
 .marquee {
@@ -688,7 +795,15 @@ main {
   grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 32px;
 }
+/* Wrapper estable: captura el :hover sin moverse. El .track interno se
+   eleva con translateY sin alterar la zona de hover, evitando el loop
+   hover/unhover en los bordes. */
+.track-card {
+  position: relative;
+  display: flex;
+}
 .track {
+  flex: 1;
   background: var(--ash);
   border: 1px solid var(--border);
   padding: 0;
@@ -696,7 +811,7 @@ main {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
-.track:hover {
+.track-card:hover .track {
   border-color: var(--border-bright);
   transform: translateY(-6px);
   box-shadow:

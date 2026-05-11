@@ -1,0 +1,58 @@
+---
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDict(lang).bio;
+---
+
+<section class="bio" id="bio">
+  <div class="bio-grid">
+    <aside class="bio-side">
+      <div class="bio-side-image" aria-hidden="true"></div>
+
+      <div class="bio-meta">
+        <div class="bio-meta-row">
+          <span>{t.origin}</span>
+          <span>Tacna, Perú</span>
+        </div>
+        <div class="bio-meta-row">
+          <span>{t.scope}</span>
+          <span>{t.scopeVal}</span>
+        </div>
+        <div class="bio-meta-row">
+          <span>{t.genre}</span>
+          <span>{t.genreVal}</span>
+        </div>
+        <div class="bio-meta-row">
+          <span>{t.influences}</span>
+          <span>SOAD · Molotov · Pantera · Rammstein</span>
+        </div>
+        <div class="bio-meta-row">
+          <span>{t.format}</span>
+          <span>{t.formatVal}</span>
+        </div>
+        <div class="bio-meta-row">
+          <span>{t.tracks}</span>
+          <span>7+</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="bio-content">
+      <div class="section-label">{t.label}</div>
+      <h2 class="section-title" style="margin-bottom: 48px;" set:html={t.title}></h2>
+
+      <p set:html={t.p1}></p>
+      <p set:html={t.p2}></p>
+
+      <div class="bio-pullquote" set:html={t.quote}></div>
+
+      <p set:html={t.p3}></p>
+      <p set:html={t.p4}></p>
+    </div>
+  </div>
+</section>

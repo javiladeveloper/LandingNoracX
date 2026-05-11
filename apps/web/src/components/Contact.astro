@@ -1,0 +1,38 @@
+---
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDict(lang).contact;
+
+const cards = [
+  { label: t.booking, email: 'booking@noracx.com' },
+  { label: t.press, email: 'prensa@noracx.com' },
+  { label: t.general, email: 'contacto@noracx.com' },
+] as const;
+---
+
+<section class="contact reveal" id="contacto">
+  <div class="section-label">
+    <span>{t.label}</span>
+    <span class="section-number">/ 06</span>
+  </div>
+  <h2 class="section-title" set:html={t.title}></h2>
+  <p class="section-intro contact-intro">{t.intro}</p>
+
+  <div class="contact-grid">
+    {
+      cards.map((c) => (
+        <div class="contact-card">
+          <div class="contact-card-label">{c.label}</div>
+          <div class="contact-card-value">
+            <a href={`mailto:${c.email}`}>{c.email}</a>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

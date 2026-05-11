@@ -1,0 +1,113 @@
+---
+import { getCollection } from 'astro:content';
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDict(lang).music;
+
+const allSongs = await getCollection('songs');
+const featured = allSongs
+  .filter((s) => s.data.featured)
+  .sort((a, b) => a.data.trackNumber - b.data.trackNumber);
+
+const SPOTIFY_ARTIST_ID = '23reXrP1oSrpgNVFHIEGk6';
+const spotifyEmbedSrc = `https://open.spotify.com/embed/artist/${SPOTIFY_ARTIST_ID}?utm_source=generator&theme=0`;
+const spotifyArtistUrl = `https://open.spotify.com/artist/${SPOTIFY_ARTIST_ID}`;
+---
+
+<section class="section music-section" id="musica">
+  <div class="section-head">
+    <div>
+      <div class="section-label">
+        <span>{t.label}</span>
+        <span class="section-number">/ 02</span>
+      </div>
+      <h2 class="section-title" set:html={t.title}></h2>
+    </div>
+    <p class="section-intro">{t.intro}</p>
+  </div>
+
+  <div class="spotify-full">
+    <div class="spotify-full-header">
+      <div class="spotify-full-title" set:html={t.discography}></div>
+      <a
+        href={spotifyArtistUrl}
+        target="_blank"
+        rel="noopener"
+        class="btn"
+        style="padding: 12px 20px; font-size: 10px;"
+      >
+        <span>{t.openSpotify}</span>
+      </a>
+    </div>
+    <iframe
+      src={spotifyEmbedSrc}
+      width="100%"
+      height="380"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"
+      title="NORAC X Spotify Artist Embed"></iframe>
+    <p class="spotify-full-hint">{t.embedHint}</p>
+  </div>
+
+  <div class="featured-tracks-head">
+    <div class="section-label" style="margin-bottom: 24px;">
+      <span>{t.featuredLabel}</span>
+    </div>
+    <h3 class="featured-tracks-title" set:html={t.featuredTitle}></h3>
+  </div>
+
+  <div class="tracks">
+    {
+      featured.map((song) => (
+        <div class="track-card">
+          <article class="track">
+          <div class="track-header">
+            <div class="track-info">
+              <div class="track-number">
+                TRACK · {song.data.trackNumber.toString().padStart(2, '0')}
+              </div>
+              <h3 class="track-title">{song.data.title}</h3>
+              <div class="track-meta">
+                {song.data.duration ?? song.data.genre}
+                <span>·</span>
+                {song.data.duration ? song.data.genre : song.data.year}
+              </div>
+            </div>
+            <div class="track-badge">{t.featured}</div>
+          </div>
+
+          <div class="track-body">
+            <p class="track-theme">{song.data.themes[lang]}</p>
+            <blockquote class="track-quote">"{song.data.quote}"</blockquote>
+          </div>
+
+          <div class="track-player">
+            {song.data.spotifyId ? (
+              <iframe
+                src={`https://open.spotify.com/embed/track/${song.data.spotifyId}?utm_source=generator&theme=0`}
+                width="100%"
+                height="152"
+                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                title={`Spotify player — ${song.data.title}`}
+              />
+            ) : (
+              <div class="track-player-placeholder">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.36-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.561.3z" />
+                </svg>
+                <span>{t.placeholder}</span>
+              </div>
+            )}
+          </div>
+        </article>
+        </div>
+      ))
+    }
+  </div>
+</section>

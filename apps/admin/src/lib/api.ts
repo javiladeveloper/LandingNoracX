@@ -150,3 +150,19 @@ export async function listFans(filters: FansFilters = {}): Promise<FansResponse 
   if (!res.ok) return null;
   return res.body as FansResponse;
 }
+
+export interface AnalyticsOverview {
+  ok: true;
+  totals: { views7d: number; uniqueSessions7d: number };
+  daily: Array<{ day: string; count: number }>;
+  topPaths: Array<{ path: string; count: number }>;
+  byCountry: Array<{ country: string | null; count: number }>;
+  byDevice: Array<{ device: string | null; count: number }>;
+  byLanguage: Array<{ language: string | null; count: number }>;
+}
+
+export async function getAnalyticsOverview(): Promise<AnalyticsOverview | null> {
+  const res = await apiFetch<AnalyticsOverview>('/api/admin/analytics/overview');
+  if (!res.ok) return null;
+  return res.body as AnalyticsOverview;
+}

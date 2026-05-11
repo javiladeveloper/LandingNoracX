@@ -2,8 +2,8 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
-import { eq, desc, isNull, isNotNull, sql, and, or, like, type SQL } from 'drizzle-orm';
-import { users, contactMessages, fans } from '../db/schema';
+import { eq, desc, isNull, isNotNull, sql, and, or, like, gt, type SQL } from 'drizzle-orm';
+import { users, contactMessages, fans, pageViews } from '../db/schema';
 import { verifyPassword, newSessionToken, hashPassword } from '../lib/password';
 import {
   resolveSession,
@@ -239,5 +239,88 @@ adminRoute.get('/fans', async (c) => {
       totalUnsubscribed: totalUnsubscribed?.count ?? 0,
       byLanguage,
     },
+  });
+});
+
+/* ============================================================
+   Analytics overview — agregaciones sobre page_views.
+   ============================================================ */
+
+adminRoute.get('/analytics/overview', async (c) => {
+  const db = drizzle(c.env.DB);
+  const now = Date.now();
+  const sevenDaysAgo = new Date(now - 7 * 24 * 3600 * 1000);
+  const fourteenDaysAgo = new Date(now - 14 * 24 * 3600 * 1000);
+
+  const [
+    totalViews7d,
+    uniqueSessions7d,
+    daily,
+    topPaths,
+    byCountry,
+    byDevice,
+    byLanguage,
+  ] = await Promise.all([
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(pageViews)
+      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .get(),
+    db
+      .select({ count: sql<number>`count(distinct ${pageViews.sessionId})` })
+      .from(pageViews)
+      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .get(),
+    db
+      .select({
+        day: sql<string>`date(${pageViews.createdAt}, 'unixepoch')`,
+        count: sql<number>`count(*)`,
+      })
+      .from(pageViews)
+      .where(gt(pageViews.createdAt, fourteenDaysAgo))
+      .groupBy(sql`date(${pageViews.createdAt}, 'unixepoch')`)
+      .orderBy(sql`date(${pageViews.createdAt}, 'unixepoch')`)
+      .all(),
+    db
+      .select({ path: pageViews.path, count: sql<number>`count(*)` })
+      .from(pageViews)
+      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .groupBy(pageViews.path)
+      .orderBy(desc(sql`count(*)`))
+      .limit(10)
+      .all(),
+    db
+      .select({ country: pageViews.country, count: sql<number>`count(*)` })
+      .from(pageViews)
+      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .groupBy(pageViews.country)
+      .orderBy(desc(sql`count(*)`))
+      .limit(10)
+      .all(),
+    db
+      .select({ device: pageViews.deviceClass, count: sql<number>`count(*)` })
+      .from(pageViews)
+      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .groupBy(pageViews.deviceClass)
+      .all(),
+    db
+      .select({ language: pageViews.language, count: sql<number>`count(*)` })
+      .from(pageViews)
+      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .groupBy(pageViews.language)
+      .all(),
+  ]);
+
+  return c.json({
+    ok: true,
+    totals: {
+      views7d: totalViews7d?.count ?? 0,
+      uniqueSessions7d: uniqueSessions7d?.count ?? 0,
+    },
+    daily,
+    topPaths,
+    byCountry,
+    byDevice,
+    byLanguage,
   });
 });

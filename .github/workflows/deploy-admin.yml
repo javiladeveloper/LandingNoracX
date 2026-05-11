@@ -1,0 +1,64 @@
+name: Deploy admin → Cloudflare Pages
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'apps/admin/**'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - '.github/workflows/deploy-admin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Build & deploy noracx-admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter @noracx/admin lint || true
+
+      - name: Typecheck
+        run: pnpm --filter @noracx/admin typecheck
+
+      # En producción la API vive en el mismo origen (admin.noracx.com/api/*
+      # vía Workers Route), así que el front llama a paths relativos.
+      - name: Build
+        run: pnpm --filter @noracx/admin build
+        env:
+          VITE_API_URL: ''
+
+      # Bootstrap del Pages project si no existe (primer deploy).
+      - name: Ensure Cloudflare Pages project exists
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create noracx-admin --production-branch=master
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/admin/dist --project-name=noracx-admin --branch=${{ github.ref_name }}

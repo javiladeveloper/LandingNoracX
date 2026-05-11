@@ -33,6 +33,13 @@ zone_name = "noracx.com"
 pattern = "www.noracx.com/api/*"
 zone_name = "noracx.com"
 
+# admin.noracx.com sirve el SPA de admin desde Cloudflare Pages (proyecto
+# noracx-admin), pero /api/* lo intercepta este worker — mismo origen
+# evita la complicación de cookies cross-subdomain en el login.
+[[routes]]
+pattern = "admin.noracx.com/api/*"
+zone_name = "noracx.com"
+
 # Cron triggers
 # Spotify snapshot disabled — los cambios de Feb 2026 quitaron followers,
 # popularity y genres del response de /artists/{id} para apps en Development

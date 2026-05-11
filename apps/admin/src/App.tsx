@@ -4,6 +4,7 @@ import DashboardPage from './pages/Dashboard';
 import MessagesPage from './pages/Messages';
 import FansPage from './pages/Fans';
 import CampaignsPage from './pages/Campaigns';
+import SongsPage from './pages/Songs';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -39,6 +40,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <CampaignsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/songs"
+        element={
+          <ProtectedRoute>
+            <SongsPage />
           </ProtectedRoute>
         }
       />

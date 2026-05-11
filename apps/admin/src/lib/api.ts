@@ -225,3 +225,67 @@ export async function listCampaigns(): Promise<CampaignRow[] | null> {
   if (!res.ok) return null;
   return (res.body as { data: CampaignRow[] }).data;
 }
+
+export interface SongRow {
+  slug: string;
+  title: string;
+  trackNumber: number | null;
+  spotifyId: string | null;
+  duration: string | null;
+  genre: string;
+  year: number | null;
+  featured: boolean;
+  themesEs: string;
+  themesEn: string;
+  quote: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface SongInput {
+  slug: string;
+  title: string;
+  trackNumber?: number | null;
+  spotifyId?: string | null;
+  duration?: string | null;
+  genre: string;
+  year?: number | null;
+  featured: boolean;
+  themesEs: string;
+  themesEn: string;
+  quote: string;
+}
+
+export async function listSongs(): Promise<SongRow[] | null> {
+  const res = await apiFetch<{ ok: true; data: SongRow[] }>('/api/admin/songs');
+  if (!res.ok) return null;
+  return (res.body as { data: SongRow[] }).data;
+}
+
+export async function createSong(
+  input: SongInput,
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await apiFetch<{ ok: boolean; error?: string }>('/api/admin/songs', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+  if (res.ok) return { ok: true };
+  return { ok: false, error: (res.body as { error?: string }).error ?? 'create_failed' };
+}
+
+export async function updateSong(
+  slug: string,
+  input: Partial<Omit<SongInput, 'slug'>>,
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await apiFetch<{ ok: boolean; error?: string }>(`/api/admin/songs/${slug}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+  if (res.ok) return { ok: true };
+  return { ok: false, error: (res.body as { error?: string }).error ?? 'update_failed' };
+}
+
+export async function deleteSong(slug: string): Promise<boolean> {
+  const res = await apiFetch(`/api/admin/songs/${slug}`, { method: 'DELETE' });
+  return res.ok;
+}

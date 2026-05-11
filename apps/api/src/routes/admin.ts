@@ -2,8 +2,8 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
-import { eq, desc, isNull, isNotNull, sql, and, or, like, gt, type SQL } from 'drizzle-orm';
-import { users, contactMessages, fans, pageViews } from '../db/schema';
+import { eq, desc, asc, isNull, isNotNull, sql, and, or, like, gt, type SQL } from 'drizzle-orm';
+import { users, contactMessages, fans, pageViews, songs } from '../db/schema';
 import { verifyPassword, newSessionToken, hashPassword } from '../lib/password';
 import {
   resolveSession,
@@ -323,4 +323,109 @@ adminRoute.get('/analytics/overview', async (c) => {
     byDevice,
     byLanguage,
   });
+});
+
+/* ============================================================
+   Songs CRUD
+   ============================================================ */
+
+/**
+ * Trigger del deploy hook de Cloudflare Pages para regenerar el sitio web
+ * estático después de un cambio en songs. Si DEPLOY_HOOK_URL no está
+ * seteado (dev local), no hace nada — el cambio igual está en D1.
+ */
+async function triggerWebRebuild(env: Bindings): Promise<void> {
+  if (!env.DEPLOY_HOOK_URL) return;
+  try {
+    await fetch(env.DEPLOY_HOOK_URL, { method: 'POST' });
+  } catch (err) {
+    console.error('[songs] deploy hook failed', err);
+  }
+}
+
+adminRoute.get('/songs', async (c) => {
+  const db = drizzle(c.env.DB);
+  const data = await db
+    .select()
+    .from(songs)
+    .where(isNull(songs.deletedAt))
+    .orderBy(asc(songs.trackNumber))
+    .all();
+  return c.json({ ok: true, data });
+});
+
+const songSchema = z.object({
+  slug: z
+    .string()
+    .min(1)
+    .max(120)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'slug debe ser kebab-case (a-z, 0-9, -)'),
+  title: z.string().min(1).max(200),
+  trackNumber: z.number().int().positive().nullable().optional(),
+  spotifyId: z.string().max(40).nullable().optional(),
+  duration: z.string().max(10).nullable().optional(),
+  genre: z.string().min(1).max(80),
+  year: z.number().int().min(1900).max(2100).nullable().optional(),
+  featured: z.boolean().default(false),
+  themesEs: z.string().min(1).max(1000),
+  themesEn: z.string().min(1).max(1000),
+  quote: z.string().min(1).max(500),
+});
+
+adminRoute.post('/songs', zValidator('json', songSchema), async (c) => {
+  const data = c.req.valid('json');
+  const db = drizzle(c.env.DB);
+
+  const existing = await db.select({ slug: songs.slug }).from(songs).where(eq(songs.slug, data.slug)).get();
+  if (existing) {
+    return c.json({ ok: false, error: 'slug_already_exists' }, 409);
+  }
+
+  await db.insert(songs).values({
+    slug: data.slug,
+    title: data.title,
+    trackNumber: data.trackNumber ?? null,
+    spotifyId: data.spotifyId ?? null,
+    duration: data.duration ?? null,
+    genre: data.genre,
+    year: data.year ?? null,
+    featured: data.featured,
+    themesEs: data.themesEs,
+    themesEn: data.themesEn,
+    quote: data.quote,
+  });
+
+  c.executionCtx.waitUntil(triggerWebRebuild(c.env));
+  return c.json({ ok: true, slug: data.slug }, 201);
+});
+
+const songPatchSchema = songSchema.partial().omit({ slug: true });
+
+adminRoute.patch('/songs/:slug', zValidator('json', songPatchSchema), async (c) => {
+  const slug = c.req.param('slug');
+  const data = c.req.valid('json');
+  const db = drizzle(c.env.DB);
+
+  const existing = await db.select({ slug: songs.slug }).from(songs).where(eq(songs.slug, slug)).get();
+  if (!existing) return c.json({ ok: false, error: 'not_found' }, 404);
+
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  for (const k of Object.keys(data) as Array<keyof typeof data>) {
+    if (data[k] !== undefined) updates[k] = data[k];
+  }
+
+  await db.update(songs).set(updates).where(eq(songs.slug, slug));
+
+  c.executionCtx.waitUntil(triggerWebRebuild(c.env));
+  return c.json({ ok: true });
+});
+
+adminRoute.delete('/songs/:slug', async (c) => {
+  const slug = c.req.param('slug');
+  const db = drizzle(c.env.DB);
+
+  await db.update(songs).set({ deletedAt: new Date() }).where(eq(songs.slug, slug));
+
+  c.executionCtx.waitUntil(triggerWebRebuild(c.env));
+  return c.json({ ok: true });
 });

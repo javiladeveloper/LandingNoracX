@@ -16,6 +16,13 @@ export interface Bindings {
   EMAIL_FROM: string;
   SPOTIFY_CLIENT_ID: string;
   SPOTIFY_CLIENT_SECRET: string;
+  /**
+   * Cloudflare Pages Deploy Hook URL para regenerar el sitio web cuando
+   * cambia contenido en D1 (songs, quotes futuros). Opcional — si está
+   * vacío el rebuild no se dispara y los cambios solo se ven al próximo
+   * deploy manual.
+   */
+  DEPLOY_HOOK_URL: string;
 }
 
 const app = new Hono<{ Bindings: Bindings }>();

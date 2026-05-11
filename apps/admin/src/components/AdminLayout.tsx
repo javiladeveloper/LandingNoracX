@@ -17,7 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/messages', label: 'Mensajes' },
   { to: '/fans', label: 'Fans' },
   { to: '/campaigns', label: 'Campañas' },
-  { to: '/songs', label: 'Canciones', disabled: true },
+  { to: '/songs', label: 'Canciones' },
   { to: '/quotes', label: 'Frases', disabled: true },
 ];
 

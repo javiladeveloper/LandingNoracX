@@ -34,5 +34,10 @@ pattern = "www.noracx.com/api/*"
 zone_name = "noracx.com"
 
 # Cron triggers
-[triggers]
-crons = ["0 9 * * *"] # Spotify snapshot diario a las 9:00 UTC
+# Spotify snapshot disabled — los cambios de Feb 2026 quitaron followers,
+# popularity y genres del response de /artists/{id} para apps en Development
+# Mode. El código de lib/spotify.ts y la tabla spotify_snapshots quedan
+# por si Spotify revierte o decidimos reactivar para sincronizar imágenes
+# u otros campos disponibles.
+# [triggers]
+# crons = ["0 9 * * *"]

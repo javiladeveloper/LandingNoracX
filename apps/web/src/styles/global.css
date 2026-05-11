@@ -702,26 +702,14 @@ main {
   overflow: hidden;
   margin-bottom: 28px;
 }
-.bio-side-image::before {
-  content: '✊';
+.bio-side-image img {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 120px;
-  filter: drop-shadow(0 0 30px var(--blood));
-  opacity: 0.7;
-}
-.bio-side-image::after {
-  content: 'IMG: PLACEHOLDER';
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.3em;
-  color: var(--ink-dim);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Tinte rojizo sutil para alinear con la paleta del sitio sin perder la cara */
+  filter: saturate(0.85) contrast(1.05);
 }
 .bio-meta {
   font-family: 'JetBrains Mono', monospace;

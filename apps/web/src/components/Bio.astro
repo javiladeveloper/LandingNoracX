@@ -7,12 +7,20 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getDict(lang).bio;
+
+// Imagen del artista pulled de Spotify (640x640). Cambia rarísimas veces
+// (solo cuando actualizas la foto en Spotify for Artists). El URL es
+// estable y servido por el CDN de Spotify (i.scdn.co).
+const artistImage = 'https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7';
+const altText = lang === 'es' ? 'Foto del artista NORAC X' : 'Artist photo of NORAC X';
 ---
 
 <section class="bio" id="bio">
   <div class="bio-grid">
     <aside class="bio-side">
-      <div class="bio-side-image" aria-hidden="true"></div>
+      <div class="bio-side-image">
+        <img src={artistImage} alt={altText} loading="lazy" decoding="async" />
+      </div>
 
       <div class="bio-meta">
         <div class="bio-meta-row">

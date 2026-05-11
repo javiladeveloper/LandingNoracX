@@ -5,7 +5,10 @@
  * de 16 bytes. Output: "pbkdf2$<iterations>$<salt-hex>$<hash-hex>".
  */
 
-const ITERATIONS = 600_000;
+// 100k SHA-256 PBKDF2: ~5-10ms CPU. Compatible con Workers free tier (10ms CPU
+// budget por request). Verify lee iterations del hash almacenado, así que hashes
+// antiguos con 600k siguen funcionando — solo los nuevos se crean con 100k.
+const ITERATIONS = 100_000;
 const KEY_LEN = 32; // bytes
 const HASH_NAME = 'SHA-256';
 

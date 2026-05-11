@@ -50,7 +50,11 @@ app.route('/api/track', trackRoute);
 app.route('/api/admin', adminRoute);
 
 app.onError((err, c) => {
-  console.error('[api] unhandled error', err);
+  // Log con stack completo para diagnostics en wrangler tail / Logs del worker
+  console.error(
+    '[api] unhandled error',
+    err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : err,
+  );
   return c.json({ ok: false, error: 'internal_error' }, 500);
 });
 

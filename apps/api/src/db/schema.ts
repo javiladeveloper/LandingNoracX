@@ -216,3 +216,42 @@ export const campaigns = sqliteTable(
 
 export type Campaign = typeof campaigns.$inferSelect;
 export type NewCampaign = typeof campaigns.$inferInsert;
+
+/**
+ * Canciones del catálogo de NORAC X. La clave primaria es el slug
+ * (kebab-case del título), legible y estable. featured controla si
+ * aparece en las tracks destacadas del sitio. spotifyId/duration son
+ * nullable hasta que se publique en Spotify. themes son bilingues.
+ * Soft delete vía deletedAt.
+ */
+export const songs = sqliteTable(
+  'songs',
+  {
+    slug: text('slug').primaryKey(),
+    title: text('title').notNull(),
+    trackNumber: integer('track_number'),
+    spotifyId: text('spotify_id'),
+    duration: text('duration'),
+    genre: text('genre').notNull(),
+    year: integer('year'),
+    featured: integer('featured', { mode: 'boolean' }).notNull().default(false),
+    themesEs: text('themes_es').notNull(),
+    themesEn: text('themes_en').notNull(),
+    quote: text('quote').notNull(),
+    publishedAt: integer('published_at', { mode: 'timestamp' }),
+    deletedAt: integer('deleted_at', { mode: 'timestamp' }),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    updatedAt: integer('updated_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => ({
+    featuredIdx: index('songs_featured_idx').on(table.featured),
+    trackIdx: index('songs_track_number_idx').on(table.trackNumber),
+  }),
+);
+
+export type Song = typeof songs.$inferSelect;
+export type NewSong = typeof songs.$inferInsert;

@@ -36,11 +36,14 @@ jobs:
         run: pnpm --filter @noracx/web typecheck
 
       # En producción la API vive en el mismo origen (Workers Route en
-      # noracx.com/api/*), así que el front llama a paths relativos.
+      # noracx.com/api/*). Usamos URL absoluta para que el build de Astro
+      # pueda hacer server-side fetch a /api/songs (necesita base completa
+      # en build time). Para el cliente, fetch a https://noracx.com/...
+      # sigue siendo same-origin cuando el visitante está en noracx.com.
       - name: Build
         run: pnpm --filter @noracx/web build
         env:
-          PUBLIC_API_URL: ''
+          PUBLIC_API_URL: 'https://noracx.com'
 
       # Bootstrap del proyecto en el primer deploy. Si ya existe el
       # comando falla con 8000007, lo ignoramos.

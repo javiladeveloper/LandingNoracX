@@ -1,18 +1,34 @@
 ---
-import { getCollection } from 'astro:content';
 import { getDict, type Lang } from '@/i18n';
 
 interface Props {
   lang: Lang;
 }
 
+interface SongRow {
+  slug: string;
+  title: string;
+  trackNumber: number | null;
+  spotifyId: string | null;
+  duration: string | null;
+  genre: string;
+  year: number | null;
+  featured: boolean;
+  themesEs: string;
+  themesEn: string;
+  quote: string;
+}
+
 const { lang } = Astro.props;
 const t = getDict(lang).music;
 
-const allSongs = await getCollection('songs');
-const featured = allSongs
-  .filter((s) => s.data.featured)
-  .sort((a, b) => a.data.trackNumber - b.data.trackNumber);
+// Build-time fetch desde la API (D1 es fuente única). En CI definimos
+// PUBLIC_API_URL a https://noracx.com; en dev local apunta al worker.
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
+const songsRes = await fetch(`${apiUrl}/api/songs`);
+const songsJson = (await songsRes.json()) as { ok: boolean; data: SongRow[] };
+const allSongs = songsJson.ok ? songsJson.data : [];
+const featured = allSongs.filter((s) => s.featured);
 
 const SPOTIFY_ARTIST_ID = '23reXrP1oSrpgNVFHIEGk6';
 const spotifyEmbedSrc = `https://open.spotify.com/embed/artist/${SPOTIFY_ARTIST_ID}?utm_source=generator&theme=0`;
@@ -69,32 +85,32 @@ const spotifyArtistUrl = `https://open.spotify.com/artist/${SPOTIFY_ARTIST_ID}`;
           <div class="track-header">
             <div class="track-info">
               <div class="track-number">
-                TRACK · {song.data.trackNumber.toString().padStart(2, '0')}
+                TRACK · {(song.trackNumber ?? 0).toString().padStart(2, '0')}
               </div>
-              <h3 class="track-title">{song.data.title}</h3>
+              <h3 class="track-title">{song.title}</h3>
               <div class="track-meta">
-                {song.data.duration ?? song.data.genre}
+                {song.duration ?? song.genre}
                 <span>·</span>
-                {song.data.duration ? song.data.genre : song.data.year}
+                {song.duration ? song.genre : song.year}
               </div>
             </div>
             <div class="track-badge">{t.featured}</div>
           </div>
 
           <div class="track-body">
-            <p class="track-theme">{song.data.themes[lang]}</p>
-            <blockquote class="track-quote">"{song.data.quote}"</blockquote>
+            <p class="track-theme">{lang === 'es' ? song.themesEs : song.themesEn}</p>
+            <blockquote class="track-quote">"{song.quote}"</blockquote>
           </div>
 
           <div class="track-player">
-            {song.data.spotifyId ? (
+            {song.spotifyId ? (
               <iframe
-                src={`https://open.spotify.com/embed/track/${song.data.spotifyId}?utm_source=generator&theme=0`}
+                src={`https://open.spotify.com/embed/track/${song.spotifyId}?utm_source=generator&theme=0`}
                 width="100%"
                 height="152"
                           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
-                title={`Spotify player — ${song.data.title}`}
+                title={`Spotify player — ${song.title}`}
               />
             ) : (
               <div class="track-player-placeholder">

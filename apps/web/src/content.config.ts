@@ -1,24 +1,9 @@
-import { defineCollection, z, reference } from 'astro:content';
-import { glob, file } from 'astro/loaders';
+import { defineCollection, z } from 'astro:content';
+import { file } from 'astro/loaders';
 
-const songs = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/songs' }),
-  schema: z.object({
-    title: z.string(),
-    trackNumber: z.number().int().positive(),
-    spotifyId: z.string().nullable().default(null),
-    duration: z.string().nullable().default(null),
-    genre: z.string(),
-    year: z.number().int().optional(),
-    featured: z.boolean().default(false),
-    themes: z.object({
-      es: z.string(),
-      en: z.string(),
-    }),
-    quote: z.string(),
-    publishedAt: z.coerce.date().optional(),
-  }),
-});
+// Las canciones vivían acá pero migraron a D1 (apps/api). Ahora el
+// frontend las fetchea de /api/songs en build time. Solo quedan quotes
+// como content collection (5 entries cortos, no necesitan admin CRUD).
 
 const quotes = defineCollection({
   loader: file('src/content/quotes.json'),
@@ -27,10 +12,10 @@ const quotes = defineCollection({
       es: z.string(),
       en: z.string(),
     }),
-    source: reference('songs'),
+    sourceName: z.string(),
     order: z.number().int().positive(),
     featured: z.boolean().default(false),
   }),
 });
 
-export const collections = { songs, quotes };
+export const collections = { quotes };

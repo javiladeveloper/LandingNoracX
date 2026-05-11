@@ -5,7 +5,7 @@
       "es": "\"La ley no es ciega... solo mira hacia arriba.\"",
       "en": "\"Justice is not blind... it only looks upward.\""
     },
-    "source": "justicia-de-dos-caras",
+    "sourceName": "JUSTICIA DE DOS CARAS",
     "order": 1,
     "featured": true
   },
@@ -15,7 +15,7 @@
       "es": "\"Justicia para los ricos: rápida, limpia, sin testigos.\"",
       "en": "\"Justice for the rich: fast, clean, no witnesses.\""
     },
-    "source": "justicia-de-dos-caras",
+    "sourceName": "JUSTICIA DE DOS CARAS",
     "order": 2
   },
   {
@@ -24,7 +24,7 @@
       "es": "\"Un lado pesa el oro, el otro el sacrificio.\"",
       "en": "\"One side weighs gold, the other weighs sacrifice.\""
     },
-    "source": "justicia-de-dos-caras",
+    "sourceName": "JUSTICIA DE DOS CARAS",
     "order": 3
   },
   {
@@ -33,7 +33,7 @@
       "es": "\"Oro en tus venas, no en tu nevera.\"",
       "en": "\"Gold in your veins, not in your fridge.\""
     },
-    "source": "garras-sobre-el-ande",
+    "sourceName": "GARRAS SOBRE EL ANDE",
     "order": 4
   },
   {
@@ -42,7 +42,7 @@
       "es": "\"Qué peligroso ser de los olvidados.\"",
       "en": "\"How dangerous it is to be among the forgotten.\""
     },
-    "source": "justicia-de-dos-caras",
+    "sourceName": "JUSTICIA DE DOS CARAS",
     "order": 5
   }
 ]

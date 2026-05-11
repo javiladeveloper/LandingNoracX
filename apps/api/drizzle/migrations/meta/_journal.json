@@ -8,6 +8,13 @@
       "when": 1778523647307,
       "tag": "0000_blue_mauler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1778531447714,
+      "tag": "0001_outgoing_forge",
+      "breakpoints": true
     }
   ]
 }

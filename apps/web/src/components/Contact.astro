@@ -8,10 +8,12 @@ interface Props {
 const { lang } = Astro.props;
 const t = getDict(lang).contact;
 
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
+
 const cards = [
-  { label: t.booking, email: 'booking@noracx.com' },
-  { label: t.press, email: 'prensa@noracx.com' },
-  { label: t.general, email: 'contacto@noracx.com' },
+  { label: t.booking, email: 'booking@noracx.com', type: 'booking' },
+  { label: t.press, email: 'prensa@noracx.com', type: 'press' },
+  { label: t.general, email: 'contacto@noracx.com', type: 'general' },
 ] as const;
 ---
 
@@ -35,4 +37,107 @@ const cards = [
       ))
     }
   </div>
+
+  <div class="contact-form-wrap">
+    <h3 class="contact-form-heading">{t.formHeading}</h3>
+    <p class="contact-form-intro">{t.formIntro}</p>
+
+    <form
+      class="contact-form"
+      id="contact-form"
+      data-lang={lang}
+      data-api-url={apiUrl}
+      data-msg-thanks={t.formThanks}
+      data-msg-error={t.formError}
+    >
+      <div class="contact-form-row contact-form-row-2">
+        <label class="contact-form-field">
+          <span class="contact-form-label">{t.formName}</span>
+          <input type="text" name="name" required minlength="1" maxlength="120" autocomplete="name" />
+        </label>
+        <label class="contact-form-field">
+          <span class="contact-form-label">{t.formEmail}</span>
+          <input type="email" name="email" required maxlength="255" autocomplete="email" />
+        </label>
+      </div>
+
+      <label class="contact-form-field">
+        <span class="contact-form-label">{t.formType}</span>
+        <select name="type" required>
+          <option value="booking">{t.booking}</option>
+          <option value="press">{t.press}</option>
+          <option value="general" selected>{t.general}</option>
+        </select>
+      </label>
+
+      <label class="contact-form-field">
+        <span class="contact-form-label">{t.formMessage}</span>
+        <textarea name="message" required minlength="5" maxlength="4000" rows="6"></textarea>
+      </label>
+
+      {/* Honeypot anti-spam: oculto a humanos, llenado por bots */}
+      <div class="contact-form-honeypot" aria-hidden="true">
+        <label>
+          Website
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="contact-form-actions">
+        <button type="submit" class="btn btn-primary">
+          <span>{t.formSubmit}</span>
+        </button>
+        <span class="contact-form-status" id="contact-form-status"></span>
+      </div>
+    </form>
+  </div>
 </section>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('contact-form-status');
+
+  if (form && status) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const fd = new FormData(form);
+
+      const payload = {
+        name: String(fd.get('name') ?? '').trim(),
+        email: String(fd.get('email') ?? '').trim(),
+        type: String(fd.get('type') ?? 'general'),
+        message: String(fd.get('message') ?? '').trim(),
+        language: form.dataset.lang ?? 'es',
+        website: String(fd.get('website') ?? ''),
+      };
+
+      const apiUrl = form.dataset.apiUrl ?? '';
+      const msgThanks = form.dataset.msgThanks ?? '';
+      const msgError = form.dataset.msgError ?? '';
+
+      submit?.setAttribute('disabled', '');
+      status.textContent = '...';
+
+      try {
+        const res = await fetch(`${apiUrl}/api/contact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const json = (await res.json()) as { ok: boolean };
+
+        if (res.ok && json.ok) {
+          status.textContent = msgThanks;
+          form.reset();
+        } else {
+          status.textContent = msgError;
+        }
+      } catch {
+        status.textContent = msgError;
+      } finally {
+        submit?.removeAttribute('disabled');
+      }
+    });
+  }
+</script>

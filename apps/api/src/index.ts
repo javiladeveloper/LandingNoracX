@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { subscribeRoute } from './routes/subscribe';
+import { contactRoute } from './routes/contact';
+import { trackRoute } from './routes/track';
 
 export interface Bindings {
   DB: D1Database;
@@ -38,6 +40,8 @@ app.get('/', (c) =>
 app.get('/health', (c) => c.json({ ok: true, ts: Date.now() }));
 
 app.route('/api/subscribe', subscribeRoute);
+app.route('/api/contact', contactRoute);
+app.route('/api/track', trackRoute);
 
 app.onError((err, c) => {
   console.error('[api] unhandled error', err);

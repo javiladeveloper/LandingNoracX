@@ -125,6 +125,84 @@ function welcomeText(lang: Lang): string {
   return `${t.greeting}\n\n${t.body1}\n\n${t.body2}\n\n→ ${t.cta}: https://noracx.com\n\n--\nNORAC X — ${t.tag}\n${t.unsubscribe}`;
 }
 
+interface ContactNotificationArgs {
+  name: string;
+  email: string;
+  type: 'booking' | 'press' | 'general';
+  message: string;
+  language: 'es' | 'en';
+  country: string | null;
+}
+
+export function renderContactNotification(args: ContactNotificationArgs): {
+  subject: string;
+  html: string;
+  text: string;
+} {
+  const labels = {
+    booking: 'Booking',
+    press: 'Prensa',
+    general: 'General',
+  } as const;
+
+  const subject = `[NORAC X · ${labels[args.type]}] ${args.name}`;
+
+  const escapedMsg = escapeHtml(args.message);
+  const country = args.country ? ` · ${args.country}` : '';
+
+  const text = `Nuevo mensaje desde noracx.com
+
+Tipo:    ${labels[args.type]}
+Nombre:  ${args.name}
+Email:   ${args.email}
+Lang:    ${args.language}${country}
+
+────────────────────────────────────
+${args.message}
+────────────────────────────────────
+
+Respondé a este mail para contestarle directamente.`;
+
+  const html = `<!doctype html>
+<html lang="es">
+  <head><meta charset="utf-8" /></head>
+  <body style="margin:0;padding:24px;background:#f4ede0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1c1c1c;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #d4cdb8;">
+      <tr>
+        <td style="background:#b30707;padding:16px 24px;color:#f4ede0;font-family:Georgia,serif;font-size:14px;letter-spacing:0.2em;text-transform:uppercase;">
+          NORAC X · ${labels[args.type]}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:24px;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size:14px;line-height:1.6;">
+            <tr><td style="padding:4px 0;color:#6a625c;width:90px;">Nombre</td><td style="padding:4px 0;"><strong>${escapeHtml(args.name)}</strong></td></tr>
+            <tr><td style="padding:4px 0;color:#6a625c;">Email</td><td style="padding:4px 0;"><a href="mailto:${args.email}" style="color:#b30707;">${escapeHtml(args.email)}</a></td></tr>
+            <tr><td style="padding:4px 0;color:#6a625c;">Idioma</td><td style="padding:4px 0;">${args.language}</td></tr>
+            ${args.country ? `<tr><td style="padding:4px 0;color:#6a625c;">País</td><td style="padding:4px 0;">${args.country}</td></tr>` : ''}
+          </table>
+          <hr style="border:none;border-top:1px solid #e8e0d0;margin:20px 0;" />
+          <div style="font-size:15px;line-height:1.7;white-space:pre-wrap;">${escapedMsg}</div>
+          <hr style="border:none;border-top:1px solid #e8e0d0;margin:20px 0;" />
+          <p style="font-size:12px;color:#6a625c;margin:0;">Respondé a este mail para contestarle directamente — el reply-to apunta a ${escapeHtml(args.email)}.</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+
+  return { subject, html, text };
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const CONTENT = {
   es: {
     subject: 'Gracias por unirte al grito',

@@ -34,3 +34,70 @@ export const fans = sqliteTable(
 
 export type Fan = typeof fans.$inferSelect;
 export type NewFan = typeof fans.$inferInsert;
+
+/**
+ * Mensajes del form de contacto.
+ * type determina a qué buzón se reenvía: booking@, prensa@, contacto@.
+ * Marcamos readAt y repliedAt manualmente desde el admin (Fase 3).
+ */
+export const contactMessages = sqliteTable(
+  'contact_messages',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    name: text('name').notNull(),
+    email: text('email').notNull(),
+    type: text('type', { enum: ['booking', 'press', 'general'] }).notNull(),
+    message: text('message').notNull(),
+    language: text('language', { enum: ['es', 'en'] })
+      .notNull()
+      .default('es'),
+    country: text('country'),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    readAt: integer('read_at', { mode: 'timestamp' }),
+    repliedAt: integer('replied_at', { mode: 'timestamp' }),
+  },
+  (table) => ({
+    typeIdx: index('contact_type_idx').on(table.type),
+    createdIdx: index('contact_created_idx').on(table.createdAt),
+  }),
+);
+
+export type ContactMessage = typeof contactMessages.$inferSelect;
+export type NewContactMessage = typeof contactMessages.$inferInsert;
+
+/**
+ * Analytics: page views server-side, sin cookies de tracking ni terceros.
+ * sessionId se genera client-side (UUID v4) y se guarda en sessionStorage.
+ * Permite contar visitantes únicos por sesión sin identificar personas.
+ * country viene del header CF-IPCountry (geoip).
+ */
+export const pageViews = sqliteTable(
+  'page_views',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    path: text('path').notNull(),
+    referrer: text('referrer'),
+    country: text('country'),
+    language: text('language'),
+    sessionId: text('session_id').notNull(),
+    deviceClass: text('device_class', { enum: ['mobile', 'tablet', 'desktop', 'bot', 'unknown'] }),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => ({
+    pathIdx: index('pageviews_path_idx').on(table.path),
+    sessionIdx: index('pageviews_session_idx').on(table.sessionId),
+    createdIdx: index('pageviews_created_idx').on(table.createdAt),
+    countryIdx: index('pageviews_country_idx').on(table.country),
+  }),
+);
+
+export type PageView = typeof pageViews.$inferSelect;
+export type NewPageView = typeof pageViews.$inferInsert;

@@ -1,0 +1,155 @@
+---
+import '@/styles/global.css';
+import Nav from '@/components/Nav.astro';
+import Footer from '@/components/Footer.astro';
+import { getDict, type Lang, altLang, localizePath } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+  pageTitle?: string;
+  pagePath?: string;
+}
+
+const { lang, pageTitle, pagePath = '/' } = Astro.props;
+const dict = getDict(lang);
+const title = pageTitle ?? dict.meta.title;
+const description = dict.meta.description;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://noracx.com').href;
+const alt = altLang(lang);
+const altPath = localizePath(pagePath, alt);
+const altUrl = new URL(altPath, Astro.site ?? 'https://noracx.com').href;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="NORAC X" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <link rel="alternate" hreflang={lang} href={canonicalUrl} />
+    <link rel="alternate" hreflang={alt} href={altUrl} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site ?? 'https://noracx.com').href} />
+
+    <meta property="og:type" content="music.musician" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={dict.meta.ogDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={dict.meta.locale} />
+    <meta property="og:image" content="https://noracx.com/og-image.jpg" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={dict.meta.ogDescription} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Archivo+Black&display=swap"
+      rel="stylesheet"
+    />
+
+    <script is:inline>
+      (function () {
+        try {
+          var path = window.location.pathname;
+          var isEn = path === '/en' || path === '/en/' || path.startsWith('/en/');
+          var saved = localStorage.getItem('noracx-lang');
+          if (saved === 'en' && !isEn) {
+            window.location.replace('/en' + (path === '/' ? '' : path));
+            return;
+          }
+          if (saved === 'es' && isEn) {
+            var stripped = path.replace(/^\/en/, '') || '/';
+            window.location.replace(stripped);
+            return;
+          }
+          if (!saved && !isEn && navigator.language && navigator.language.toLowerCase().startsWith('en')) {
+            window.location.replace('/en' + (path === '/' ? '' : path));
+          }
+        } catch (e) {
+          /* localStorage no disponible */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="cursor" id="cursor"></div>
+
+    <Nav lang={lang} pagePath={pagePath} />
+
+    <main>
+      <slot />
+    </main>
+
+    <Footer lang={lang} />
+
+    <script>
+      // Persistencia de idioma elegido por el usuario
+      const langBtns = document.querySelectorAll<HTMLAnchorElement>('[data-lang]');
+      langBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const lang = btn.dataset.lang;
+          if (lang === 'es' || lang === 'en') {
+            try {
+              localStorage.setItem('noracx-lang', lang);
+            } catch {
+              /* ignore */
+            }
+          }
+        });
+      });
+
+      // Nav scroll state
+      const nav = document.getElementById('nav');
+      if (nav) {
+        const onScroll = () => {
+          if (window.scrollY > 50) nav.classList.add('scrolled');
+          else nav.classList.remove('scrolled');
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      // Reveal on scroll
+      const revealEls = document.querySelectorAll('.reveal');
+      if (revealEls.length > 0) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1 },
+        );
+        revealEls.forEach((el) => observer.observe(el));
+      }
+
+      // Custom cursor (solo cuando hay puntero fino, ej. mouse)
+      const cursor = document.getElementById('cursor');
+      if (cursor && window.matchMedia('(pointer: fine)').matches) {
+        document.addEventListener('mousemove', (e) => {
+          cursor.style.left = e.clientX + 'px';
+          cursor.style.top = e.clientY + 'px';
+        });
+        document
+          .querySelectorAll('a, button, .track, .platform, .lyric-row')
+          .forEach((el) => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+          });
+      } else if (cursor) {
+        cursor.style.display = 'none';
+      }
+    </script>
+  </body>
+</html>

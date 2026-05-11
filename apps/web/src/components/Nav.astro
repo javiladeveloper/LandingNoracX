@@ -1,0 +1,43 @@
+---
+import { getDict, localizePath, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+  pagePath?: string;
+}
+
+const { lang, pagePath = '/' } = Astro.props;
+const t = getDict(lang).nav;
+
+const homePath = localizePath('/', lang);
+const esHref = localizePath(pagePath, 'es');
+const enHref = localizePath(pagePath, 'en');
+---
+
+<nav class="nav" id="nav">
+  <a href={homePath} class="nav-logo">NORAC X</a>
+
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#bio">{t.bio}</a></li>
+      <li><a href="#musica">{t.music}</a></li>
+      <li><a href="#plataformas">{t.platforms}</a></li>
+      <li><a href="#contacto">{t.contact}</a></li>
+    </ul>
+
+    <div class="lang-switch" role="group" aria-label="Language">
+      <a
+        href={esHref}
+        class:list={['lang-btn', { active: lang === 'es' }]}
+        data-lang="es"
+        aria-current={lang === 'es' ? 'true' : 'false'}>ES</a
+      >
+      <a
+        href={enHref}
+        class:list={['lang-btn', { active: lang === 'en' }]}
+        data-lang="en"
+        aria-current={lang === 'en' ? 'true' : 'false'}>EN</a
+      >
+    </div>
+  </div>
+</nav>

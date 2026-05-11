@@ -1,0 +1,18 @@
+---
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const items = getDict(lang).marquee;
+// Duplicar la lista para que el scroll infinito sea continuo
+const track = [...items, ...items];
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    {track.map((item) => <div class="marquee-item">{item}</div>)}
+  </div>
+</div>

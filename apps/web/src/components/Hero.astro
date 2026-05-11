@@ -1,0 +1,82 @@
+---
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDict(lang).hero;
+---
+
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <svg
+    class="mountains"
+    viewBox="0 0 1440 500"
+    preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true">
+    <defs>
+      <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a0505" stop-opacity="0"></stop>
+        <stop offset="50%" stop-color="#0a0202" stop-opacity="0.5"></stop>
+        <stop offset="100%" stop-color="#000" stop-opacity="1"></stop>
+      </linearGradient>
+    </defs>
+    <path
+      d="M0,500 L0,260 L120,170 L260,240 L380,140 L520,220 L660,110 L800,200 L940,90 L1080,190 L1220,130 L1360,220 L1440,160 L1440,500 Z"
+      fill="url(#m1)"></path>
+    <path
+      d="M0,500 L0,340 L160,260 L320,310 L480,240 L640,290 L820,220 L980,280 L1140,210 L1300,290 L1440,250 L1440,500 Z"
+      fill="#020202"
+      opacity="0.95"></path>
+    <path
+      d="M0,500 L0,400 L200,340 L420,380 L640,320 L860,370 L1080,310 L1280,380 L1440,330 L1440,500 Z"
+      fill="#000"></path>
+  </svg>
+
+  <div class="hero-grid">
+    <div class="hero-meta">
+      <div class="hero-meta-block">
+        <strong>{t.metaProject}</strong>
+        NORAC X<br />
+        <span>{t.metaSince}</span>
+      </div>
+      <div class="hero-meta-block hero-meta-right">
+        <strong>{t.metaOrigin}</strong>
+        Tacna · Perú<br />
+        <span>17°59'S 70°15'W</span>
+      </div>
+    </div>
+
+    <div class="hero-title-block">
+      <h1 class="hero-title">
+        <span class="hero-title-text" data-text="NORAC">NORAC</span>
+        <span class="hero-title-x">X</span>
+      </h1>
+    </div>
+
+    <div class="hero-info">
+      <p class="hero-tagline" set:html={t.tagline}></p>
+
+      <div class="hero-cta">
+        <a href="#musica" class="btn btn-primary">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z"></path>
+          </svg>
+          <span>{t.btnListen}</span>
+        </a>
+        <a
+          href="https://distrokid.com/hyperfollow/noracx/"
+          target="_blank"
+          rel="noopener"
+          class="btn"
+        >
+          <span>{t.btnFollow}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

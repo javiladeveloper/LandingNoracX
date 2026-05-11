@@ -1,0 +1,21 @@
+---
+import { getDict, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDict(lang).footer;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer-fist" aria-hidden="true">✊</div>
+  <div class="footer-mark">NORAC <span>X</span></div>
+  <div class="footer-divider"></div>
+  <div class="footer-text">
+    © {year} · <span>{t.tag}</span><br />
+    <strong>{t.from}</strong>
+  </div>
+</footer>

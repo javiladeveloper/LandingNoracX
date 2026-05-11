@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 # CORS allowlist — agregar/quitar orígenes según hosts del frontend.
 # localhost:4321 sirve para `pnpm --filter @noracx/web dev` contra esta API.
 [vars]
-CORS_ALLOWED_ORIGINS = "https://noracx.com,https://www.noracx.com,http://localhost:4321"
+CORS_ALLOWED_ORIGINS = "https://noracx.com,https://www.noracx.com,https://admin.noracx.com,http://localhost:4321,http://localhost:5173"
 # Email From — noracx.com está verificado en Resend (DKIM/SPF/return-path).
 EMAIL_FROM = "NORAC X <hola@noracx.com>"
 

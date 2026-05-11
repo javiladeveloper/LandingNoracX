@@ -1,0 +1,31 @@
+{
+  "name": "@noracx/admin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NORAC X — admin dashboard (React + Vite)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.16",
+    "@types/node": "^25.7.0",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^4.1.16",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
+  }
+}

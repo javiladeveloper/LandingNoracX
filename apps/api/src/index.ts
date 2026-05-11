@@ -4,6 +4,7 @@ import { logger } from 'hono/logger';
 import { subscribeRoute } from './routes/subscribe';
 import { contactRoute } from './routes/contact';
 import { trackRoute } from './routes/track';
+import { adminRoute } from './routes/admin';
 import { runSpotifySnapshot } from './jobs/spotifySnapshot';
 
 export interface Bindings {
@@ -27,7 +28,8 @@ app.use('*', (c, next) => {
     origin: (incoming) => (origins.includes(incoming) ? incoming : null),
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
-    credentials: false,
+    // Credentials true para que el admin (otro origen) pueda enviar la cookie de sesión
+    credentials: true,
     maxAge: 86400,
   })(c, next);
 });
@@ -45,6 +47,7 @@ app.get('/health', (c) => c.json({ ok: true, ts: Date.now() }));
 app.route('/api/subscribe', subscribeRoute);
 app.route('/api/contact', contactRoute);
 app.route('/api/track', trackRoute);
+app.route('/api/admin', adminRoute);
 
 app.onError((err, c) => {
   console.error('[api] unhandled error', err);

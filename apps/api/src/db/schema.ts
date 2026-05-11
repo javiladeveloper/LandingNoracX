@@ -129,3 +129,58 @@ export const spotifySnapshots = sqliteTable(
 
 export type SpotifySnapshot = typeof spotifySnapshots.$inferSelect;
 export type NewSpotifySnapshot = typeof spotifySnapshots.$inferInsert;
+
+/**
+ * Usuarios del admin dashboard. passwordHash usa PBKDF2 (Web Crypto API,
+ * disponible en Workers nativamente). role determina permisos en Fase 3+.
+ * Usaremos 'owner' para el primer y único usuario inicial.
+ */
+export const users = sqliteTable(
+  'users',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    email: text('email').notNull().unique(),
+    passwordHash: text('password_hash').notNull(),
+    role: text('role', { enum: ['owner', 'editor', 'viewer'] })
+      .notNull()
+      .default('owner'),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    lastLoginAt: integer('last_login_at', { mode: 'timestamp' }),
+  },
+  (table) => ({
+    emailIdx: index('users_email_idx').on(table.email),
+  }),
+);
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+/**
+ * Sesiones del admin. id es un token random opaco (32 bytes hex), también
+ * usado como valor del cookie HttpOnly Secure. expiresAt se renueva en
+ * cada request para keep-alive.
+ */
+export const sessions = sqliteTable(
+  'sessions',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id').notNull(),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    userAgent: text('user_agent'),
+    ip: text('ip'),
+  },
+  (table) => ({
+    userIdx: index('sessions_user_idx').on(table.userId),
+    expiresIdx: index('sessions_expires_idx').on(table.expiresAt),
+  }),
+);
+
+export type Session = typeof sessions.$inferSelect;
+export type NewSession = typeof sessions.$inferInsert;

@@ -1,0 +1,65 @@
+/**
+ * Cliente de la API. Mismo origen en producción (admin.noracx.com → noracx.com/api/*
+ * vía CORS, OR usamos PUBLIC_API_URL para apuntar al worker explícitamente).
+ * En dev local apunta al worker corriendo en localhost:8787.
+ */
+
+const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8787';
+
+export interface ApiError {
+  ok: false;
+  error: string;
+}
+
+export interface ApiOk<T = unknown> {
+  ok: true;
+  [key: string]: unknown;
+  data?: T;
+}
+
+export async function apiFetch<T = unknown>(
+  path: string,
+  init?: RequestInit,
+): Promise<{ ok: boolean; status: number; body: T | ApiError }> {
+  const res = await fetch(`${API_URL}${path}`, {
+    ...init,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers ?? {}),
+    },
+  });
+  const body = (await res.json().catch(() => ({ ok: false, error: 'invalid_json' }))) as
+    | T
+    | ApiError;
+  return { ok: res.ok, status: res.status, body };
+}
+
+export interface MeResponse {
+  ok: true;
+  user: {
+    id: string;
+    email: string;
+    role: 'owner' | 'editor' | 'viewer';
+  };
+}
+
+export async function getMe(): Promise<MeResponse['user'] | null> {
+  const res = await apiFetch<MeResponse>('/api/admin/me');
+  if (!res.ok || !('user' in (res.body as object))) return null;
+  return (res.body as MeResponse).user;
+}
+
+export async function login(email: string, password: string): Promise<{ ok: boolean; error?: string }> {
+  const res = await apiFetch<{ ok: boolean; error?: string }>('/api/admin/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+  if (res.ok) return { ok: true };
+  const body = res.body as ApiError;
+  return { ok: false, error: body.error ?? 'login_failed' };
+}
+
+export async function logout(): Promise<void> {
+  await apiFetch('/api/admin/logout', { method: 'POST' });
+}

@@ -19,3 +19,14 @@ migrations_dir = "drizzle/migrations"
 # Observabilidad por defecto en Workers
 [observability]
 enabled = true
+
+# Workers Route — el worker maneja todo lo que llegue a noracx.com/api/*.
+# El resto del dominio sigue sirviéndolo Cloudflare Pages (apps/web).
+# Workers Routes tienen prioridad sobre Pages para esos paths específicos.
+[[routes]]
+pattern = "noracx.com/api/*"
+zone_name = "noracx.com"
+
+[[routes]]
+pattern = "www.noracx.com/api/*"
+zone_name = "noracx.com"

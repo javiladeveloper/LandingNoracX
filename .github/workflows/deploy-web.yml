@@ -35,8 +35,12 @@ jobs:
       - name: Typecheck
         run: pnpm --filter @noracx/web typecheck
 
+      # En producción la API vive en el mismo origen (Workers Route en
+      # noracx.com/api/*), así que el front llama a paths relativos.
       - name: Build
         run: pnpm --filter @noracx/web build
+        env:
+          PUBLIC_API_URL: ''
 
       # Bootstrap del proyecto en el primer deploy. Si ya existe el
       # comando falla con 8000007, lo ignoramos.

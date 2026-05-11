@@ -39,6 +39,9 @@ Thumbs.db
 coverage/
 *.lcov
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # IDE AI rules locales
 .github/instructions/codacy.instructions.md
 .codacy/

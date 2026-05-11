@@ -12,6 +12,11 @@ export interface AuthContext {
   sessionId: string;
 }
 
+// SessionCtx con Variables=any para que el caller pueda tipar su contexto
+// libremente (Hono usa invariancia en Set<T>, así que solo any encaja).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SessionCtx = Context<{ Bindings: Bindings; Variables: any }>;
+
 /**
  * Resuelve la sesión actual desde el cookie. Devuelve null si:
  * - no hay cookie
@@ -19,7 +24,7 @@ export interface AuthContext {
  * - la sesión está expirada
  * - el user al que pertenece la sesión ya no existe
  */
-export async function resolveSession(c: Context<{ Bindings: Bindings }>): Promise<AuthContext | null> {
+export async function resolveSession(c: SessionCtx): Promise<AuthContext | null> {
   const cookieHeader = c.req.header('Cookie') ?? '';
   const match = cookieHeader.split(';').find((s) => s.trim().startsWith(`${COOKIE_NAME}=`));
   if (!match) return null;
@@ -46,7 +51,7 @@ export async function resolveSession(c: Context<{ Bindings: Bindings }>): Promis
 }
 
 export async function createSession(
-  c: Context<{ Bindings: Bindings }>,
+  c: SessionCtx,
   userId: string,
   sessionToken: string,
 ): Promise<void> {
@@ -62,7 +67,7 @@ export async function createSession(
 }
 
 export async function destroySession(
-  c: Context<{ Bindings: Bindings }>,
+  c: SessionCtx,
   sessionId: string,
 ): Promise<void> {
   const db = drizzle(c.env.DB);

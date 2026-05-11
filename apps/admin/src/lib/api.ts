@@ -63,3 +63,45 @@ export async function login(email: string, password: string): Promise<{ ok: bool
 export async function logout(): Promise<void> {
   await apiFetch('/api/admin/logout', { method: 'POST' });
 }
+
+export interface ContactMessageRow {
+  id: string;
+  name: string;
+  email: string;
+  type: 'booking' | 'press' | 'general';
+  message: string;
+  language: 'es' | 'en';
+  country: string | null;
+  createdAt: number;
+  readAt: number | null;
+  repliedAt: number | null;
+}
+
+export interface ContactMessagesResponse {
+  ok: true;
+  data: ContactMessageRow[];
+  unreadCount: number;
+}
+
+export async function listContactMessages(): Promise<ContactMessagesResponse | null> {
+  const res = await apiFetch<ContactMessagesResponse>('/api/admin/contact-messages');
+  if (!res.ok) return null;
+  return res.body as ContactMessagesResponse;
+}
+
+export type ContactMessageAction =
+  | 'mark-read'
+  | 'mark-unread'
+  | 'mark-replied'
+  | 'mark-unreplied';
+
+export async function patchContactMessage(
+  id: string,
+  action: ContactMessageAction,
+): Promise<boolean> {
+  const res = await apiFetch(`/api/admin/contact-messages/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ action }),
+  });
+  return res.ok;
+}

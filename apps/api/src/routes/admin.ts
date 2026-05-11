@@ -2,8 +2,8 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
-import { eq } from 'drizzle-orm';
-import { users } from '../db/schema';
+import { eq, desc, isNull, sql } from 'drizzle-orm';
+import { users, contactMessages } from '../db/schema';
 import { verifyPassword, newSessionToken, hashPassword } from '../lib/password';
 import {
   resolveSession,
@@ -12,9 +12,15 @@ import {
   buildSessionCookie,
   buildClearCookie,
 } from '../lib/session';
+import type { User } from '../db/schema';
 import type { Bindings } from '../index';
 
-export const adminRoute = new Hono<{ Bindings: Bindings }>();
+type Vars = {
+  user: User;
+  sessionId: string;
+};
+
+export const adminRoute = new Hono<{ Bindings: Bindings; Variables: Vars }>();
 
 const loginSchema = z.object({
   email: z.string().email().max(255).toLowerCase().trim(),
@@ -99,3 +105,73 @@ adminRoute.post('/setup', zValidator('json', setupSchema), async (c) => {
 
   return c.json({ ok: true, message: 'owner_created' }, 201);
 });
+
+/* ============================================================
+   A partir de acá, todas las rutas requieren auth.
+   ============================================================ */
+adminRoute.use('*', async (c, next) => {
+  const auth = await resolveSession(c);
+  if (!auth) return c.json({ ok: false, error: 'unauthenticated' }, 401);
+  c.set('user', auth.user);
+  c.set('sessionId', auth.sessionId);
+  await next();
+});
+
+adminRoute.get('/contact-messages', async (c) => {
+  const db = drizzle(c.env.DB);
+  const limit = Math.min(Number(c.req.query('limit') ?? 100), 200);
+
+  const data = await db
+    .select()
+    .from(contactMessages)
+    .orderBy(desc(contactMessages.createdAt))
+    .limit(limit)
+    .all();
+
+  const unreadCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(contactMessages)
+    .where(isNull(contactMessages.readAt))
+    .get();
+
+  return c.json({
+    ok: true,
+    data,
+    unreadCount: unreadCount?.count ?? 0,
+  });
+});
+
+const messageActionSchema = z.object({
+  action: z.enum(['mark-read', 'mark-unread', 'mark-replied', 'mark-unreplied']),
+});
+
+adminRoute.patch(
+  '/contact-messages/:id',
+  zValidator('json', messageActionSchema),
+  async (c) => {
+    const id = c.req.param('id');
+    const { action } = c.req.valid('json');
+    const db = drizzle(c.env.DB);
+
+    const now = new Date();
+    const updates: Record<string, Date | null> = {};
+    switch (action) {
+      case 'mark-read':
+        updates.readAt = now;
+        break;
+      case 'mark-unread':
+        updates.readAt = null;
+        break;
+      case 'mark-replied':
+        updates.repliedAt = now;
+        if (!updates.readAt) updates.readAt = now;
+        break;
+      case 'mark-unreplied':
+        updates.repliedAt = null;
+        break;
+    }
+
+    await db.update(contactMessages).set(updates).where(eq(contactMessages.id, id));
+    return c.json({ ok: true });
+  },
+);

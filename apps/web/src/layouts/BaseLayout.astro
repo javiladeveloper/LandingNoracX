@@ -58,22 +58,22 @@ const altUrl = new URL(altPath, Astro.site ?? 'https://noracx.com').href;
     <script is:inline>
       (function () {
         try {
-          var path = window.location.pathname;
-          var isEn = path === '/en' || path === '/en/' || path.startsWith('/en/');
-          var saved = localStorage.getItem('noracx-lang');
+          const path = window.location.pathname;
+          const isEn = path === '/en' || path === '/en/' || path.startsWith('/en/');
+          const saved = localStorage.getItem('noracx-lang');
           if (saved === 'en' && !isEn) {
             window.location.replace('/en' + (path === '/' ? '' : path));
             return;
           }
           if (saved === 'es' && isEn) {
-            var stripped = path.replace(/^\/en/, '') || '/';
+            const stripped = path.replace(/^\/en/, '') || '/';
             window.location.replace(stripped);
             return;
           }
           if (!saved && !isEn && navigator.language && navigator.language.toLowerCase().startsWith('en')) {
             window.location.replace('/en' + (path === '/' ? '' : path));
           }
-        } catch (e) {
+        } catch (_e) {
           /* localStorage no disponible */
         }
       })();

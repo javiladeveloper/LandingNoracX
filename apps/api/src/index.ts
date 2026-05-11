@@ -6,6 +6,8 @@ import { subscribeRoute } from './routes/subscribe';
 export interface Bindings {
   DB: D1Database;
   CORS_ALLOWED_ORIGINS: string;
+  RESEND_API_KEY: string;
+  EMAIL_FROM: string;
 }
 
 const app = new Hono<{ Bindings: Bindings }>();

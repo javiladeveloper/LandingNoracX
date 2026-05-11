@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
 import { fans } from '../db/schema';
+import { renderWelcomeEmail, sendEmail } from '../lib/email';
 import type { Bindings } from '../index';
 
 const subscribeSchema = z.object({
@@ -38,6 +39,9 @@ subscribeRoute.post('/', zValidator('json', subscribeSchema), async (c) => {
           source: data.source,
         })
         .where(eq(fans.email, data.email));
+
+      await sendWelcomeAsync(c.executionCtx, c.env, data.email, data.language);
+
       return c.json({ ok: true, status: 'reopted-in' as const });
     }
     return c.json({ ok: true, status: 'already-subscribed' as const });
@@ -51,5 +55,36 @@ subscribeRoute.post('/', zValidator('json', subscribeSchema), async (c) => {
     country: country ?? null,
   });
 
+  await sendWelcomeAsync(c.executionCtx, c.env, data.email, data.language);
+
   return c.json({ ok: true, status: 'subscribed' as const }, 201);
 });
+
+/**
+ * Envía el welcome email sin bloquear la respuesta al cliente.
+ * waitUntil() le dice al Worker que mantenga el isolate vivo hasta que
+ * la promesa resuelva. Si Resend tarda 1-2s, el usuario no espera.
+ */
+function sendWelcomeAsync(
+  ctx: ExecutionContext,
+  env: Bindings,
+  email: string,
+  lang: 'es' | 'en',
+): Promise<void> {
+  const { subject, html, text } = renderWelcomeEmail({ email, lang });
+  const promise = sendEmail({
+    apiKey: env.RESEND_API_KEY,
+    from: env.EMAIL_FROM,
+    to: email,
+    subject,
+    html,
+    text,
+  })
+    .then((res) => {
+      if (!res.ok) console.error('[subscribe] welcome email failed', email, res.error);
+    })
+    .catch((err) => console.error('[subscribe] welcome email exception', email, err));
+
+  ctx.waitUntil(promise);
+  return promise;
+}

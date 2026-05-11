@@ -15,6 +15,13 @@
       "when": 1778531447714,
       "tag": "0001_outgoing_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1778533061555,
+      "tag": "0002_silent_the_hand",
+      "breakpoints": true
     }
   ]
 }

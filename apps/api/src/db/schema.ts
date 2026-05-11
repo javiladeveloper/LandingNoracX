@@ -101,3 +101,31 @@ export const pageViews = sqliteTable(
 
 export type PageView = typeof pageViews.$inferSelect;
 export type NewPageView = typeof pageViews.$inferInsert;
+
+/**
+ * Snapshots diarios de stats de Spotify del artista.
+ * monthly_listeners no está disponible en la Web API pública — solo
+ * vía Spotify for Artists. Capturamos lo que sí está: followers,
+ * popularity (0-100 según Spotify), genres asociados.
+ * El cron del worker corre todos los días a las 9am UTC.
+ */
+export const spotifySnapshots = sqliteTable(
+  'spotify_snapshots',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    followers: integer('followers').notNull(),
+    popularity: integer('popularity'),
+    genres: text('genres'), // JSON array de strings serializado
+    snapshotAt: integer('snapshot_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => ({
+    snapshotIdx: index('spotify_snapshots_at_idx').on(table.snapshotAt),
+  }),
+);
+
+export type SpotifySnapshot = typeof spotifySnapshots.$inferSelect;
+export type NewSpotifySnapshot = typeof spotifySnapshots.$inferInsert;

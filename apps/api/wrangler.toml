@@ -32,3 +32,7 @@ zone_name = "noracx.com"
 [[routes]]
 pattern = "www.noracx.com/api/*"
 zone_name = "noracx.com"
+
+# Cron triggers
+[triggers]
+crons = ["0 9 * * *"] # Spotify snapshot diario a las 9:00 UTC

@@ -79,6 +79,8 @@ export const en: Dict = {
     btn: 'Subscribe',
     note: 'No spam · Unsubscribe anytime',
     thanks: 'Thanks for joining the roar: ',
+    alreadySubscribed: 'You were already on the list:',
+    error: 'Something failed. Try again later.',
   },
   platforms: {
     label: 'Platforms',

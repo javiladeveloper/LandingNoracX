@@ -7,6 +7,8 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getDict(lang).newsletter;
+
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 ---
 
 <section class="newsletter reveal">
@@ -17,7 +19,15 @@ const t = getDict(lang).newsletter;
   <h2 class="section-title" set:html={t.title}></h2>
   <p class="section-intro newsletter-intro">{t.intro}</p>
 
-  <form class="newsletter-form" id="newsletter-form" data-thanks={t.thanks}>
+  <form
+    class="newsletter-form"
+    id="newsletter-form"
+    data-lang={lang}
+    data-api-url={apiUrl}
+    data-msg-thanks={t.thanks}
+    data-msg-already={t.alreadySubscribed}
+    data-msg-error={t.error}
+  >
     <input
       type="email"
       class="newsletter-input"
@@ -30,20 +40,56 @@ const t = getDict(lang).newsletter;
       <span>{t.btn}</span>
     </button>
   </form>
-  <p class="newsletter-note">{t.note}</p>
+  <p class="newsletter-note newsletter-status" id="newsletter-status">{t.note}</p>
 </section>
 
 <script>
-  // Placeholder hasta que conectemos POST /api/subscribe (Fase 2)
   const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
-  if (form) {
-    form.addEventListener('submit', (e) => {
+  const status = document.getElementById('newsletter-status');
+
+  if (form && status) {
+    const baseNote = status.textContent;
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const input = form.querySelector<HTMLInputElement>('input[type="email"]');
-      const email = input?.value ?? '';
-      const thanks = form.dataset.thanks ?? '';
-      alert(thanks + email);
-      if (input) input.value = '';
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const email = input?.value.trim().toLowerCase() ?? '';
+      if (!email) return;
+
+      const apiUrl = form.dataset.apiUrl ?? '';
+      const lang = form.dataset.lang ?? 'es';
+      const msgThanks = form.dataset.msgThanks ?? '';
+      const msgAlready = form.dataset.msgAlready ?? '';
+      const msgError = form.dataset.msgError ?? '';
+
+      submit?.setAttribute('disabled', '');
+      status.textContent = '...';
+
+      try {
+        const res = await fetch(`${apiUrl}/api/subscribe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, language: lang, source: 'newsletter' }),
+        });
+        const json = (await res.json()) as { ok: boolean; status?: string; error?: string };
+
+        if (!res.ok || !json.ok) {
+          status.textContent = msgError;
+        } else if (json.status === 'already-subscribed') {
+          status.textContent = msgAlready + ' ' + email;
+        } else {
+          status.textContent = msgThanks + email;
+          if (input) input.value = '';
+        }
+      } catch {
+        status.textContent = msgError;
+      } finally {
+        submit?.removeAttribute('disabled');
+        setTimeout(() => {
+          if (baseNote) status.textContent = baseNote;
+        }, 6000);
+      }
     });
   }
 </script>

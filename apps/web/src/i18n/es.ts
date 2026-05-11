@@ -69,6 +69,8 @@ export const es = {
     btn: 'Suscribirme',
     note: 'No spam · Cancela cuando quieras',
     thanks: 'Gracias por unirte al grito: ',
+    alreadySubscribed: 'Ya estabas en la lista:',
+    error: 'Algo falló. Probá de nuevo en un rato.',
   },
   platforms: {
     label: 'Plataformas',

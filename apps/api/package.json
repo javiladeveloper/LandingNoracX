@@ -1,0 +1,32 @@
+{
+  "name": "@noracx/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NORAC X — API en Cloudflare Workers (Hono + Drizzle + D1)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply noracx-db --local",
+    "db:migrate:prod": "wrangler d1 migrations apply noracx-db --remote",
+    "db:studio": "drizzle-kit studio",
+    "clean": "rimraf dist .wrangler"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.4.1",
+    "drizzle-orm": "^0.36.4",
+    "hono": "^4.6.12",
+    "nanoid": "^5.0.9",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "drizzle-kit": "^0.28.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.2",
+    "wrangler": "^3.90.0"
+  }
+}

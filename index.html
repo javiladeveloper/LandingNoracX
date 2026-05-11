@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NORAC X — Metal Peruano con Mensaje</title>
+<meta name="description" content="NORAC X. Metal peruano de protesta desde Tacna. Voz del pueblo, justicia social, orgullo andino. Escucha en Spotify, YouTube y todas las plataformas.">
+<meta name="keywords" content="NORAC X, NORACX, NORAC_X, metal peruano, metal Tacna, power metal, protesta social, música peruana, rock peruano">
+<meta name="author" content="NORAC X">
+<link rel="canonical" href="https://noracx.com/">
+
+<meta property="og:type" content="music.musician">
+<meta property="og:title" content="NORAC X — Metal Peruano con Mensaje">
+<meta property="og:description" content="Voz del pueblo. Metal de protesta desde Tacna.">
+<meta property="og:url" content="https://noracx.com/">
+<meta property="og:image" content="https://noracx.com/og-image.jpg">
+<meta property="og:locale" content="es_PE">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NORAC X — Metal Peruano con Mensaje">
+<meta name="twitter:description" content="Voz del pueblo. Metal de protesta desde Tacna.">
+
+<meta name="theme-color" content="#000000">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Archivo+Black&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --black: #000000;
+  --void: #050505;
+  --coal: #0a0a0a;
+  --ash: #141414;
+  --smoke: #1c1c1c;
+  --steel: #2a2a2a;
+  --bone: #f4ede0;
+  --paper: #e8e0d0;
+  --ink: #b8b0a8;
+  --ink-dim: #6a625c;
+  --ink-faint: #3a3530;
+  --blood: #b30707;
+  --blood-deep: #5c0303;
+  --blood-bright: #e60a0a;
+  --ember: #ff3b1a;
+  --rust: #3a1208;
+  --border: rgba(179, 7, 7, 0.18);
+  --border-bright: rgba(230, 10, 10, 0.5);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--black); }
+
+body {
+  background: var(--black);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Custom cursor dot */
+.cursor {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: var(--blood-bright);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px var(--blood);
+}
+
+.cursor.hover { width: 36px; height: 36px; background: transparent; border: 1px solid var(--ember); box-shadow: 0 0 20px var(--blood); }
+
+@media (max-width: 768px) { .cursor { display: none; } }
+
+/* Grain + vignette */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 90%);
+  pointer-events: none;
+  z-index: 99;
+}
+
+main { position: relative; z-index: 3; }
+::selection { background: var(--blood); color: var(--bone); }
+
+/* ============ NAV ============ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0);
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  transition: all 0.4s;
+  border-bottom: 1px solid transparent;
+}
+
+.nav.scrolled {
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: var(--border);
+  padding: 14px 40px;
+}
+
+.nav-logo {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  color: var(--bone);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-logo::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--blood-bright);
+  display: inline-block;
+  box-shadow: 0 0 10px var(--blood-bright);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.nav-right { display: flex; align-items: center; gap: 28px; }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.nav-links a {
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+  padding: 4px 0;
+}
+
+.nav-links a:hover { color: var(--ember); }
+
+/* Language switch */
+.lang-switch {
+  display: flex;
+  background: var(--ash);
+  border: 1px solid var(--border);
+  padding: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--ink-dim);
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.lang-btn.active {
+  background: var(--blood);
+  color: var(--bone);
+}
+
+.lang-btn:hover:not(.active) { color: var(--bone); }
+
+@media (max-width: 880px) {
+  .nav-links { display: none; }
+  .nav { padding: 14px 20px; }
+  .nav.scrolled { padding: 12px 20px; }
+}
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 120px 40px 80px;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 70% 50% at 30% 60%, rgba(179, 7, 7, 0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(92, 3, 3, 0.4) 0%, transparent 60%),
+    var(--black);
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(179, 7, 7, 0.03) 1px, transparent 1px);
+  background-size: 60px 100%;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.mountains {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50vh;
+  z-index: -1;
+  opacity: 0.9;
+}
+
+/* Hero asymmetric grid */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.hero-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0;
+  animation: fadeIn 0.8s 0.2s forwards;
+}
+
+.hero-meta-block { line-height: 1.8; }
+.hero-meta-block strong { color: var(--blood-bright); display: block; margin-bottom: 4px; }
+
+.hero-meta-right { text-align: right; }
+
+.hero-title-block { position: relative; }
+
+.hero-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 900;
+  font-size: clamp(80px, 18vw, 280px);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: var(--bone);
+  position: relative;
+  opacity: 0;
+  animation: fadeUp 1.2s 0.3s forwards;
+  display: flex;
+  align-items: center;
+  gap: 4vw;
+}
+
+.hero-title-text { position: relative; }
+
+.hero-title-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--blood);
+  z-index: -1;
+  opacity: 0.7;
+  filter: blur(3px);
+  transform: translate(4px, 4px);
+}
+
+.hero-title-x {
+  color: var(--blood-bright);
+  font-style: italic;
+  text-shadow: 0 0 40px rgba(230, 10, 10, 0.6);
+  position: relative;
+}
+
+.hero-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 40px;
+  align-items: end;
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+  opacity: 0;
+  animation: fadeUp 0.8s 0.8s forwards;
+}
+
+.hero-tagline {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 300;
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.3;
+  color: var(--bone);
+  max-width: 560px;
+  letter-spacing: -0.01em;
+}
+
+.hero-tagline em {
+  color: var(--blood-bright);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--blood);
+  background: transparent;
+  color: var(--bone);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--blood) 0%, var(--blood-deep) 100%);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+.btn:hover::before { transform: translateX(0); }
+.btn:hover { color: var(--bone); border-color: var(--ember); box-shadow: 0 0 30px rgba(230, 10, 10, 0.4); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--blood) 0%, var(--blood-deep) 100%);
+  border-color: var(--blood-bright);
+}
+
+.btn-primary::before { background: linear-gradient(135deg, var(--ember) 0%, var(--blood-bright) 100%); }
+
+/* ============ MARQUEE ============ */
+.marquee {
+  background: var(--blood);
+  padding: 18px 0;
+  overflow: hidden;
+  border-top: 1px solid var(--blood-deep);
+  border-bottom: 1px solid var(--blood-deep);
+  position: relative;
+}
+
+.marquee-track {
+  display: flex;
+  gap: 60px;
+  animation: scroll 30s linear infinite;
+  white-space: nowrap;
+}
+
+.marquee-item {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bone);
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.marquee-item::after {
+  content: '✕';
+  color: var(--bone);
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+@keyframes scroll {
+  to { transform: translateX(calc(-50% - 30px)); }
+}
+
+/* ============ SECTIONS ============ */
+.section {
+  padding: 140px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.section-head {
+  margin-bottom: 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+}
+
+@media (max-width: 880px) {
+  .section { padding: 80px 24px; }
+  .section-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 50px; }
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--blood-bright);
+  margin-bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--blood-bright);
+}
+
+.section-number {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 14px;
+  color: var(--ink-dim);
+  letter-spacing: 0.1em;
+}
+
+.section-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 900;
+  font-size: clamp(40px, 6vw, 88px);
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  color: var(--bone);
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--blood-bright);
+  text-shadow: 0 0 30px rgba(230, 10, 10, 0.4);
+}
+
+.section-intro {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 480px;
+}
+
+/* ============ BIO ============ */
+.bio {
+  background: var(--void);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 140px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bio::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blood-bright), transparent);
+}
+
+.bio-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 80px;
+  align-items: start;
+}
+
+@media (max-width: 880px) {
+  .bio { padding: 80px 24px; }
+  .bio-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.bio-side {
+  position: sticky;
+  top: 120px;
+}
+
+.bio-side-image {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background:
+    linear-gradient(135deg, var(--rust) 0%, var(--black) 60%),
+    var(--ash);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.bio-side-image::before {
+  content: '✊';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 120px;
+  filter: drop-shadow(0 0 30px var(--blood));
+  opacity: 0.7;
+}
+
+.bio-side-image::after {
+  content: 'IMG: PLACEHOLDER';
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+}
+
+.bio-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  line-height: 2;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+
+.bio-meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--ink-faint);
+}
+
+.bio-meta-row span:first-child { color: var(--ink-dim); }
+.bio-meta-row span:last-child { color: var(--bone); }
+
+.bio-content { padding-top: 40px; }
+
+.bio-content p {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 28px;
+}
+
+.bio-content p:first-child {
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--bone);
+  font-weight: 400;
+}
+
+.bio-content p strong { color: var(--blood-bright); font-weight: 700; }
+.bio-content p em { color: var(--bone); font-style: italic; font-weight: 500; }
+
+.bio-pullquote {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.2;
+  color: var(--bone);
+  padding: 32px 0 32px 32px;
+  border-left: 4px solid var(--blood);
+  margin: 40px 0;
+  letter-spacing: -0.02em;
+}
+
+.bio-pullquote em {
+  color: var(--blood-bright);
+  font-style: italic;
+}
+
+/* ============ MUSIC ============ */
+.music-section { background: var(--black); }
+
+.tracks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 32px;
+}
+
+.track {
+  background: var(--ash);
+  border: 1px solid var(--border);
+  padding: 0;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.track:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-6px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(179, 7, 7, 0.1);
+}
+
+.track-header {
+  padding: 28px 28px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.track-info { flex: 1; }
+
+.track-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--blood-bright);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.track-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 900;
+  font-size: 26px;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  color: var(--bone);
+  letter-spacing: -0.02em;
+}
+
+.track-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+.track-meta span { color: var(--blood); margin: 0 6px; }
+
+.track-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  padding: 6px 10px;
+  background: var(--blood);
+  color: var(--bone);
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.track-body { padding: 24px 28px; }
+
+.track-theme {
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.track-quote {
+  font-family: 'Space Grotesk', sans-serif;
+  font-style: italic;
+  color: var(--bone);
+  font-size: 15px;
+  border-left: 2px solid var(--blood);
+  padding-left: 16px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* Spotify embed wrapper */
+.track-player {
+  margin: 0 -1px -1px;
+  background: var(--coal);
+  border-top: 1px solid var(--border);
+}
+
+.track-player iframe {
+  display: block;
+  width: 100%;
+  border-radius: 0;
+}
+
+.track-player-placeholder {
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--coal);
+  color: var(--ink-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.track-player-placeholder svg { width: 20px; height: 20px; fill: var(--blood-bright); }
+
+/* Big Spotify embed (full artist) */
+.spotify-full {
+  margin-top: 60px;
+  padding: 40px;
+  background: var(--ash);
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.spotify-full-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.spotify-full-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 22px;
+  color: var(--bone);
+  letter-spacing: -0.02em;
+}
+
+.spotify-full-title span { color: var(--blood-bright); }
+
+.spotify-full iframe {
+  display: block;
+  width: 100%;
+  border-radius: 0;
+  border: 1px solid var(--border);
+}
+
+/* ============ LYRICS WALL ============ */
+.lyrics-wall {
+  background: var(--void);
+  padding: 140px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.lyrics-wall-head {
+  text-align: center;
+  margin-bottom: 80px;
+  padding: 0 40px;
+}
+
+.lyrics-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.lyric-row {
+  padding: 32px 40px;
+  border-top: 1px solid var(--ink-faint);
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 32px;
+  align-items: center;
+  cursor: default;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.lyric-row:last-child { border-bottom: 1px solid var(--ink-faint); }
+
+.lyric-row::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--blood);
+  transform: scaleY(0);
+  transition: transform 0.4s;
+  transform-origin: top;
+}
+
+.lyric-row:hover { background: rgba(179, 7, 7, 0.05); }
+.lyric-row:hover::before { transform: scaleY(1); }
+.lyric-row:hover .lyric-text { color: var(--bone); transform: translateX(8px); }
+
+.lyric-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--blood);
+  font-weight: 700;
+}
+
+.lyric-text {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(18px, 2.5vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-style: italic;
+  transition: all 0.4s;
+}
+
+.lyric-source {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+@media (max-width: 880px) {
+  .lyric-row { grid-template-columns: 60px 1fr; padding: 24px 24px; }
+  .lyric-source { grid-column: 1 / -1; padding-left: 60px; }
+}
+
+/* ============ NEWSLETTER ============ */
+.newsletter {
+  padding: 140px 40px;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 12px;
+  max-width: 560px;
+  margin: 40px auto 0;
+  flex-wrap: wrap;
+}
+
+.newsletter-input {
+  flex: 1;
+  min-width: 240px;
+  padding: 16px 20px;
+  background: var(--ash);
+  border: 1px solid var(--border);
+  color: var(--bone);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--blood-bright);
+  background: var(--smoke);
+  box-shadow: 0 0 20px rgba(230, 10, 10, 0.2);
+}
+
+.newsletter-input::placeholder { color: var(--ink-dim); }
+
+.newsletter-note {
+  margin-top: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+/* ============ PLATFORMS ============ */
+.platforms-section { background: var(--black); }
+
+.platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.platform {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 26px;
+  background: var(--ash);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--bone);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.platform::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--blood);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s;
+}
+
+.platform::after {
+  content: '→';
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+  opacity: 0;
+  transition: all 0.3s;
+  color: var(--ember);
+  font-size: 18px;
+}
+
+.platform:hover { border-color: var(--border-bright); background: var(--smoke); }
+.platform:hover::before { transform: scaleY(1); }
+.platform:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+.platform-icon {
+  width: 40px; height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--black);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.platform-icon svg { width: 18px; height: 18px; fill: var(--ink); transition: fill 0.3s; }
+.platform:hover .platform-icon { border-color: var(--blood); background: var(--rust); }
+.platform:hover .platform-icon svg { fill: var(--ember); }
+
+.platform-name {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.platform-handle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-dim);
+  letter-spacing: 0.1em;
+}
+
+/* ============ CONTACT ============ */
+.contact { text-align: center; padding: 140px 40px; }
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 60px auto 0;
+}
+
+.contact-card {
+  padding: 40px 28px;
+  border: 1px solid var(--border);
+  background: var(--ash);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.contact-card::before {
+  content: '✕';
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  color: var(--blood);
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+.contact-card:hover { border-color: var(--border-bright); transform: translateY(-3px); }
+
+.contact-card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--blood-bright);
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+.contact-card-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  word-break: break-all;
+}
+
+.contact-card-value a {
+  color: var(--bone);
+  text-decoration: none;
+  border-bottom: 1px solid var(--blood);
+  padding-bottom: 2px;
+  transition: all 0.2s;
+}
+
+.contact-card-value a:hover { color: var(--ember); border-color: var(--ember); }
+
+/* ============ FOOTER ============ */
+.footer {
+  padding: 60px 40px 40px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  background: var(--black);
+}
+
+.footer-fist {
+  display: inline-block;
+  font-size: 40px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 20px var(--blood)) drop-shadow(0 0 40px rgba(179, 7, 7, 0.5));
+}
+
+.footer-mark {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 28px;
+  color: var(--bone);
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+
+.footer-mark span { color: var(--blood-bright); font-style: italic; }
+
+.footer-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  line-height: 1.8;
+}
+
+.footer-text strong { color: var(--blood-bright); font-weight: 400; }
+
+.footer-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--blood);
+  margin: 24px auto;
+}
+
+/* Reveal */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo" data-i18n="nav.logo">NORAC X</a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#bio" data-i18n="nav.bio">Bio</a></li>
+      <li><a href="#musica" data-i18n="nav.music">Música</a></li>
+      <li><a href="#plataformas" data-i18n="nav.platforms">Plataformas</a></li>
+      <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
+    </ul>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="es">ES</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <svg class="mountains" viewBox="0 0 1440 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a0505" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#0a0202" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="1"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,500 L0,260 L120,170 L260,240 L380,140 L520,220 L660,110 L800,200 L940,90 L1080,190 L1220,130 L1360,220 L1440,160 L1440,500 Z" fill="url(#m1)"/>
+    <path d="M0,500 L0,340 L160,260 L320,310 L480,240 L640,290 L820,220 L980,280 L1140,210 L1300,290 L1440,250 L1440,500 Z" fill="#020202" opacity="0.95"/>
+    <path d="M0,500 L0,400 L200,340 L420,380 L640,320 L860,370 L1080,310 L1280,380 L1440,330 L1440,500 Z" fill="#000"/>
+  </svg>
+
+  <div class="hero-grid">
+    <div class="hero-meta">
+      <div class="hero-meta-block">
+        <strong data-i18n="hero.metaProject">PROYECTO</strong>
+        NORAC X<br>
+        <span data-i18n="hero.metaSince">Nuevo proyecto · 2026</span>
+      </div>
+      <div class="hero-meta-block hero-meta-right">
+        <strong data-i18n="hero.metaOrigin">ORIGEN</strong>
+        Tacna · Perú<br>
+        <span>17°59'S 70°15'W</span>
+      </div>
+    </div>
+
+    <div class="hero-title-block">
+      <h1 class="hero-title">
+        <span class="hero-title-text" data-text="NORAC">NORAC</span>
+        <span class="hero-title-x">X</span>
+      </h1>
+    </div>
+
+    <div class="hero-info">
+      <p class="hero-tagline" data-i18n="hero.tagline">
+        Metal peruano nacido en la frontera. <em>Voz del pueblo</em>, justicia social y memoria andina. Esto no es ruido — es <em>protesta con riffs</em>.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#musica" class="btn btn-primary">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span data-i18n="hero.btnListen">Escuchar</span>
+        </a>
+        <a href="https://distrokid.com/hyperfollow/noracx/" target="_blank" rel="noopener" class="btn">
+          <span data-i18n="hero.btnFollow">Seguir</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <div class="marquee-item">VOZ DEL PUEBLO</div>
+    <div class="marquee-item">JUSTICIA SOCIAL</div>
+    <div class="marquee-item">METAL PERUANO</div>
+    <div class="marquee-item">DESDE TACNA</div>
+    <div class="marquee-item">NUEVO ÁLBUM 2026</div>
+    <div class="marquee-item">VOZ DEL PUEBLO</div>
+    <div class="marquee-item">JUSTICIA SOCIAL</div>
+    <div class="marquee-item">METAL PERUANO</div>
+    <div class="marquee-item">DESDE TACNA</div>
+    <div class="marquee-item">NUEVO ÁLBUM 2026</div>
+  </div>
+</div>
+
+<!-- BIO -->
+<section class="bio" id="bio">
+  <div class="bio-grid">
+
+    <aside class="bio-side">
+      <div class="bio-side-image"></div>
+      <div class="bio-meta">
+        <div class="bio-meta-row">
+          <span data-i18n="bio.origin">Origen</span>
+          <span>Tacna, Perú</span>
+        </div>
+        <div class="bio-meta-row">
+          <span data-i18n="bio.scope">Alcance</span>
+          <span data-i18n="bio.scopeVal">Todo el Perú</span>
+        </div>
+        <div class="bio-meta-row">
+          <span data-i18n="bio.genre">Género</span>
+          <span data-i18n="bio.genreVal">Power Metal / Protesta</span>
+        </div>
+        <div class="bio-meta-row">
+          <span data-i18n="bio.influences">Influencias</span>
+          <span>RATM · SOAD · Molotov</span>
+        </div>
+        <div class="bio-meta-row">
+          <span data-i18n="bio.format">Formato</span>
+          <span data-i18n="bio.formatVal">Vocalista anónimo</span>
+        </div>
+        <div class="bio-meta-row">
+          <span data-i18n="bio.tracks">Canciones</span>
+          <span>7+</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="bio-content">
+      <div class="section-label" data-i18n="bio.label">Biografía / 01</div>
+      <h2 class="section-title" style="margin-bottom: 48px;" data-i18n="bio.title">El <em>grito</em> que bajó del Ande</h2>
+
+      <p data-i18n="bio.p1">
+        NORAC X es la voz que apareció sin pedir permiso. Un solo cantante, sin rostro, sin nombre real, sin entrevistas. Surge en <strong>Tacna</strong> en 2026 — la ciudad fronteriza del sur peruano, donde el desierto se besa con la cordillera y la memoria de resistir nunca se apaga. Pero esto no es un proyecto sobre Tacna: es un proyecto <em>desde Tacna para todo el Perú</em>.
+      </p>
+
+      <p data-i18n="bio.p2">
+        Lima, Arequipa, Cusco, Puno, Iquitos, Trujillo. Donde haya alguien que sienta que el sistema lo aplastó, ahí canta NORAC X. El anonimato no es marketing — es <em>principio</em>. El rostro no importa cuando lo que se grita es de todos: la <strong>desigualdad</strong> que parte al país en dos, la <strong>justicia que se compra</strong>, la corrupción tan normalizada que ya nadie se sorprende, el peso de ser de los que el poder olvida.
+      </p>
+
+      <div class="bio-pullquote" data-i18n="bio.quote">
+        "No vinimos a entretener. Vinimos a <em>nombrar</em> lo que el sistema borra."
+      </div>
+
+      <p data-i18n="bio.p3">
+        El sonido es <strong>power metal</strong> peruano con sangre política: la urgencia rap-metal de Rage Against the Machine, el desconcierto rítmico de System of a Down, la rabia callejera de Molotov — pero cantado en castellano y con identidad andina. Riffs pesados, baterías que golpean como protesta urbana, coros que se gritan, y letras que no piden permiso para nombrar lo que pasa.
+      </p>
+
+      <p data-i18n="bio.p4">
+        El proyecto es <strong>reciente</strong> — apenas unos meses de vida — pero ya suma <strong>más de siete canciones publicadas</strong> y un álbum debut en camino para 2026. NORAC X no busca volverse famoso. Busca que las letras lleguen a quien las necesite escuchar. Si te encontraste con esto, probablemente ya sabías que algo estaba pendiente de gritarse.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- MUSIC -->
+<section class="section music-section" id="musica">
+  <div class="section-head">
+    <div>
+      <div class="section-label">
+        <span data-i18n="music.label">Discografía</span>
+        <span class="section-number">/ 02</span>
+      </div>
+      <h2 class="section-title" data-i18n="music.title">Canciones que <em>arden</em></h2>
+    </div>
+    <p class="section-intro" data-i18n="music.intro">
+      Cada track es un manifiesto. Reproductor directo desde Spotify — escucha completo si tienes Premium, o el preview de 30 segundos. Sigue al artista para no perderte nuevos lanzamientos.
+    </p>
+  </div>
+
+  <!-- Embed PROTAGONISTA del artista (todas las canciones reales) -->
+  <div class="spotify-full">
+    <div class="spotify-full-header">
+      <div class="spotify-full-title" data-i18n="music.discography">Discografía <span>completa</span></div>
+      <a href="https://open.spotify.com/artist/23reXrP1oSrpgNVFHIEGk6" target="_blank" rel="noopener" class="btn" style="padding: 12px 20px; font-size: 10px;">
+        <span data-i18n="music.openSpotify">Abrir en Spotify</span>
+      </a>
+    </div>
+    <iframe src="https://open.spotify.com/embed/artist/23reXrP1oSrpgNVFHIEGk6?utm_source=generator&theme=0" width="100%" height="380" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border: 1px solid var(--border);"></iframe>
+    <p style="margin-top: 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); text-align: center;" data-i18n="music.embedHint">▼ Selecciona cualquier canción para escuchar · Premium = canción completa</p>
+  </div>
+
+  <!-- Featured tracks - highlights con contexto -->
+  <div style="margin-top: 80px;">
+    <div class="section-label" style="margin-bottom: 24px;">
+      <span data-i18n="music.featuredLabel">Tracks destacados</span>
+    </div>
+    <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(28px, 4vw, 48px); letter-spacing: -0.02em; line-height: 1; margin-bottom: 48px; color: var(--bone);" data-i18n="music.featuredTitle">Los que <em style="color: var(--blood-bright); font-style: italic;">arden</em> más</h3>
+  </div>
+
+  <div class="tracks">
+
+    <article class="track">
+      <div class="track-header">
+        <div class="track-info">
+          <div class="track-number">TRACK · 01</div>
+          <h3 class="track-title">Garras sobre el Ande</h3>
+          <div class="track-meta">4:34 <span>·</span> Power Metal</div>
+        </div>
+        <div class="track-badge" data-i18n="music.featured">DESTACADO</div>
+      </div>
+      <div class="track-body">
+        <p class="track-theme" data-i18n="track1.theme">
+          Protesta social, opresión gubernamental, y el orgullo indomable del pueblo peruano levantándose desde las montañas.
+        </p>
+        <blockquote class="track-quote">"Garras de cóndor que rasgan la noche, voz del pueblo que nunca se rompe."</blockquote>
+      </div>
+      <div class="track-player">
+        <!-- Embed: cuando me pases el track ID exacto, reemplaza TRACK_ID_GARRAS aquí -->
+        <div class="track-player-placeholder">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.36-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.561.3z"/></svg>
+          <span data-i18n="music.placeholder">Reproductor disponible arriba ↑</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="track">
+      <div class="track-header">
+        <div class="track-info">
+          <div class="track-number">TRACK · 02</div>
+          <h3 class="track-title">Justicia de Dos Caras</h3>
+          <div class="track-meta">Power Metal <span>·</span> 2026</div>
+        </div>
+        <div class="track-badge" data-i18n="music.featured">DESTACADO</div>
+      </div>
+      <div class="track-body">
+        <p class="track-theme" data-i18n="track2.theme">
+          La desigualdad brutal de un sistema que pesa el oro en un lado y el sacrificio en el otro. Ricos vs pobres, corrupción al descubierto.
+        </p>
+        <blockquote class="track-quote">"Un lado pesa el oro, el otro el sacrificio. Qué peligroso ser de los olvidados."</blockquote>
+      </div>
+      <div class="track-player">
+        <div class="track-player-placeholder">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.36-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.561.3z"/></svg>
+          <span data-i18n="music.placeholder">Reproductor disponible arriba ↑</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- LYRICS WALL -->
+<section class="lyrics-wall reveal">
+  <div class="lyrics-wall-head">
+    <div class="section-label" style="justify-content: center;">
+      <span data-i18n="lyrics.label">Manifiesto</span>
+      <span class="section-number">/ 03</span>
+    </div>
+    <h2 class="section-title" data-i18n="lyrics.title">Frases que <em>cortan</em></h2>
+  </div>
+
+  <div class="lyrics-list">
+    <div class="lyric-row">
+      <span class="lyric-number">01</span>
+      <div class="lyric-text" data-i18n="lyric1">"La ley no es ciega... solo mira hacia arriba."</div>
+      <span class="lyric-source">JUSTICIA DE DOS CARAS</span>
+    </div>
+    <div class="lyric-row">
+      <span class="lyric-number">02</span>
+      <div class="lyric-text" data-i18n="lyric2">"Justicia para los ricos: rápida, limpia, sin testigos."</div>
+      <span class="lyric-source">JUSTICIA DE DOS CARAS</span>
+    </div>
+    <div class="lyric-row">
+      <span class="lyric-number">03</span>
+      <div class="lyric-text" data-i18n="lyric3">"Un lado pesa el oro, el otro el sacrificio."</div>
+      <span class="lyric-source">JUSTICIA DE DOS CARAS</span>
+    </div>
+    <div class="lyric-row">
+      <span class="lyric-number">04</span>
+      <div class="lyric-text" data-i18n="lyric4">"Garras de cóndor que rasgan la noche, voz del pueblo que nunca se rompe."</div>
+      <span class="lyric-source">GARRAS SOBRE EL ANDE</span>
+    </div>
+    <div class="lyric-row">
+      <span class="lyric-number">05</span>
+      <div class="lyric-text" data-i18n="lyric5">"Qué peligroso ser de los olvidados."</div>
+      <span class="lyric-source">JUSTICIA DE DOS CARAS</span>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter reveal">
+  <div class="section-label" style="justify-content: center;">
+    <span data-i18n="newsletter.label">Suscríbete</span>
+    <span class="section-number">/ 04</span>
+  </div>
+  <h2 class="section-title" data-i18n="newsletter.title">No te pierdas el <em>próximo grito</em></h2>
+  <p class="section-intro" style="max-width: 600px; margin: 24px auto 0;" data-i18n="newsletter.intro">
+    Sé el primero en escuchar cada lanzamiento, recibir letras inéditas, videos exclusivos y noticias del proyecto. Sin spam — solo metal.
+  </p>
+
+  <form class="newsletter-form" onsubmit="handleSubscribe(event)">
+    <input type="email" class="newsletter-input" placeholder="tu-email@correo.com" required data-i18n-placeholder="newsletter.placeholder">
+    <button type="submit" class="btn btn-primary">
+      <span data-i18n="newsletter.btn">Suscribirme</span>
+    </button>
+  </form>
+  <p class="newsletter-note" data-i18n="newsletter.note">No spam · Cancela cuando quieras</p>
+</section>
+
+<!-- PLATFORMS -->
+<section class="section platforms-section" id="plataformas">
+  <div class="section-head">
+    <div>
+      <div class="section-label">
+        <span data-i18n="platforms.label">Plataformas</span>
+        <span class="section-number">/ 05</span>
+      </div>
+      <h2 class="section-title" data-i18n="platforms.title">En todas <em>partes</em></h2>
+    </div>
+    <p class="section-intro" data-i18n="platforms.intro">
+      Sígueme donde escuches música. Cada plataforma tiene su propio mensaje, su propia comunidad. Todas conectadas por el mismo grito.
+    </p>
+  </div>
+
+  <div class="platforms-grid">
+    <a href="https://open.spotify.com/artist/23reXrP1oSrpgNVFHIEGk6" class="platform" target="_blank" rel="noopener">
+      <div class="platform-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.36-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.561.3z"/></svg>
+      </div>
+      <div>
+        <div class="platform-name">Spotify</div>
+        <div class="platform-handle">NORAC X · Artist</div>
+      </div>
+    </a>
+
+    <a href="https://youtube.com/@Norac_X" class="platform" target="_blank" rel="noopener">
+      <div class="platform-icon">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </div>
+      <div>
+        <div class="platform-name">YouTube</div>
+        <div class="platform-handle">@Norac_X</div>
+      </div>
+    </a>
+
+    <a href="https://tiktok.com/@norac_x" class="platform" target="_blank" rel="noopener">
+      <div class="platform-icon">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.1z"/></svg>
+      </div>
+      <div>
+        <div class="platform-name">TikTok</div>
+        <div class="platform-handle">@norac_x</div>
+      </div>
+    </a>
+
+    <a href="https://instagram.com/norac_x" class="platform" target="_blank" rel="noopener">
+      <div class="platform-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      </div>
+      <div>
+        <div class="platform-name">Instagram</div>
+        <div class="platform-handle">@norac_x</div>
+      </div>
+    </a>
+
+    <a href="#" class="platform" target="_blank" rel="noopener">
+      <div class="platform-icon">
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </div>
+      <div>
+        <div class="platform-name">Facebook</div>
+        <div class="platform-handle">NoracX</div>
+      </div>
+    </a>
+
+    <a href="https://distrokid.com/hyperfollow/noracx/" class="platform" target="_blank" rel="noopener">
+      <div class="platform-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 0L1.5 6v12L12 24l10.5-6V6L12 0zm0 4.5l6.5 3.75v7.5L12 19.5l-6.5-3.75v-7.5L12 4.5z"/></svg>
+      </div>
+      <div>
+        <div class="platform-name">HyperFollow</div>
+        <div class="platform-handle">Pre-save</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact reveal" id="contacto">
+  <div class="section-label" style="justify-content: center;">
+    <span data-i18n="contact.label">Contacto</span>
+    <span class="section-number">/ 06</span>
+  </div>
+  <h2 class="section-title" data-i18n="contact.title">Booking & <em>Prensa</em></h2>
+  <p class="section-intro" style="max-width: 600px; margin: 24px auto 0;" data-i18n="contact.intro">
+    Para shows, entrevistas, prensa, colaboraciones o cualquier consulta. Respuesta en 48 horas.
+  </p>
+
+  <div class="contact-grid">
+    <div class="contact-card">
+      <div class="contact-card-label">Booking</div>
+      <div class="contact-card-value"><a href="mailto:booking@noracx.com">booking@noracx.com</a></div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-card-label" data-i18n="contact.press">Prensa</div>
+      <div class="contact-card-value"><a href="mailto:prensa@noracx.com">prensa@noracx.com</a></div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-card-label" data-i18n="contact.general">General</div>
+      <div class="contact-card-value"><a href="mailto:contacto@noracx.com">contacto@noracx.com</a></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-fist">✊</div>
+  <div class="footer-mark">NORAC <span>X</span></div>
+  <div class="footer-divider"></div>
+  <div class="footer-text">
+    © 2026 · <span data-i18n="footer.tag">METAL PERUANO CON MENSAJE</span><br>
+    <strong data-i18n="footer.from">HECHO EN TACNA · ANDES PERUANOS</strong>
+  </div>
+</footer>
+
+<script>
+// ============ TRANSLATIONS ============
+const translations = {
+  es: {
+    'nav.bio': 'Bio',
+    'nav.music': 'Música',
+    'nav.platforms': 'Plataformas',
+    'nav.contact': 'Contacto',
+    'hero.metaProject': 'PROYECTO',
+    'hero.metaSince': 'Nuevo proyecto · 2026',
+    'hero.metaOrigin': 'ORIGEN',
+    'hero.tagline': 'Metal peruano nacido en la frontera. <em>Voz del pueblo</em>, justicia social y memoria andina. Esto no es ruido — es <em>protesta con riffs</em>.',
+    'hero.btnListen': 'Escuchar',
+    'hero.btnFollow': 'Seguir',
+    'bio.label': 'Biografía / 01',
+    'bio.title': 'El <em>grito</em> que bajó del Ande',
+    'bio.origin': 'Origen',
+    'bio.scope': 'Alcance',
+    'bio.scopeVal': 'Todo el Perú',
+    'bio.genre': 'Género',
+    'bio.genreVal': 'Power Metal / Protesta',
+    'bio.influences': 'Influencias',
+    'bio.format': 'Formato',
+    'bio.formatVal': 'Vocalista anónimo',
+    'bio.tracks': 'Canciones',
+    'bio.p1': 'NORAC X es la voz que apareció sin pedir permiso. Un solo cantante, sin rostro, sin nombre real, sin entrevistas. Surge en <strong>Tacna</strong> en 2026 — la ciudad fronteriza del sur peruano, donde el desierto se besa con la cordillera y la memoria de resistir nunca se apaga. Pero esto no es un proyecto sobre Tacna: es un proyecto <em>desde Tacna para todo el Perú</em>.',
+    'bio.p2': 'Lima, Arequipa, Cusco, Puno, Iquitos, Trujillo. Donde haya alguien que sienta que el sistema lo aplastó, ahí canta NORAC X. El anonimato no es marketing — es <em>principio</em>. El rostro no importa cuando lo que se grita es de todos: la <strong>desigualdad</strong> que parte al país en dos, la <strong>justicia que se compra</strong>, la corrupción tan normalizada que ya nadie se sorprende, el peso de ser de los que el poder olvida.',
+    'bio.quote': '"No vinimos a entretener. Vinimos a <em>nombrar</em> lo que el sistema borra."',
+    'bio.p3': 'El sonido es <strong>power metal</strong> peruano con sangre política: la urgencia rap-metal de Rage Against the Machine, el desconcierto rítmico de System of a Down, la rabia callejera de Molotov — pero cantado en castellano y con identidad andina. Riffs pesados, baterías que golpean como protesta urbana, coros que se gritan, y letras que no piden permiso para nombrar lo que pasa.',
+    'bio.p4': 'El proyecto es <strong>reciente</strong> — apenas unos meses de vida — pero ya suma <strong>más de siete canciones publicadas</strong> y un álbum debut en camino para 2026. NORAC X no busca volverse famoso. Busca que las letras lleguen a quien las necesite escuchar. Si te encontraste con esto, probablemente ya sabías que algo estaba pendiente de gritarse.',
+    'music.label': 'Discografía',
+    'music.title': 'Canciones que <em>arden</em>',
+    'music.intro': 'Cada track es un manifiesto. Reproductor directo desde Spotify — escucha completo si tienes Premium, o el preview de 30 segundos. Sigue al artista para no perderte nuevos lanzamientos.',
+    'music.featured': 'DESTACADO',
+    'music.featuredLabel': 'Tracks destacados',
+    'music.featuredTitle': 'Los que <em style="color: var(--blood-bright); font-style: italic;">arden</em> más',
+    'music.placeholder': 'Reproductor disponible arriba ↑',
+    'music.discography': 'Discografía <span>completa</span>',
+    'music.openSpotify': 'Abrir en Spotify',
+    'music.embedHint': '▼ Selecciona cualquier canción para escuchar · Premium = canción completa',
+    'track1.theme': 'Protesta social, opresión gubernamental, y el orgullo indomable del pueblo peruano levantándose desde las montañas.',
+    'track2.theme': 'La desigualdad brutal de un sistema que pesa el oro en un lado y el sacrificio en el otro. Ricos vs pobres, corrupción al descubierto.',
+    'lyrics.label': 'Manifiesto',
+    'lyrics.title': 'Frases que <em>cortan</em>',
+    'lyric1': '"La ley no es ciega... solo mira hacia arriba."',
+    'lyric2': '"Justicia para los ricos: rápida, limpia, sin testigos."',
+    'lyric3': '"Un lado pesa el oro, el otro el sacrificio."',
+    'lyric4': '"Garras de cóndor que rasgan la noche, voz del pueblo que nunca se rompe."',
+    'lyric5': '"Qué peligroso ser de los olvidados."',
+    'newsletter.label': 'Suscríbete',
+    'newsletter.title': 'No te pierdas el <em>próximo grito</em>',
+    'newsletter.intro': 'Sé el primero en escuchar cada lanzamiento, recibir letras inéditas, videos exclusivos y noticias del proyecto. Sin spam — solo metal.',
+    'newsletter.placeholder': 'tu-email@correo.com',
+    'newsletter.btn': 'Suscribirme',
+    'newsletter.note': 'No spam · Cancela cuando quieras',
+    'platforms.label': 'Plataformas',
+    'platforms.title': 'En todas <em>partes</em>',
+    'platforms.intro': 'Sígueme donde escuches música. Cada plataforma tiene su propio mensaje, su propia comunidad. Todas conectadas por el mismo grito.',
+    'contact.label': 'Contacto',
+    'contact.title': 'Booking & <em>Prensa</em>',
+    'contact.intro': 'Para shows, entrevistas, prensa, colaboraciones o cualquier consulta. Respuesta en 48 horas.',
+    'contact.press': 'Prensa',
+    'contact.general': 'General',
+    'footer.tag': 'METAL PERUANO CON MENSAJE',
+    'footer.from': 'HECHO EN TACNA · ANDES PERUANOS'
+  },
+  en: {
+    'nav.bio': 'Bio',
+    'nav.music': 'Music',
+    'nav.platforms': 'Platforms',
+    'nav.contact': 'Contact',
+    'hero.metaProject': 'PROJECT',
+    'hero.metaSince': 'New project · 2026',
+    'hero.metaOrigin': 'ORIGIN',
+    'hero.tagline': 'Peruvian metal born on the border. <em>Voice of the people</em>, social justice and Andean memory. This is not noise — it\'s <em>protest with riffs</em>.',
+    'hero.btnListen': 'Listen',
+    'hero.btnFollow': 'Follow',
+    'bio.label': 'Biography / 01',
+    'bio.title': 'The <em>roar</em> that came down from the Andes',
+    'bio.origin': 'Origin',
+    'bio.scope': 'Scope',
+    'bio.scopeVal': 'All of Peru',
+    'bio.genre': 'Genre',
+    'bio.genreVal': 'Power Metal / Protest',
+    'bio.influences': 'Influences',
+    'bio.format': 'Format',
+    'bio.formatVal': 'Anonymous vocalist',
+    'bio.tracks': 'Tracks',
+    'bio.p1': 'NORAC X is the voice that showed up without asking permission. A single vocalist, faceless, no real name, no interviews. Emerged in <strong>Tacna</strong> in 2026 — the southern Peruvian border city where the desert kisses the cordillera and the memory of resistance never fades. But this isn\'t a project about Tacna: it\'s a project <em>from Tacna for all of Peru</em>.',
+    'bio.p2': 'Lima, Arequipa, Cusco, Puno, Iquitos, Trujillo. Wherever there\'s someone who feels crushed by the system, NORAC X sings there. The anonymity isn\'t marketing — it\'s <em>principle</em>. The face doesn\'t matter when what\'s being shouted belongs to everyone: the <strong>inequality</strong> that splits the country in two, the <strong>justice you can buy</strong>, the corruption so normalized no one is shocked anymore, the weight of being among those power forgets.',
+    'bio.quote': '"We didn\'t come to entertain. We came to <em>name</em> what the system erases."',
+    'bio.p3': 'The sound is Peruvian <strong>power metal</strong> with political blood: the rap-metal urgency of Rage Against the Machine, the rhythmic disarray of System of a Down, the street rage of Molotov — but sung in Spanish and with Andean identity. Heavy riffs, drums that hit like an urban protest, choruses meant to be shouted, and lyrics that don\'t ask permission to name what\'s happening.',
+    'bio.p4': 'The project is <strong>recent</strong> — only a few months old — but already counts <strong>more than seven released songs</strong> and a debut album on the way for 2026. NORAC X isn\'t trying to get famous. It\'s trying to make the lyrics reach whoever needs to hear them. If you stumbled into this, you probably already knew something was waiting to be screamed.',
+    'music.label': 'Discography',
+    'music.title': 'Songs that <em>burn</em>',
+    'music.intro': 'Each track is a manifesto. Direct player from Spotify — listen in full with Premium, or the 30-second preview. Follow the artist so you don\'t miss new releases.',
+    'music.featured': 'FEATURED',
+    'music.featuredLabel': 'Featured tracks',
+    'music.featuredTitle': 'The ones that <em style="color: var(--blood-bright); font-style: italic;">burn</em> hardest',
+    'music.placeholder': 'Player available above ↑',
+    'music.discography': 'Full <span>discography</span>',
+    'music.openSpotify': 'Open in Spotify',
+    'music.embedHint': '▼ Select any song to play · Premium = full song',
+    'track1.theme': 'Social protest, governmental oppression, and the unbreakable pride of the Peruvian people rising from the mountains.',
+    'track2.theme': 'The brutal inequality of a system that weighs gold on one side and sacrifice on the other. Rich vs poor, corruption exposed.',
+    'lyrics.label': 'Manifesto',
+    'lyrics.title': 'Lines that <em>cut</em>',
+    'lyric1': '"Justice is not blind... it only looks upward."',
+    'lyric2': '"Justice for the rich: fast, clean, no witnesses."',
+    'lyric3': '"One side weighs gold, the other weighs sacrifice."',
+    'lyric4': '"Condor claws tearing the night, voice of the people that never breaks."',
+    'lyric5': '"How dangerous it is to be among the forgotten."',
+    'newsletter.label': 'Subscribe',
+    'newsletter.title': 'Don\'t miss the <em>next roar</em>',
+    'newsletter.intro': 'Be the first to hear every release, receive unreleased lyrics, exclusive videos and project news. No spam — only metal.',
+    'newsletter.placeholder': 'your-email@mail.com',
+    'newsletter.btn': 'Subscribe',
+    'newsletter.note': 'No spam · Unsubscribe anytime',
+    'platforms.label': 'Platforms',
+    'platforms.title': 'Everywhere <em>you listen</em>',
+    'platforms.intro': 'Follow me wherever you stream music. Each platform has its own message, its own community. All connected by the same roar.',
+    'contact.label': 'Contact',
+    'contact.title': 'Booking & <em>Press</em>',
+    'contact.intro': 'For shows, interviews, press, collaborations or any inquiry. Response within 48 hours.',
+    'contact.press': 'Press',
+    'contact.general': 'General',
+    'footer.tag': 'PERUVIAN METAL WITH A MESSAGE',
+    'footer.from': 'MADE IN TACNA · PERUVIAN ANDES'
+  }
+};
+
+function setLanguage(lang) {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang][key]) el.innerHTML = translations[lang][key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (translations[lang][key]) el.setAttribute('placeholder', translations[lang][key]);
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  try { localStorage.setItem('noracx-lang', lang); } catch(e) {}
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+});
+
+// Detect initial language: saved preference > browser language > Spanish default
+(function() {
+  let initial = 'es';
+  try {
+    const saved = localStorage.getItem('noracx-lang');
+    if (saved === 'es' || saved === 'en') initial = saved;
+    else if (navigator.language && navigator.language.startsWith('en')) initial = 'en';
+  } catch(e) {}
+  setLanguage(initial);
+})();
+
+// ============ INTERACTIONS ============
+
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('in');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll state
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    const href = a.getAttribute('href');
+    if (href === '#') return;
+    e.preventDefault();
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Custom cursor
+const cursor = document.getElementById('cursor');
+if (cursor && window.matchMedia('(pointer: fine)').matches) {
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .track, .platform, .lyric-row').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+}
+
+// Newsletter handler (placeholder - integra con tu servicio real)
+function handleSubscribe(e) {
+  e.preventDefault();
+  const input = e.target.querySelector('.newsletter-input');
+  const email = input.value;
+  alert((document.documentElement.lang === 'en' ? 'Thanks for joining the roar: ' : 'Gracias por unirte al grito: ') + email);
+  input.value = '';
+  // TODO: enviar a Mailchimp / Brevo / ConvertKit
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Builds
+dist/
+build/
+.astro/
+.turbo/
+.wrangler/
+.output/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Secretos / variables de entorno
+.env
+.env.*
+!.env.example
+.dev.vars
+*.dev.vars
+!*.dev.vars.example
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+
+# Cloudflare local state
+.mf/
+
+# Coverage / tests
+coverage/
+*.lcov
+
+# IDE AI rules locales
+.github/instructions/codacy.instructions.md
+.codacy/

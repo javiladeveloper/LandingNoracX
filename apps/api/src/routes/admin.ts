@@ -2,8 +2,8 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
-import { eq, desc, isNull, sql } from 'drizzle-orm';
-import { users, contactMessages } from '../db/schema';
+import { eq, desc, isNull, isNotNull, sql, and, or, like, type SQL } from 'drizzle-orm';
+import { users, contactMessages, fans } from '../db/schema';
 import { verifyPassword, newSessionToken, hashPassword } from '../lib/password';
 import {
   resolveSession,
@@ -175,3 +175,69 @@ adminRoute.patch(
     return c.json({ ok: true });
   },
 );
+
+/* ============================================================
+   Fans CRM
+   ============================================================ */
+
+adminRoute.get('/fans', async (c) => {
+  const db = drizzle(c.env.DB);
+
+  const q = (c.req.query('q') ?? '').trim().toLowerCase();
+  const lang = c.req.query('lang');
+  const country = c.req.query('country');
+  const showUnsubscribed = c.req.query('include_unsubscribed') === '1';
+  const limit = Math.min(Number(c.req.query('limit') ?? 200), 500);
+
+  const conditions: SQL[] = [isNull(fans.deletedAt)];
+  if (!showUnsubscribed) {
+    conditions.push(isNull(fans.unsubscribedAt));
+  }
+  if (q) {
+    const pattern = `%${q}%`;
+    conditions.push(or(like(fans.email, pattern), like(fans.name, pattern)) as SQL);
+  }
+  if (lang === 'es' || lang === 'en') {
+    conditions.push(eq(fans.language, lang));
+  }
+  if (country) {
+    conditions.push(eq(fans.country, country.toUpperCase()));
+  }
+
+  const data = await db
+    .select()
+    .from(fans)
+    .where(and(...conditions))
+    .orderBy(desc(fans.optedInAt))
+    .limit(limit)
+    .all();
+
+  // Summary global (independiente de filtros): total activos, total unsubscribed,
+  // breakdown por idioma.
+  const totalActive = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(fans)
+    .where(and(isNull(fans.deletedAt), isNull(fans.unsubscribedAt)))
+    .get();
+  const totalUnsubscribed = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(fans)
+    .where(and(isNull(fans.deletedAt), isNotNull(fans.unsubscribedAt)))
+    .get();
+  const byLanguage = await db
+    .select({ language: fans.language, count: sql<number>`count(*)` })
+    .from(fans)
+    .where(and(isNull(fans.deletedAt), isNull(fans.unsubscribedAt)))
+    .groupBy(fans.language)
+    .all();
+
+  return c.json({
+    ok: true,
+    data,
+    summary: {
+      totalActive: totalActive?.count ?? 0,
+      totalUnsubscribed: totalUnsubscribed?.count ?? 0,
+      byLanguage,
+    },
+  });
+});

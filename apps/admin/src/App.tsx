@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/Login';
 import DashboardPage from './pages/Dashboard';
 import MessagesPage from './pages/Messages';
+import FansPage from './pages/Fans';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -21,6 +22,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <MessagesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/fans"
+        element={
+          <ProtectedRoute>
+            <FansPage />
           </ProtectedRoute>
         }
       />

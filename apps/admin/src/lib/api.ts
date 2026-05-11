@@ -105,3 +105,48 @@ export async function patchContactMessage(
   });
   return res.ok;
 }
+
+export interface FanRow {
+  id: string;
+  email: string;
+  name: string | null;
+  country: string | null;
+  city: string | null;
+  source: string;
+  language: 'es' | 'en';
+  optedInAt: number;
+  confirmedAt: number | null;
+  unsubscribedAt: number | null;
+  deletedAt: number | null;
+}
+
+export interface FansSummary {
+  totalActive: number;
+  totalUnsubscribed: number;
+  byLanguage: Array<{ language: 'es' | 'en'; count: number }>;
+}
+
+export interface FansResponse {
+  ok: true;
+  data: FanRow[];
+  summary: FansSummary;
+}
+
+export interface FansFilters {
+  q?: string;
+  lang?: 'es' | 'en';
+  country?: string;
+  includeUnsubscribed?: boolean;
+}
+
+export async function listFans(filters: FansFilters = {}): Promise<FansResponse | null> {
+  const params = new URLSearchParams();
+  if (filters.q) params.set('q', filters.q);
+  if (filters.lang) params.set('lang', filters.lang);
+  if (filters.country) params.set('country', filters.country);
+  if (filters.includeUnsubscribed) params.set('include_unsubscribed', '1');
+  const qs = params.toString();
+  const res = await apiFetch<FansResponse>(`/api/admin/fans${qs ? `?${qs}` : ''}`);
+  if (!res.ok) return null;
+  return res.body as FansResponse;
+}

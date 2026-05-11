@@ -15,9 +15,9 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard' },
   { to: '/messages', label: 'Mensajes' },
+  { to: '/fans', label: 'Fans' },
   { to: '/songs', label: 'Canciones', disabled: true },
   { to: '/quotes', label: 'Frases', disabled: true },
-  { to: '/fans', label: 'Fans', disabled: true },
 ];
 
 export default function AdminLayout({ children }: Props) {

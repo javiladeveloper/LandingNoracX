@@ -3,6 +3,7 @@ import LoginPage from './pages/Login';
 import DashboardPage from './pages/Dashboard';
 import MessagesPage from './pages/Messages';
 import FansPage from './pages/Fans';
+import CampaignsPage from './pages/Campaigns';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -30,6 +31,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <FansPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/campaigns"
+        element={
+          <ProtectedRoute>
+            <CampaignsPage />
           </ProtectedRoute>
         }
       />

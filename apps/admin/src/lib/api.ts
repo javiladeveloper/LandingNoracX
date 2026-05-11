@@ -166,3 +166,62 @@ export async function getAnalyticsOverview(): Promise<AnalyticsOverview | null> 
   if (!res.ok) return null;
   return res.body as AnalyticsOverview;
 }
+
+export interface CampaignSegment {
+  lang?: 'es' | 'en';
+  country?: string;
+}
+
+export interface CampaignPreview {
+  ok: true;
+  recipients: number;
+  sample: Array<{ email: string; name: string | null }>;
+}
+
+export async function previewCampaign(segment: CampaignSegment): Promise<CampaignPreview | null> {
+  const res = await apiFetch<CampaignPreview>('/api/admin/campaigns/preview', {
+    method: 'POST',
+    body: JSON.stringify(segment),
+  });
+  if (!res.ok) return null;
+  return res.body as CampaignPreview;
+}
+
+export interface CampaignSendBody {
+  subject: string;
+  bodyHtml: string;
+  bodyText: string;
+  segment: CampaignSegment;
+}
+
+export interface CampaignSendResult {
+  ok: boolean;
+  sentCount: number;
+  targeted: number;
+  errors?: string[];
+  error?: string;
+}
+
+export async function sendCampaign(body: CampaignSendBody): Promise<CampaignSendResult | null> {
+  const res = await apiFetch<CampaignSendResult>('/api/admin/campaigns/send', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+  return res.body as CampaignSendResult;
+}
+
+export interface CampaignRow {
+  id: string;
+  subject: string;
+  segmentLang: 'es' | 'en' | null;
+  segmentCountry: string | null;
+  sentCount: number;
+  sentAt: number | null;
+  createdAt: number;
+}
+
+export async function listCampaigns(): Promise<CampaignRow[] | null> {
+  const res = await apiFetch<{ ok: true; data: CampaignRow[] }>('/api/admin/campaigns');
+  if (!res.ok) return null;
+  return (res.body as { data: CampaignRow[] }).data;
+}

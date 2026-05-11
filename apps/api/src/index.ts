@@ -5,6 +5,7 @@ import { subscribeRoute } from './routes/subscribe';
 import { contactRoute } from './routes/contact';
 import { trackRoute } from './routes/track';
 import { adminRoute } from './routes/admin';
+import { campaignsRoute } from './routes/campaigns';
 import { runSpotifySnapshot } from './jobs/spotifySnapshot';
 
 export interface Bindings {
@@ -48,6 +49,7 @@ app.route('/api/subscribe', subscribeRoute);
 app.route('/api/contact', contactRoute);
 app.route('/api/track', trackRoute);
 app.route('/api/admin', adminRoute);
+app.route('/api/admin/campaigns', campaignsRoute);
 
 app.onError((err, c) => {
   // Log con stack completo para diagnostics en wrangler tail / Logs del worker

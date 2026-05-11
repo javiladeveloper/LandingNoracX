@@ -184,3 +184,35 @@ export const sessions = sqliteTable(
 
 export type Session = typeof sessions.$inferSelect;
 export type NewSession = typeof sessions.$inferInsert;
+
+/**
+ * Campañas de email enviadas al fanbase. Guardamos el HTML/text que se envió
+ * + qué segmento se targeteó + cuándo + a cuántos. La tabla campaign_sends
+ * (per-fan tracking, open/click) la agregamos en Fase 3c+ si necesitamos
+ * granularidad.
+ */
+export const campaigns = sqliteTable(
+  'campaigns',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    subject: text('subject').notNull(),
+    bodyHtml: text('body_html').notNull(),
+    bodyText: text('body_text').notNull(),
+    segmentLang: text('segment_lang', { enum: ['es', 'en'] }),
+    segmentCountry: text('segment_country'),
+    sentCount: integer('sent_count').notNull().default(0),
+    sentAt: integer('sent_at', { mode: 'timestamp' }),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    createdBy: text('created_by'),
+  },
+  (table) => ({
+    sentIdx: index('campaigns_sent_idx').on(table.sentAt),
+  }),
+);
+
+export type Campaign = typeof campaigns.$inferSelect;
+export type NewCampaign = typeof campaigns.$inferInsert;

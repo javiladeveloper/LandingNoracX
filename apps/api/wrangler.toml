@@ -7,10 +7,8 @@ compatibility_flags = ["nodejs_compat"]
 # localhost:4321 sirve para `pnpm --filter @noracx/web dev` contra esta API.
 [vars]
 CORS_ALLOWED_ORIGINS = "https://noracx.com,https://www.noracx.com,http://localhost:4321"
-# Email From — usamos el sender genérico de Resend hasta que verifiques noracx.com.
-# Después de verificar el dominio en Resend (DKIM/SPF/return-path), cambialo a
-# "NORAC X <hola@noracx.com>" o similar.
-EMAIL_FROM = "NORAC X <onboarding@resend.dev>"
+# Email From — noracx.com está verificado en Resend (DKIM/SPF/return-path).
+EMAIL_FROM = "NORAC X <hola@noracx.com>"
 
 # D1 binding.
 # Completar database_id después de correr `wrangler d1 create noracx-db`.

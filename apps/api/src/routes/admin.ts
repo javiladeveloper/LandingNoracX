@@ -330,16 +330,26 @@ adminRoute.get('/analytics/overview', async (c) => {
    ============================================================ */
 
 /**
- * Trigger del deploy hook de Cloudflare Pages para regenerar el sitio web
- * estático después de un cambio en songs. Si DEPLOY_HOOK_URL no está
- * seteado (dev local), no hace nada — el cambio igual está en D1.
+ * Trigger de redeploy de noracx-web vía Cloudflare API después de un
+ * cambio en songs/quotes. Necesita CF_ACCOUNT_ID + CF_API_TOKEN con
+ * permission Pages:Edit. Si no están seteados, no hace nada.
  */
 async function triggerWebRebuild(env: Bindings): Promise<void> {
-  if (!env.DEPLOY_HOOK_URL) return;
+  if (!env.CF_ACCOUNT_ID || !env.CF_API_TOKEN) return;
   try {
-    await fetch(env.DEPLOY_HOOK_URL, { method: 'POST' });
+    const res = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/pages/projects/noracx-web/deployments`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${env.CF_API_TOKEN}` },
+      },
+    );
+    if (!res.ok) {
+      const body = await res.text();
+      console.error('[songs] rebuild failed', res.status, body);
+    }
   } catch (err) {
-    console.error('[songs] deploy hook failed', err);
+    console.error('[songs] rebuild exception', err);
   }
 }
 

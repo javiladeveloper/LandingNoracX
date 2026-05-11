@@ -9,10 +9,9 @@ compatibility_flags = ["nodejs_compat"]
 CORS_ALLOWED_ORIGINS = "https://noracx.com,https://www.noracx.com,https://admin.noracx.com,http://localhost:4321,http://localhost:5173"
 # Email From — noracx.com está verificado en Resend (DKIM/SPF/return-path).
 EMAIL_FROM = "NORAC X <hola@noracx.com>"
-# DEPLOY_HOOK_URL se carga via wrangler secret put. URL es del tipo
-# https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/<hash>
-# Generada desde Pages → noracx-web → Settings → Deploy Hooks.
-DEPLOY_HOOK_URL = ""
+# CF_ACCOUNT_ID + CF_API_TOKEN cargados via Dashboard del worker
+# (Variables and Secrets) para que el admin pueda disparar redeploys
+# de noracx-web al editar songs/quotes.
 
 # D1 binding.
 # Completar database_id después de correr `wrangler d1 create noracx-db`.

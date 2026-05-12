@@ -78,6 +78,13 @@
       "when": 1778555500000,
       "tag": "0010_content_garras",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1778592500000,
+      "tag": "0011_content_vestido",
+      "breakpoints": true
     }
   ]
 }

@@ -3,17 +3,30 @@ import '@/styles/global.css';
 import Nav from '@/components/Nav.astro';
 import Footer from '@/components/Footer.astro';
 import { getDict, type Lang, altLang, localizePath } from '@/i18n';
+import { getArtistImage } from '@/lib/artistImage';
 
 interface Props {
   lang: Lang;
   pageTitle?: string;
   pagePath?: string;
+  /**
+   * Description específica de la página, sobreescribe la default del dict.
+   * Usada en song detail pages para que cada URL tenga su propia meta description
+   * y og:description — mejora ranking y CTR en SERP.
+   */
+  pageDescription?: string;
+  /**
+   * BreadcrumbList items, se inyectan como JSON-LD si están presentes.
+   * Cada item: { name, item (URL absoluta) }.
+   */
+  breadcrumbs?: Array<{ name: string; item: string }>;
 }
 
-const { lang, pageTitle, pagePath = '/' } = Astro.props;
+const { lang, pageTitle, pagePath = '/', pageDescription, breadcrumbs } = Astro.props;
 const dict = getDict(lang);
 const title = pageTitle ?? dict.meta.title;
-const description = dict.meta.description;
+const description = pageDescription ?? dict.meta.description;
+const ogDescription = pageDescription ?? dict.meta.ogDescription;
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://noracx.com').href;
 const alt = altLang(lang);
@@ -21,6 +34,12 @@ const altPath = localizePath(pagePath, alt);
 const altUrl = new URL(altPath, Astro.site ?? 'https://noracx.com').href;
 
 const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
+
+// Foto del artista dinámica (Spotify Web API via /api/artist-image, memoizada).
+// Usada en og:image, twitter:image y JSON-LD image. Si el artista actualiza
+// la foto en Spotify, todos los previews sociales se actualizan en el siguiente
+// rebuild sin tocar código.
+const artistImage = await getArtistImage();
 ---
 
 <!doctype html>
@@ -46,17 +65,20 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
     <meta property="og:type" content="music.musician" />
     <meta property="og:site_name" content="NORAC X" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={dict.meta.ogDescription} />
+    <meta property="og:description" content={ogDescription} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content={dict.meta.locale} />
-    <meta property="og:image" content="https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7" />
+    <meta property="og:image" content={artistImage} />
     <meta property="og:image:width" content="640" />
     <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content="NORAC X" />
 
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@norac_x" />
+    <meta name="twitter:creator" content="@norac_x" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={dict.meta.ogDescription} />
-    <meta name="twitter:image" content="https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7" />
+    <meta name="twitter:description" content={ogDescription} />
+    <meta name="twitter:image" content={artistImage} />
 
     <script is:inline type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
@@ -64,7 +86,7 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
       name: 'NORAC X',
       url: 'https://noracx.com',
       logo: 'https://noracx.com/favicon.svg',
-      image: 'https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7',
+      image: artistImage,
       description: dict.meta.description,
       foundingLocation: {
         '@type': 'Place',
@@ -83,6 +105,19 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
       ],
       email: 'contacto@noracx.com',
     })}></script>
+
+    {breadcrumbs && breadcrumbs.length > 0 && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.name,
+          item: b.item,
+        })),
+      })}></script>
+    )}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

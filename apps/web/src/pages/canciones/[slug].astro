@@ -17,9 +17,30 @@ export async function getStaticPaths() {
 
 const { song } = Astro.props as { song: SongDetailData };
 const lang = 'es' as const;
-const pageTitle = `${song.title} — NORAC X`;
+const pageTitle = `${song.title} — Letra y video · NORAC X`;
+// Meta description específica de esta canción. Truncamos a ~155 chars
+// (sweet spot SERP) y siempre arrancamos con el nombre para keyword early.
+function trim(text: string, max = 155): string {
+  if (!text) return text;
+  if (text.length <= max) return text;
+  return text.slice(0, max - 1).replace(/\s+\S*$/, '') + '…';
+}
+const pageDescription = trim(
+  `${song.title} de NORAC X — ${song.themesEs}`,
+);
+const breadcrumbs = [
+  { name: 'Inicio', item: 'https://noracx.com/' },
+  { name: 'Canciones', item: 'https://noracx.com/#musica' },
+  { name: song.title, item: `https://noracx.com/canciones/${song.slug}` },
+];
 ---
 
-<BaseLayout lang={lang} pageTitle={pageTitle} pagePath={`/canciones/${song.slug}`}>
+<BaseLayout
+  lang={lang}
+  pageTitle={pageTitle}
+  pagePath={`/canciones/${song.slug}`}
+  pageDescription={pageDescription}
+  breadcrumbs={breadcrumbs}
+>
   <SongDetail lang={lang} song={song} />
 </BaseLayout>

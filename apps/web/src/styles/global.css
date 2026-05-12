@@ -1628,6 +1628,18 @@ main {
     margin-left: auto;
     margin-right: auto;
   }
+  .bio-meta-row {
+    /* Label arriba, valor abajo: en mobile no hay espacio horizontal
+       para campos como "Influencias: SOAD · Molotov · Pantera · Rammstein"
+       y se pegaban al label. */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 0;
+  }
+  .bio-meta-row span:last-child {
+    text-align: left;
+  }
   .bio-content p {
     font-size: 16px;
   }

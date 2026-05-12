@@ -1587,6 +1587,16 @@ main {
   }
 
   /* Bio: spacing más compacto */
+  .bio-side {
+    /* Sin sticky en mobile — sino el sidebar se monta sobre la sección Música al scrollear */
+    position: static;
+  }
+  .bio-side-image {
+    /* Imagen no domina la vista en mobile */
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .bio-content p {
     font-size: 16px;
   }

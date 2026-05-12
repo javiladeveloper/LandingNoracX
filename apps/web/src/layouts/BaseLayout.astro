@@ -79,17 +79,17 @@ const artistImage = await getArtistImage();
     <meta property="og:description" content={ogDescription} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content={dict.meta.locale} />
-    <meta property="og:image" content={artistImage} />
-    <meta property="og:image:width" content="640" />
-    <meta property="og:image:height" content="640" />
-    <meta property="og:image:alt" content="NORAC X" />
+    <meta property="og:image" content="https://noracx.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="NORAC X — Metal Peruano de Protesta" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@norac_x" />
     <meta name="twitter:creator" content="@norac_x" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={ogDescription} />
-    <meta name="twitter:image" content={artistImage} />
+    <meta name="twitter:image" content="https://noracx.com/og-image.jpg" />
 
     <script is:inline type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
@@ -97,7 +97,7 @@ const artistImage = await getArtistImage();
       name: 'NORAC X',
       url: 'https://noracx.com',
       logo: 'https://noracx.com/favicon.svg',
-      image: artistImage,
+      image: 'https://noracx.com/og-image.jpg',
       description: dict.meta.description,
       foundingLocation: {
         '@type': 'Place',

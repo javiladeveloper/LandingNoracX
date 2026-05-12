@@ -384,6 +384,7 @@ const songSchema = z.object({
   title: z.string().min(1).max(200),
   trackNumber: z.number().int().positive().nullable().optional(),
   spotifyId: z.string().max(40).nullable().optional(),
+  youtubeId: z.string().max(40).nullable().optional(),
   duration: z.string().max(10).nullable().optional(),
   genre: z.string().min(1).max(80),
   year: z.number().int().min(1900).max(2100).nullable().optional(),
@@ -391,6 +392,7 @@ const songSchema = z.object({
   themesEs: z.string().min(1).max(1000),
   themesEn: z.string().min(1).max(1000),
   quote: z.string().min(1).max(500),
+  lyrics: z.string().max(20_000).nullable().optional(),
 });
 
 adminRoute.post('/songs', zValidator('json', songSchema), async (c) => {
@@ -407,6 +409,7 @@ adminRoute.post('/songs', zValidator('json', songSchema), async (c) => {
     title: data.title,
     trackNumber: data.trackNumber ?? null,
     spotifyId: data.spotifyId ?? null,
+    youtubeId: data.youtubeId ?? null,
     duration: data.duration ?? null,
     genre: data.genre,
     year: data.year ?? null,
@@ -414,6 +417,7 @@ adminRoute.post('/songs', zValidator('json', songSchema), async (c) => {
     themesEs: data.themesEs,
     themesEn: data.themesEn,
     quote: data.quote,
+    lyrics: data.lyrics ?? null,
   });
 
   c.executionCtx.waitUntil(triggerWebRebuild(c.env));

@@ -1,6 +1,10 @@
 ---
 import { getDict, type Lang } from '@/i18n';
 
+function detailPath(lang: Lang, slug: string): string {
+  return lang === 'en' ? `/en/songs/${slug}` : `/canciones/${slug}`;
+}
+
 interface Props {
   lang: Lang;
 }
@@ -92,7 +96,9 @@ const spotifyArtistUrl = `https://open.spotify.com/artist/${SPOTIFY_ARTIST_ID}`;
               <div class="track-number">
                 TRACK · {(song.trackNumber ?? 0).toString().padStart(2, '0')}
               </div>
-              <h3 class="track-title">{song.title}</h3>
+              <h3 class="track-title">
+                <a href={detailPath(lang, song.slug)} class="track-title-link">{song.title}</a>
+              </h3>
               <div class="track-meta">
                 {song.duration ?? song.genre}
                 <span>·</span>

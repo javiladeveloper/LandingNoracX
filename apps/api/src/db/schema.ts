@@ -231,6 +231,7 @@ export const songs = sqliteTable(
     title: text('title').notNull(),
     trackNumber: integer('track_number'),
     spotifyId: text('spotify_id'),
+    youtubeId: text('youtube_id'),
     duration: text('duration'),
     genre: text('genre').notNull(),
     year: integer('year'),
@@ -238,6 +239,7 @@ export const songs = sqliteTable(
     themesEs: text('themes_es').notNull(),
     themesEn: text('themes_en').notNull(),
     quote: text('quote').notNull(),
+    lyrics: text('lyrics'),
     publishedAt: integer('published_at', { mode: 'timestamp' }),
     deletedAt: integer('deleted_at', { mode: 'timestamp' }),
     createdAt: integer('created_at', { mode: 'timestamp' })

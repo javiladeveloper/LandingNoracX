@@ -19,6 +19,7 @@ const EMPTY_FORM: SongInput = {
   title: '',
   trackNumber: null,
   spotifyId: null,
+  youtubeId: null,
   duration: null,
   genre: 'Power Metal',
   year: 2026,
@@ -26,7 +27,29 @@ const EMPTY_FORM: SongInput = {
   themesEs: '',
   themesEn: '',
   quote: '',
+  lyrics: null,
 };
+
+/**
+ * Extrae el ID de YouTube de cualquier formato común de URL:
+ * - https://www.youtube.com/watch?v=ABC123
+ * - https://youtu.be/ABC123
+ * - https://music.youtube.com/watch?v=ABC123
+ * - O simplemente el ID pegado: ABC123
+ */
+function extractYoutubeId(input: string): string {
+  const trimmed = input.trim();
+  if (!trimmed) return '';
+  // youtu.be/<id>
+  const short = trimmed.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (short) return short[1] ?? '';
+  // youtube.com/watch?v=<id>
+  const long = trimmed.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (long) return long[1] ?? '';
+  // Si parece ya un ID de 11 chars
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+  return trimmed;
+}
 
 function slugify(s: string): string {
   return s
@@ -67,6 +90,7 @@ export default function SongsPage() {
       title: song.title,
       trackNumber: song.trackNumber,
       spotifyId: song.spotifyId,
+      youtubeId: song.youtubeId,
       duration: song.duration,
       genre: song.genre,
       year: song.year,
@@ -74,6 +98,7 @@ export default function SongsPage() {
       themesEs: song.themesEs,
       themesEn: song.themesEn,
       quote: song.quote,
+      lyrics: song.lyrics,
     });
     setError(null);
   }
@@ -96,6 +121,7 @@ export default function SongsPage() {
               title: form.title,
               trackNumber: form.trackNumber,
               spotifyId: form.spotifyId,
+              youtubeId: form.youtubeId,
               duration: form.duration,
               genre: form.genre,
               year: form.year,
@@ -103,6 +129,7 @@ export default function SongsPage() {
               themesEs: form.themesEs,
               themesEn: form.themesEn,
               quote: form.quote,
+              lyrics: form.lyrics,
             })
           : { ok: false, error: 'invalid_mode' };
 
@@ -224,6 +251,22 @@ export default function SongsPage() {
                 />
               </label>
 
+              <label className="block space-y-1 md:col-span-2">
+                <span className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">
+                  YouTube URL o ID (auto-extract)
+                </span>
+                <input
+                  type="text"
+                  value={form.youtubeId ?? ''}
+                  onChange={(e) => {
+                    const extracted = extractYoutubeId(e.target.value);
+                    setForm((f) => ({ ...f, youtubeId: extracted || null }));
+                  }}
+                  placeholder="https://youtu.be/... o https://youtube.com/watch?v=..."
+                  className="bg-ash border-blood/30 text-bone focus:border-blood-bright w-full border p-2 font-mono text-sm outline-none"
+                />
+              </label>
+
               <label className="block space-y-1">
                 <span className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">
                   Duración (mm:ss)
@@ -316,6 +359,19 @@ export default function SongsPage() {
                 value={form.quote}
                 onChange={(e) => setForm((f) => ({ ...f, quote: e.target.value }))}
                 className="bg-ash border-blood/30 text-bone focus:border-blood-bright w-full border p-2 text-sm outline-none"
+              />
+            </label>
+
+            <label className="block space-y-1">
+              <span className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">
+                Letra completa (Markdown soportado — usar líneas en blanco para separar estrofas)
+              </span>
+              <textarea
+                rows={12}
+                value={form.lyrics ?? ''}
+                onChange={(e) => setForm((f) => ({ ...f, lyrics: e.target.value || null }))}
+                placeholder={`[Verse 1]\nTu cuarto sigue igual\nTu ropa en el sillón\n...\n\n[Chorus]\n...`}
+                className="bg-ash border-blood/30 text-bone focus:border-blood-bright w-full border p-2 font-mono text-xs outline-none leading-relaxed"
               />
             </label>
 

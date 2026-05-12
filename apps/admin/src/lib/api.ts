@@ -231,6 +231,7 @@ export interface SongRow {
   title: string;
   trackNumber: number | null;
   spotifyId: string | null;
+  youtubeId: string | null;
   duration: string | null;
   genre: string;
   year: number | null;
@@ -238,6 +239,7 @@ export interface SongRow {
   themesEs: string;
   themesEn: string;
   quote: string;
+  lyrics: string | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -247,6 +249,7 @@ export interface SongInput {
   title: string;
   trackNumber?: number | null;
   spotifyId?: string | null;
+  youtubeId?: string | null;
   duration?: string | null;
   genre: string;
   year?: number | null;
@@ -254,6 +257,7 @@ export interface SongInput {
   themesEs: string;
   themesEn: string;
   quote: string;
+  lyrics?: string | null;
 }
 
 export async function listSongs(): Promise<SongRow[] | null> {

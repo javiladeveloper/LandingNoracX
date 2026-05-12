@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SongDetail, { type SongDetailData } from '@/components/SongDetail.astro';
+
+export async function getStaticPaths() {
+  const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
+  try {
+    const res = await fetch(`${apiUrl}/api/songs`);
+    const json = (await res.json()) as { ok: boolean; data: SongDetailData[] };
+    if (!json.ok) return [];
+    return json.data.map((song) => ({ params: { slug: song.slug }, props: { song } }));
+  } catch (err) {
+    console.warn('[canciones/[slug]] no se pudo fetch /api/songs', err);
+    return [];
+  }
+}
+
+const { song } = Astro.props as { song: SongDetailData };
+const lang = 'es' as const;
+const pageTitle = `${song.title} — NORAC X`;
+---
+
+<BaseLayout lang={lang} pageTitle={pageTitle} pagePath={`/canciones/${song.slug}`}>
+  <SongDetail lang={lang} song={song} />
+</BaseLayout>

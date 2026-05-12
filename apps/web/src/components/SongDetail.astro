@@ -1,0 +1,279 @@
+---
+import { localizePath, type Lang } from '@/i18n';
+
+export interface SongDetailData {
+  slug: string;
+  title: string;
+  trackNumber: number | null;
+  spotifyId: string | null;
+  youtubeId: string | null;
+  duration: string | null;
+  genre: string;
+  year: number | null;
+  themesEs: string;
+  themesEn: string;
+  quote: string;
+  lyrics: string | null;
+}
+
+interface Props {
+  lang: Lang;
+  song: SongDetailData;
+}
+
+const { lang, song } = Astro.props;
+
+const backHref = localizePath('/#musica', lang);
+const theme = lang === 'es' ? song.themesEs : song.themesEn;
+
+const labels =
+  lang === 'es'
+    ? {
+        back: '← Volver al catálogo',
+        track: 'Track',
+        watch: 'Mirar',
+        listen: 'Escuchar',
+        about: 'Sobre la canción',
+        lyrics: 'Letra',
+        noLyrics: 'Letra próximamente.',
+        noVideo: 'Video pronto.',
+      }
+    : {
+        back: '← Back to catalog',
+        track: 'Track',
+        watch: 'Watch',
+        listen: 'Listen',
+        about: 'About the song',
+        lyrics: 'Lyrics',
+        noLyrics: 'Lyrics coming soon.',
+        noVideo: 'Video coming soon.',
+      };
+---
+
+<article class="song-detail">
+  <div class="song-detail-inner">
+    <a href={backHref} class="song-detail-back">{labels.back}</a>
+
+    <header class="song-detail-header">
+      {song.trackNumber !== null && (
+        <p class="song-detail-track">
+          {labels.track} · {song.trackNumber.toString().padStart(2, '0')}
+        </p>
+      )}
+      <h1 class="song-detail-title">{song.title}</h1>
+      <p class="song-detail-meta">
+        {song.duration && <span>{song.duration}</span>}
+        {song.duration && song.genre && <span class="dot">·</span>}
+        {song.genre && <span>{song.genre}</span>}
+        {song.year && <span class="dot">·</span>}
+        {song.year && <span>{song.year}</span>}
+      </p>
+    </header>
+
+    <blockquote class="song-detail-quote">"{song.quote}"</blockquote>
+
+    <div class="song-detail-players">
+      {song.youtubeId ? (
+        <div class="song-detail-youtube">
+          <p class="song-detail-section-label">{labels.watch}</p>
+          <div class="song-detail-iframe-wrap">
+            <iframe
+              src={`https://www.youtube.com/embed/${song.youtubeId}`}
+              title={`YouTube — ${song.title}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              loading="lazy"></iframe>
+          </div>
+        </div>
+      ) : null}
+
+      {song.spotifyId ? (
+        <div class="song-detail-spotify">
+          <p class="song-detail-section-label">{labels.listen}</p>
+          <iframe
+            src={`https://open.spotify.com/embed/track/${song.spotifyId}?utm_source=generator&theme=0`}
+            width="100%"
+            height="152"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            title={`Spotify — ${song.title}`}></iframe>
+        </div>
+      ) : null}
+    </div>
+
+    <section class="song-detail-about">
+      <p class="song-detail-section-label">{labels.about}</p>
+      <p class="song-detail-theme">{theme}</p>
+    </section>
+
+    <section class="song-detail-lyrics-section">
+      <p class="song-detail-section-label">{labels.lyrics}</p>
+      {song.lyrics ? (
+        <pre class="song-detail-lyrics">{song.lyrics}</pre>
+      ) : (
+        <p class="song-detail-lyrics-empty">{labels.noLyrics}</p>
+      )}
+    </section>
+  </div>
+</article>
+
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'MusicRecording',
+    name: song.title,
+    byArtist: {
+      '@type': 'MusicGroup',
+      name: 'NORAC X',
+      url: 'https://noracx.com',
+    },
+    genre: song.genre,
+    inLanguage: 'es',
+    ...(song.duration ? { duration: `PT${song.duration.replace(':', 'M')}S` } : {}),
+    ...(song.spotifyId
+      ? {
+          url: `https://open.spotify.com/track/${song.spotifyId}`,
+          potentialAction: {
+            '@type': 'ListenAction',
+            target: `https://open.spotify.com/track/${song.spotifyId}`,
+          },
+        }
+      : {}),
+    ...(song.lyrics ? { lyrics: { '@type': 'CreativeWork', text: song.lyrics } } : {}),
+  })}
+></script>
+
+<style>
+  .song-detail {
+    padding: 120px 24px 80px;
+    min-height: 100vh;
+  }
+  .song-detail-inner {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .song-detail-back {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .song-detail-back:hover {
+    color: var(--ember);
+  }
+
+  .song-detail-header {
+    margin-top: 32px;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .song-detail-track {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blood-bright);
+    margin-bottom: 16px;
+  }
+  .song-detail-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(40px, 8vw, 88px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--bone);
+    margin-bottom: 16px;
+  }
+  .song-detail-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .song-detail-meta .dot {
+    color: var(--blood);
+    margin: 0 6px;
+  }
+
+  .song-detail-quote {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(22px, 3vw, 32px);
+    line-height: 1.25;
+    color: var(--bone);
+    padding: 24px 0 24px 28px;
+    border-left: 4px solid var(--blood-bright);
+    margin: 0 0 40px;
+    font-style: italic;
+  }
+
+  .song-detail-players {
+    display: grid;
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+  .song-detail-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blood-bright);
+    margin-bottom: 12px;
+  }
+  .song-detail-iframe-wrap {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--ash);
+    border: 1px solid var(--border);
+  }
+  .song-detail-iframe-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .song-detail-spotify iframe {
+    border: 1px solid var(--border);
+    display: block;
+  }
+
+  .song-detail-about {
+    margin-bottom: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .song-detail-theme {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .song-detail-lyrics-section {
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .song-detail-lyrics {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--bone);
+    white-space: pre-wrap;
+    margin: 0;
+    background: var(--coal);
+    border: 1px solid var(--border);
+    padding: 32px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .song-detail-lyrics-empty {
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+</style>

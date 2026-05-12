@@ -834,6 +834,18 @@ main {
   color: var(--bone);
   letter-spacing: -0.02em;
 }
+.track-title-link {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(var(--blood-bright), var(--blood-bright));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  transition: background-size 0.3s ease-out;
+}
+.track-card:hover .track-title-link {
+  background-size: 100% 2px;
+}
 .track-meta {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;

@@ -20,6 +20,7 @@ songsPublicRoute.get('/', async (c) => {
       title: songs.title,
       trackNumber: songs.trackNumber,
       spotifyId: songs.spotifyId,
+      youtubeId: songs.youtubeId,
       duration: songs.duration,
       genre: songs.genre,
       year: songs.year,
@@ -27,6 +28,7 @@ songsPublicRoute.get('/', async (c) => {
       themesEs: songs.themesEs,
       themesEn: songs.themesEn,
       quote: songs.quote,
+      lyrics: songs.lyrics,
     })
     .from(songs)
     .where(isNull(songs.deletedAt))

@@ -8,6 +8,7 @@ import { adminRoute } from './routes/admin';
 import { campaignsRoute } from './routes/campaigns';
 import { songsPublicRoute } from './routes/songs';
 import { quotesPublicRoute } from './routes/quotes';
+import { artistImageRoute } from './routes/artistImage';
 import { runSpotifySnapshot } from './jobs/spotifySnapshot';
 
 export interface Bindings {
@@ -62,6 +63,7 @@ app.route('/api/contact', contactRoute);
 app.route('/api/track', trackRoute);
 app.route('/api/songs', songsPublicRoute);
 app.route('/api/quotes', quotesPublicRoute);
+app.route('/api/artist-image', artistImageRoute);
 app.route('/api/admin', adminRoute);
 app.route('/api/admin/campaigns', campaignsRoute);
 

@@ -8,10 +8,21 @@ interface Props {
 const { lang } = Astro.props;
 const t = getDict(lang).bio;
 
-// Imagen del artista pulled de Spotify (640x640). Cambia rarísimas veces
-// (solo cuando actualizas la foto en Spotify for Artists). El URL es
-// estable y servido por el CDN de Spotify (i.scdn.co).
-const artistImage = 'https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7';
+// Imagen del artista: build-time fetch a /api/artist-image (que a su vez
+// pulla en vivo de Spotify Web API). Así cuando el artista actualice su
+// foto en Spotify for Artists, el siguiente rebuild la trae sola.
+// Fallback hardcoded por si la API falla durante el build (la foto vieja
+// es preferible a romper el render).
+const FALLBACK_IMAGE = 'https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7';
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
+let artistImage = FALLBACK_IMAGE;
+try {
+  const res = await fetch(`${apiUrl}/api/artist-image`);
+  const json = (await res.json()) as { ok: boolean; data?: { url: string } };
+  if (json.ok && json.data?.url) artistImage = json.data.url;
+} catch (err) {
+  console.warn('[Bio.astro] no se pudo fetch /api/artist-image en build time, usando fallback', err);
+}
 const altText = lang === 'es' ? 'Foto del artista NORAC X' : 'Artist photo of NORAC X';
 ---
 

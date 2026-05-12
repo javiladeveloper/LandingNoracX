@@ -251,21 +251,42 @@ export default function SongsPage() {
                 />
               </label>
 
-              <label className="block space-y-1 md:col-span-2">
-                <span className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">
-                  YouTube URL o ID (auto-extract)
-                </span>
-                <input
-                  type="text"
-                  value={form.youtubeId ?? ''}
-                  onChange={(e) => {
-                    const extracted = extractYoutubeId(e.target.value);
-                    setForm((f) => ({ ...f, youtubeId: extracted || null }));
-                  }}
-                  placeholder="https://youtu.be/... o https://youtube.com/watch?v=..."
-                  className="bg-ash border-blood/30 text-bone focus:border-blood-bright w-full border p-2 font-mono text-sm outline-none"
-                />
-              </label>
+              <div className="md:col-span-2 space-y-1">
+                <label className="block space-y-1">
+                  <span className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">
+                    YouTube URL o ID (se guarda solo el ID — 11 chars)
+                  </span>
+                  <input
+                    type="text"
+                    value={form.youtubeId ?? ''}
+                    onChange={(e) => {
+                      const extracted = extractYoutubeId(e.target.value);
+                      setForm((f) => ({ ...f, youtubeId: extracted || null }));
+                    }}
+                    placeholder="https://youtu.be/... o https://youtube.com/watch?v=..."
+                    className="bg-ash border-blood/30 text-bone focus:border-blood-bright w-full border p-2 font-mono text-sm outline-none"
+                  />
+                </label>
+                {form.youtubeId && /^[a-zA-Z0-9_-]{11}$/.test(form.youtubeId) && (
+                  <p className="font-mono text-[10px] text-emerald-400">
+                    ✓ ID válido —{' '}
+                    <a
+                      href={`https://www.youtube.com/watch?v=${form.youtubeId}`}
+                      target="_blank"
+                      rel="noopener"
+                      className="underline hover:text-emerald-300"
+                    >
+                      abrir video en YouTube
+                    </a>{' '}
+                    para verificar
+                  </p>
+                )}
+                {form.youtubeId && !/^[a-zA-Z0-9_-]{11}$/.test(form.youtubeId) && (
+                  <p className="font-mono text-[10px] text-blood-bright">
+                    ⚠ No parece un ID de YouTube válido (debe ser 11 chars).
+                  </p>
+                )}
+              </div>
 
               <label className="block space-y-1">
                 <span className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">

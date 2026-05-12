@@ -7,7 +7,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     <div class="not-found-grid">
       <p class="not-found-label" id="nf-label">404 · página perdida</p>
       <h1 class="not-found-title">
-        Esto <em id="nf-no">no</em> <span id="nf-exists">existe</span>
+        <span id="nf-this">Esto</span> <em id="nf-no">no</em> <span id="nf-exists">existe</span>
       </h1>
       <p class="not-found-body" id="nf-body">
         La URL que pediste no llegó a ninguna parte. Quizás la escribiste mal, o
@@ -27,6 +27,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     if (!isEn) return;
     // Swap text to English and fix links
     document.getElementById('nf-label').textContent   = '404 · page not found';
+    document.getElementById('nf-this').textContent    = 'This';
     document.getElementById('nf-no').textContent      = "doesn't";
     document.getElementById('nf-exists').textContent  = 'exist';
     document.getElementById('nf-body').textContent    =

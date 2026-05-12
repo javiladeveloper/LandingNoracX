@@ -120,6 +120,13 @@
       "when": 1778595000000,
       "tag": "0016_content_zumba",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1778595500000,
+      "tag": "0017_content_secreto",
+      "breakpoints": true
     }
   ]
 }

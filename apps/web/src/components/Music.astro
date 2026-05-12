@@ -5,6 +5,10 @@ function detailPath(lang: Lang, slug: string): string {
   return lang === 'en' ? `/en/songs/${slug}` : `/canciones/${slug}`;
 }
 
+function detailLabel(lang: Lang): string {
+  return lang === 'en' ? 'Lyrics + video →' : 'Letra + video →';
+}
+
 interface Props {
   lang: Lang;
 }
@@ -111,6 +115,9 @@ const spotifyArtistUrl = `https://open.spotify.com/artist/${SPOTIFY_ARTIST_ID}`;
           <div class="track-body">
             <p class="track-theme">{lang === 'es' ? song.themesEs : song.themesEn}</p>
             <blockquote class="track-quote">"{song.quote}"</blockquote>
+            <a href={detailPath(lang, song.slug)} class="track-detail-link">
+              {detailLabel(lang)}
+            </a>
           </div>
 
           <div class="track-player">

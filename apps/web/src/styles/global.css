@@ -848,11 +848,42 @@ main {
   background-image: linear-gradient(var(--blood-bright), var(--blood-bright));
   background-position: 0 100%;
   background-repeat: no-repeat;
-  background-size: 0% 2px;
-  transition: background-size 0.3s ease-out;
+  background-size: 100% 2px;
+  transition: background-size 0.3s ease-out, color 0.2s;
+  /* Línea inferior siempre visible por default — afordance clara de que es link */
 }
 .track-card:hover .track-title-link {
-  background-size: 100% 2px;
+  color: var(--bone);
+}
+
+/* CTA explícito al final de la card body */
+.track-detail-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--blood-bright);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  align-self: flex-start;
+  margin-top: -4px;
+  margin-bottom: 4px;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s,
+    transform 0.2s;
+}
+.track-detail-link:hover {
+  background: var(--blood-bright);
+  color: var(--bone);
+  border-color: var(--blood-bright);
+  transform: translateX(2px);
 }
 .track-meta {
   font-family: 'JetBrains Mono', monospace;

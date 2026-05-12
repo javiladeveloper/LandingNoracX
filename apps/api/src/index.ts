@@ -7,6 +7,7 @@ import { trackRoute } from './routes/track';
 import { adminRoute } from './routes/admin';
 import { campaignsRoute } from './routes/campaigns';
 import { songsPublicRoute } from './routes/songs';
+import { quotesPublicRoute } from './routes/quotes';
 import { runSpotifySnapshot } from './jobs/spotifySnapshot';
 
 export interface Bindings {
@@ -60,6 +61,7 @@ app.route('/api/subscribe', subscribeRoute);
 app.route('/api/contact', contactRoute);
 app.route('/api/track', trackRoute);
 app.route('/api/songs', songsPublicRoute);
+app.route('/api/quotes', quotesPublicRoute);
 app.route('/api/admin', adminRoute);
 app.route('/api/admin/campaigns', campaignsRoute);
 

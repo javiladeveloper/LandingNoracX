@@ -255,3 +255,38 @@ export const songs = sqliteTable(
 
 export type Song = typeof songs.$inferSelect;
 export type NewSong = typeof songs.$inferInsert;
+
+/**
+ * Frases del Lyrics Wall (5 líneas destacadas que rotan en home).
+ * Bilingue, ordenadas por order. sourceName es display ('GARRAS SOBRE
+ * EL ANDE'); sourceSlug es FK opcional a songs.slug si querés linkear
+ * después. Soft delete.
+ */
+export const quotes = sqliteTable(
+  'quotes',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    textEs: text('text_es').notNull(),
+    textEn: text('text_en').notNull(),
+    sourceName: text('source_name').notNull(),
+    sourceSlug: text('source_slug'),
+    order: integer('order').notNull(),
+    featured: integer('featured', { mode: 'boolean' }).notNull().default(false),
+    deletedAt: integer('deleted_at', { mode: 'timestamp' }),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    updatedAt: integer('updated_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => ({
+    orderIdx: index('quotes_order_idx').on(table.order),
+    sourceIdx: index('quotes_source_idx').on(table.sourceSlug),
+  }),
+);
+
+export type Quote = typeof quotes.$inferSelect;
+export type NewQuote = typeof quotes.$inferInsert;

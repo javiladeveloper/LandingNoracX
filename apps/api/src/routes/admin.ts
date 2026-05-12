@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
 import { eq, desc, asc, isNull, isNotNull, sql, and, or, like, gt, type SQL } from 'drizzle-orm';
-import { users, contactMessages, fans, pageViews, songs } from '../db/schema';
+import { users, contactMessages, fans, pageViews, songs, quotes } from '../db/schema';
 import { verifyPassword, newSessionToken, hashPassword } from '../lib/password';
 import {
   resolveSession,
@@ -446,6 +446,80 @@ adminRoute.delete('/songs/:slug', async (c) => {
   const db = drizzle(c.env.DB);
 
   await db.update(songs).set({ deletedAt: new Date() }).where(eq(songs.slug, slug));
+
+  c.executionCtx.waitUntil(triggerWebRebuild(c.env));
+  return c.json({ ok: true });
+});
+
+/* ============================================================
+   Quotes CRUD
+   ============================================================ */
+
+adminRoute.get('/quotes', async (c) => {
+  const db = drizzle(c.env.DB);
+  const data = await db
+    .select()
+    .from(quotes)
+    .where(isNull(quotes.deletedAt))
+    .orderBy(asc(quotes.order))
+    .all();
+  return c.json({ ok: true, data });
+});
+
+const quoteSchema = z.object({
+  textEs: z.string().min(3).max(500),
+  textEn: z.string().min(3).max(500),
+  sourceName: z.string().min(1).max(120),
+  sourceSlug: z.string().max(120).nullable().optional(),
+  order: z.number().int().positive(),
+  featured: z.boolean().default(false),
+});
+
+adminRoute.post('/quotes', zValidator('json', quoteSchema), async (c) => {
+  const data = c.req.valid('json');
+  const db = drizzle(c.env.DB);
+
+  await db.insert(quotes).values({
+    textEs: data.textEs,
+    textEn: data.textEn,
+    sourceName: data.sourceName.toUpperCase(),
+    sourceSlug: data.sourceSlug ?? null,
+    order: data.order,
+    featured: data.featured,
+  });
+
+  c.executionCtx.waitUntil(triggerWebRebuild(c.env));
+  return c.json({ ok: true }, 201);
+});
+
+const quotePatchSchema = quoteSchema.partial();
+
+adminRoute.patch('/quotes/:id', zValidator('json', quotePatchSchema), async (c) => {
+  const id = c.req.param('id');
+  const data = c.req.valid('json');
+  const db = drizzle(c.env.DB);
+
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  for (const k of Object.keys(data) as Array<keyof typeof data>) {
+    if (data[k] === undefined) continue;
+    if (k === 'sourceName' && typeof data[k] === 'string') {
+      updates[k] = data[k].toUpperCase();
+    } else {
+      updates[k] = data[k];
+    }
+  }
+
+  await db.update(quotes).set(updates).where(eq(quotes.id, id));
+
+  c.executionCtx.waitUntil(triggerWebRebuild(c.env));
+  return c.json({ ok: true });
+});
+
+adminRoute.delete('/quotes/:id', async (c) => {
+  const id = c.req.param('id');
+  const db = drizzle(c.env.DB);
+
+  await db.update(quotes).set({ deletedAt: new Date() }).where(eq(quotes.id, id));
 
   c.executionCtx.waitUntil(triggerWebRebuild(c.env));
   return c.json({ ok: true });

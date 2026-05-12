@@ -1,22 +1,32 @@
 ---
-import { getCollection } from 'astro:content';
 import { getDict, type Lang } from '@/i18n';
 
 interface Props {
   lang: Lang;
 }
 
+interface QuoteRow {
+  id: string;
+  textEs: string;
+  textEn: string;
+  sourceName: string;
+  order: number;
+}
+
 const { lang } = Astro.props;
 const t = getDict(lang).lyrics;
 
-const allQuotes = await getCollection('quotes');
-const rows = allQuotes
-  .sort((a, b) => a.data.order - b.data.order)
-  .map((q) => ({
-    order: q.data.order,
-    text: q.data.text[lang],
-    source: q.data.sourceName,
-  }));
+// Build-time fetch desde D1 (mismo patrón que Music.astro). En CI
+// PUBLIC_API_URL = https://noracx.com.
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
+const quotesRes = await fetch(`${apiUrl}/api/quotes`);
+const quotesJson = (await quotesRes.json()) as { ok: boolean; data: QuoteRow[] };
+const allQuotes = quotesJson.ok ? quotesJson.data : [];
+const rows = allQuotes.map((q) => ({
+  order: q.order,
+  text: lang === 'es' ? q.textEs : q.textEn,
+  source: q.sourceName,
+}));
 ---
 
 <section class="lyrics-wall reveal">

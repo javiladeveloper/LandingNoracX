@@ -5,6 +5,7 @@ import MessagesPage from './pages/Messages';
 import FansPage from './pages/Fans';
 import CampaignsPage from './pages/Campaigns';
 import SongsPage from './pages/Songs';
+import QuotesPage from './pages/Quotes';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -48,6 +49,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <SongsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/quotes"
+        element={
+          <ProtectedRoute>
+            <QuotesPage />
           </ProtectedRoute>
         }
       />

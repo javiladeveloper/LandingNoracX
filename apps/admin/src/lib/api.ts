@@ -289,3 +289,56 @@ export async function deleteSong(slug: string): Promise<boolean> {
   const res = await apiFetch(`/api/admin/songs/${slug}`, { method: 'DELETE' });
   return res.ok;
 }
+
+export interface QuoteRow {
+  id: string;
+  textEs: string;
+  textEn: string;
+  sourceName: string;
+  sourceSlug: string | null;
+  order: number;
+  featured: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface QuoteInput {
+  textEs: string;
+  textEn: string;
+  sourceName: string;
+  sourceSlug?: string | null;
+  order: number;
+  featured: boolean;
+}
+
+export async function listQuotes(): Promise<QuoteRow[] | null> {
+  const res = await apiFetch<{ ok: true; data: QuoteRow[] }>('/api/admin/quotes');
+  if (!res.ok) return null;
+  return (res.body as { data: QuoteRow[] }).data;
+}
+
+export async function createQuote(input: QuoteInput): Promise<{ ok: boolean; error?: string }> {
+  const res = await apiFetch<{ ok: boolean; error?: string }>('/api/admin/quotes', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+  if (res.ok) return { ok: true };
+  return { ok: false, error: (res.body as { error?: string }).error ?? 'create_failed' };
+}
+
+export async function updateQuote(
+  id: string,
+  input: Partial<QuoteInput>,
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await apiFetch<{ ok: boolean; error?: string }>(`/api/admin/quotes/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+  if (res.ok) return { ok: true };
+  return { ok: false, error: (res.body as { error?: string }).error ?? 'update_failed' };
+}
+
+export async function deleteQuote(id: string): Promise<boolean> {
+  const res = await apiFetch(`/api/admin/quotes/${id}`, { method: 'DELETE' });
+  return res.ok;
+}

@@ -46,14 +46,14 @@ jobs:
           PUBLIC_API_URL: 'https://noracx.com'
 
       # Bootstrap del proyecto en el primer deploy. Si ya existe el
-      # comando falla con 8000007, lo ignoramos.
+      # comando falla con 8000002, lo ignoramos con continue-on-error.
       - name: Ensure Cloudflare Pages project exists
         continue-on-error: true
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages project create noracx-web --production-branch=master
+          command: pages project create noracx-web --production-branch=main
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

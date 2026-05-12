@@ -1,5 +1,16 @@
 ---
 import '@/styles/global.css';
+// Self-hosted fonts — servidas desde Cloudflare Pages, sin request a Google.
+// Mejora LCP/CLS (sin FOUT de terceros), GDPR-friendly, sin DNS lookup externo.
+import '@fontsource/archivo-black';
+import '@fontsource/bebas-neue';
+import '@fontsource/space-grotesk/300.css';
+import '@fontsource/space-grotesk/400.css';
+import '@fontsource/space-grotesk/500.css';
+import '@fontsource/space-grotesk/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/700.css';
 import Nav from '@/components/Nav.astro';
 import Footer from '@/components/Footer.astro';
 import { getDict, type Lang, altLang, localizePath } from '@/i18n';
@@ -119,12 +130,7 @@ const artistImage = await getArtistImage();
       })}></script>
     )}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Archivo+Black&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Fonts self-hosted via fontsource — importadas en el frontmatter arriba -->
 
     <script is:inline>
       (function () {

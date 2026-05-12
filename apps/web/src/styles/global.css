@@ -1499,6 +1499,168 @@ main {
   }
 }
 
+/* =========================================================
+   RESPONSIVE — mobile (<880px) + phone (<480px)
+   ========================================================= */
+@media (max-width: 880px) {
+  /* Hero: meta vertical, título más legible, CTAs full-width */
+  .hero {
+    padding: 96px 20px 60px;
+    min-height: auto;
+  }
+  .hero-title {
+    font-size: clamp(52px, 14vw, 120px);
+    gap: 3vw;
+  }
+  .hero-meta {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .hero-meta-right {
+    text-align: left;
+  }
+  .hero-info {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 24px;
+    padding-top: 24px;
+  }
+  .hero-tagline {
+    font-size: clamp(18px, 4.5vw, 24px);
+    max-width: none;
+  }
+  .hero-cta {
+    width: 100%;
+  }
+  .hero-cta .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .follow-dropdown {
+    flex: 1;
+  }
+  .follow-dropdown summary {
+    width: 100%;
+    justify-content: center;
+  }
+  .follow-menu {
+    left: 0;
+    right: 0;
+    min-width: 0;
+  }
+
+  /* Tracks grid: 1 columna full width en mobile */
+  .tracks {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .track-header {
+    padding: 22px 20px 16px;
+  }
+  .track-body {
+    padding: 20px;
+  }
+  .track-title {
+    font-size: 22px;
+    min-height: auto;
+  }
+
+  /* Section títulos más chicos en mobile */
+  .section-title {
+    font-size: clamp(36px, 9vw, 64px);
+  }
+
+  /* Spotify full + featured-tracks header */
+  .spotify-full {
+    padding: 24px 20px;
+  }
+  .spotify-full-title {
+    font-size: 18px;
+  }
+  .featured-tracks-head {
+    margin-top: 56px;
+    margin-bottom: 32px;
+  }
+  .featured-tracks-title {
+    font-size: clamp(24px, 7vw, 36px);
+  }
+
+  /* Bio: spacing más compacto */
+  .bio-content p {
+    font-size: 16px;
+  }
+  .bio-content p:first-of-type {
+    font-size: 18px;
+    line-height: 1.55;
+  }
+  .bio-pullquote {
+    padding: 20px 0 20px 20px;
+    margin: 32px 0;
+  }
+
+  /* Newsletter + Contact: padding lateral más amigable */
+  .newsletter {
+    padding: 80px 20px;
+  }
+  .contact {
+    padding: 80px 20px;
+  }
+  .contact-form-wrap {
+    margin-top: 56px;
+    padding-top: 40px;
+  }
+
+  /* Marquee items más chicos */
+  .marquee-item {
+    font-size: 15px;
+    gap: 40px;
+  }
+  .marquee-track {
+    gap: 40px;
+  }
+
+  /* Platforms grid */
+  .platforms-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Phone tight: padding mínimo, fuentes aún más conservadoras */
+  .hero {
+    padding: 80px 16px 40px;
+  }
+  .hero-title {
+    font-size: clamp(44px, 14vw, 72px);
+  }
+  .section,
+  .newsletter,
+  .contact {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .bio {
+    padding: 60px 16px;
+  }
+  .spotify-full {
+    padding: 20px 16px;
+  }
+  .footer {
+    padding: 48px 16px 32px;
+  }
+  .footer-mark {
+    font-size: 22px;
+  }
+  .nav {
+    padding: 12px 16px;
+  }
+  .nav.scrolled {
+    padding: 10px 16px;
+  }
+}
+
 /* Respeta el "reduce motion" del usuario */
 @media (prefers-reduced-motion: reduce) {
   *,

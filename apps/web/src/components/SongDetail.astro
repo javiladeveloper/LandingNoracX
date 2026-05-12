@@ -276,4 +276,55 @@ const labels =
     color: var(--ink-dim);
     font-style: italic;
   }
+
+  /* Mobile responsive — phone (<600px) y tablet (<880px) */
+  @media (max-width: 880px) {
+    .song-detail {
+      padding: 100px 20px 60px;
+    }
+    .song-detail-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+    }
+    .song-detail-title {
+      font-size: clamp(36px, 11vw, 64px);
+    }
+    .song-detail-quote {
+      font-size: clamp(18px, 5vw, 24px);
+      padding: 16px 0 16px 20px;
+      margin-bottom: 32px;
+    }
+    .song-detail-players {
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .song-detail-about,
+    .song-detail-lyrics-section {
+      padding-top: 24px;
+    }
+    .song-detail-about {
+      margin-bottom: 32px;
+    }
+    .song-detail-lyrics {
+      padding: 24px 20px;
+      max-height: 60vh;
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .song-detail {
+      padding: 88px 16px 48px;
+    }
+    .song-detail-title {
+      font-size: clamp(32px, 12vw, 52px);
+    }
+    .song-detail-quote {
+      padding-left: 16px;
+    }
+    .song-detail-lyrics {
+      padding: 20px 16px;
+      font-size: 14px;
+    }
+  }
 </style>

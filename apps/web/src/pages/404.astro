@@ -1,0 +1,79 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const lang = 'es' as const;
+---
+
+<BaseLayout lang={lang} pageTitle="404 — NORAC X" pagePath="/">
+  <section class="not-found-section">
+    <div class="not-found-grid">
+      <p class="not-found-label">404 · página perdida</p>
+      <h1 class="not-found-title">
+        Esto <em>no</em> existe
+      </h1>
+      <p class="not-found-body">
+        La URL que pediste no llegó a ninguna parte. Quizás la escribiste mal, o desapareció con el
+        sistema.
+      </p>
+      <div class="not-found-cta">
+        <a href="/" class="btn btn-primary">
+          <span>Volver al grito</span>
+        </a>
+        <a href="/#musica" class="btn">
+          <span>Ir a la música</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found-section {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 40px 80px;
+  }
+  .not-found-grid {
+    max-width: 720px;
+    text-align: center;
+  }
+  .not-found-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--blood-bright);
+    margin-bottom: 24px;
+  }
+  .not-found-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(60px, 12vw, 140px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--bone);
+    margin-bottom: 32px;
+  }
+  .not-found-title em {
+    color: var(--blood-bright);
+    font-style: italic;
+    text-shadow: 0 0 40px rgba(230, 10, 10, 0.6);
+  }
+  .not-found-body {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 40px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .not-found-cta {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

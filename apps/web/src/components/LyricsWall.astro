@@ -19,9 +19,14 @@ const t = getDict(lang).lyrics;
 // Build-time fetch desde D1 (mismo patrón que Music.astro). En CI
 // PUBLIC_API_URL = https://noracx.com.
 const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
-const quotesRes = await fetch(`${apiUrl}/api/quotes`);
-const quotesJson = (await quotesRes.json()) as { ok: boolean; data: QuoteRow[] };
-const allQuotes = quotesJson.ok ? quotesJson.data : [];
+let allQuotes: QuoteRow[] = [];
+try {
+  const quotesRes = await fetch(`${apiUrl}/api/quotes`);
+  const quotesJson = (await quotesRes.json()) as { ok: boolean; data: QuoteRow[] };
+  if (quotesJson.ok) allQuotes = quotesJson.data;
+} catch (err) {
+  console.warn('[LyricsWall.astro] no se pudo fetch /api/quotes en build time', err);
+}
 const rows = allQuotes.map((q) => ({
   order: q.order,
   text: lang === 'es' ? q.textEs : q.textEn,

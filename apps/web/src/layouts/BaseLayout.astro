@@ -39,16 +39,50 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
     <link rel="alternate" hreflang={alt} href={altUrl} />
     <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site ?? 'https://noracx.com').href} />
 
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-maskable.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
     <meta property="og:type" content="music.musician" />
+    <meta property="og:site_name" content="NORAC X" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={dict.meta.ogDescription} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content={dict.meta.locale} />
-    <meta property="og:image" content="https://noracx.com/og-image.jpg" />
+    <meta property="og:image" content="https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7" />
+    <meta property="og:image:width" content="640" />
+    <meta property="og:image:height" content="640" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={dict.meta.ogDescription} />
+    <meta name="twitter:image" content="https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'MusicGroup',
+      name: 'NORAC X',
+      url: 'https://noracx.com',
+      logo: 'https://noracx.com/favicon.svg',
+      image: 'https://i.scdn.co/image/ab6761610000e5eb20ac7abb154d5ba3170c36e7',
+      description: dict.meta.description,
+      foundingLocation: {
+        '@type': 'Place',
+        name: 'Tacna, Perú',
+      },
+      foundingDate: '2026',
+      genre: ['Power Metal', 'Protest Metal', 'Heavy Metal'],
+      sameAs: [
+        'https://open.spotify.com/artist/23reXrP1oSrpgNVFHIEGk6',
+        'https://music.apple.com/search?term=NORAC+X',
+        'https://music.youtube.com/search?q=NORAC+X',
+        'https://www.youtube.com/@norac_x',
+        'https://www.tiktok.com/@norac_x',
+        'https://www.instagram.com/noracx_official',
+        'https://www.facebook.com/profile.php?id=61575460841628',
+      ],
+      email: 'contacto@noracx.com',
+    })}></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

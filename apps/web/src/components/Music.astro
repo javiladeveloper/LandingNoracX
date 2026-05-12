@@ -25,9 +25,14 @@ const t = getDict(lang).music;
 // Build-time fetch desde la API (D1 es fuente única). En CI definimos
 // PUBLIC_API_URL a https://noracx.com; en dev local apunta al worker.
 const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
-const songsRes = await fetch(`${apiUrl}/api/songs`);
-const songsJson = (await songsRes.json()) as { ok: boolean; data: SongRow[] };
-const allSongs = songsJson.ok ? songsJson.data : [];
+let allSongs: SongRow[] = [];
+try {
+  const songsRes = await fetch(`${apiUrl}/api/songs`);
+  const songsJson = (await songsRes.json()) as { ok: boolean; data: SongRow[] };
+  if (songsJson.ok) allSongs = songsJson.data;
+} catch (err) {
+  console.warn('[Music.astro] no se pudo fetch /api/songs en build time', err);
+}
 const featured = allSongs.filter((s) => s.featured);
 
 const SPOTIFY_ARTIST_ID = '23reXrP1oSrpgNVFHIEGk6';

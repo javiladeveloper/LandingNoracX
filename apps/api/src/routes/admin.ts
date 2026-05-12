@@ -330,26 +330,37 @@ adminRoute.get('/analytics/overview', async (c) => {
    ============================================================ */
 
 /**
- * Trigger de redeploy de noracx-web vía Cloudflare API después de un
- * cambio en songs/quotes. Necesita CF_ACCOUNT_ID + CF_API_TOKEN con
- * permission Pages:Edit. Si no están seteados, no hace nada.
+ * Trigger de redeploy de noracx-web vía GitHub Actions workflow_dispatch.
+ * El workflow re-corre el build con datos frescos de D1 (que fue updated
+ * por el admin) y deploya a Cloudflare Pages.
+ *
+ * Por qué GitHub Actions y no CF API directo: noracx-web es un Pages
+ * project en modo Direct Upload (no Git-connected), así que la CF API
+ * de POST /deployments espera multipart de archivos y no hace 'rebuild
+ * from source'. GitHub Actions sí re-corre el pipeline completo.
  */
 async function triggerWebRebuild(env: Bindings): Promise<void> {
-  if (!env.CF_ACCOUNT_ID || !env.CF_API_TOKEN) return;
+  if (!env.GITHUB_TOKEN) return;
   try {
     const res = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/pages/projects/noracx-web/deployments`,
+      'https://api.github.com/repos/javiladeveloper/LandingNoracX/actions/workflows/deploy-web.yml/dispatches',
       {
         method: 'POST',
-        headers: { Authorization: `Bearer ${env.CF_API_TOKEN}` },
+        headers: {
+          Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'User-Agent': 'noracx-api-worker',
+        },
+        body: JSON.stringify({ ref: 'master' }),
       },
     );
     if (!res.ok) {
       const body = await res.text();
-      console.error('[songs] rebuild failed', res.status, body);
+      console.error('[songs] github dispatch failed', res.status, body);
     }
   } catch (err) {
-    console.error('[songs] rebuild exception', err);
+    console.error('[songs] github dispatch exception', err);
   }
 }
 

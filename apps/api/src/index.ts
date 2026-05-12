@@ -17,13 +17,15 @@ export interface Bindings {
   SPOTIFY_CLIENT_ID: string;
   SPOTIFY_CLIENT_SECRET: string;
   /**
-   * Cloudflare account ID + API token (con Pages:Edit) para disparar
-   * un redeploy de noracx-web vía CF API cuando cambia contenido en D1.
-   * Si están vacíos el rebuild no se dispara y los cambios solo se ven
-   * al próximo deploy manual.
+   * GitHub Personal Access Token con perm Actions:write en el repo.
+   * Se usa para disparar el workflow deploy-web.yml vía la API
+   * workflow_dispatch cuando se edita contenido (songs, quotes) desde
+   * el admin. El workflow corre el build con datos frescos de D1 y
+   * deploya a noracx-web. Si no está seteado, no se dispara rebuild.
+   * Cloudflare's API direct trigger no funciona para Direct Upload
+   * projects, por eso pasamos por GitHub.
    */
-  CF_ACCOUNT_ID: string;
-  CF_API_TOKEN: string;
+  GITHUB_TOKEN: string;
 }
 
 const app = new Hono<{ Bindings: Bindings }>();

@@ -292,10 +292,19 @@ const artistImage = await getArtistImage();
       const parallaxImgs = document.querySelectorAll('.bio-side-image img');
       if (parallaxImgs.length > 0 && window.matchMedia('(pointer: fine)').matches) {
         window.addEventListener('scroll', () => {
-          const y = window.scrollY;
-          // El contenedor tiene overflow:hidden, el img se desplaza creando parallax
           parallaxImgs.forEach((img) => {
-            (img as HTMLElement).style.transform = `translateY(${y * 0.1}px) scale(1.05)`;
+            const parent = img.parentElement;
+            if (!parent) return;
+            const rect = parent.getBoundingClientRect();
+            
+            // Solo animar si está en el viewport
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+              // Distancia desde el centro de la pantalla
+              const centerOffset = (rect.top + rect.height / 2) - (window.innerHeight / 2);
+              const yOffset = centerOffset * 0.15; // Factor de movimiento
+              
+              (img as HTMLElement).style.transform = `translateY(${yOffset}px) scale(1.15)`;
+            }
           });
         }, { passive: true });
       }

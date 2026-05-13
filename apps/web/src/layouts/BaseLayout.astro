@@ -157,6 +157,12 @@ const artistImage = await getArtistImage();
     </script>
   </head>
   <body>
+    <div id="preloader" class="preloader">
+      <div class="preloader-terminal">
+        <p id="boot-text"></p><span class="blink">_</span>
+      </div>
+    </div>
+
     <div class="cursor" id="cursor"></div>
 
     <Nav lang={lang} pagePath={pagePath} />
@@ -258,6 +264,40 @@ const artistImage = await getArtistImage();
           });
       } else if (cursor) {
         cursor.style.display = 'none';
+      }
+
+      // Preloader Terminal Boot Sequence
+      const bootText = document.getElementById('boot-text');
+      const preloader = document.getElementById('preloader');
+      if (bootText && preloader) {
+        // Fast sequence for a quick entry
+        const msgs = ['[INICIANDO PROTOCOLO]', '[SINTONIZANDO VOZ DEL PUEBLO]... 100%', 'NORAC X_'];
+        let idx = 0;
+        const interval = setInterval(() => {
+          if (idx < msgs.length) {
+            bootText.innerText = msgs[idx];
+            idx++;
+          } else {
+            clearInterval(interval);
+            setTimeout(() => {
+              preloader.classList.add('hidden');
+              // Remove from DOM after transition
+              setTimeout(() => preloader.remove(), 600);
+            }, 200);
+          }
+        }, 300);
+      }
+
+      // Parallax para imágenes (ej: biografía)
+      const parallaxImgs = document.querySelectorAll('.bio-side-image img');
+      if (parallaxImgs.length > 0 && window.matchMedia('(pointer: fine)').matches) {
+        window.addEventListener('scroll', () => {
+          const y = window.scrollY;
+          // El contenedor tiene overflow:hidden, el img se desplaza creando parallax
+          parallaxImgs.forEach((img) => {
+            (img as HTMLElement).style.transform = `translateY(${y * 0.1}px) scale(1.05)`;
+          });
+        }, { passive: true });
       }
     </script>
   </body>

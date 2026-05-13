@@ -275,7 +275,7 @@ const artistImage = await getArtistImage();
         let idx = 0;
         const interval = setInterval(() => {
           if (idx < msgs.length) {
-            bootText.innerText = msgs[idx];
+            bootText.innerText = msgs[idx] || '';
             idx++;
           } else {
             clearInterval(interval);

@@ -39,7 +39,8 @@ const title = pageTitle ?? dict.meta.title;
 const description = pageDescription ?? dict.meta.description;
 const ogDescription = pageDescription ?? dict.meta.ogDescription;
 
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://noracx.com').href;
+const currentPath = localizePath(pagePath, lang);
+const canonicalUrl = new URL(currentPath, Astro.site ?? 'https://noracx.com').href;
 const alt = altLang(lang);
 const altPath = localizePath(pagePath, alt);
 const altUrl = new URL(altPath, Astro.site ?? 'https://noracx.com').href;
@@ -135,6 +136,8 @@ const artistImage = await getArtistImage();
     <script is:inline>
       (function () {
         try {
+          const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
+          if (isBot) return;
           const path = window.location.pathname;
           const isEn = path === '/en' || path === '/en/' || path.startsWith('/en/');
           const saved = localStorage.getItem('noracx-lang');

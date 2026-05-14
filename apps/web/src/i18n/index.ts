@@ -23,10 +23,18 @@ export function getLangFromUrl(url: URL): Lang {
 }
 
 export function localizePath(path: string, lang: Lang): string {
-  const clean = path.startsWith('/') ? path : `/${path}`;
-  if (lang === DEFAULT_LOCALE) return clean === '/' ? '/' : clean;
-  if (clean === '/') return '/en';
-  return `/en${clean}`;
+  let clean = path.startsWith('/') ? path : `/${path}`;
+  if (lang === DEFAULT_LOCALE) {
+    if (clean.startsWith('/songs/')) {
+      clean = clean.replace('/songs/', '/canciones/');
+    }
+    return clean === '/' ? '/' : clean;
+  }
+  
+  if (clean.startsWith('/canciones/')) {
+    clean = clean.replace('/canciones/', '/songs/');
+  }
+  return clean === '/' ? '/en' : `/en${clean}`;
 }
 
 export function altLang(lang: Lang): Lang {

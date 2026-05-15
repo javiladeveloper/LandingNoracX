@@ -78,7 +78,7 @@
   white-space: nowrap;
   width: max-content;
   /* Scroll from left to right continuously */
-  animation: slide-tape 20s linear infinite;
+  animation: slide-tape 20s linear infinite !important;
   will-change: transform;
 }
 .sliding-tape:hover {

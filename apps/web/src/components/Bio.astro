@@ -1,5 +1,7 @@
 ---
 import { getDict, type Lang } from '@/i18n';
+import { Image } from 'astro:assets';
+import artistImage from '@/assets/artista-4k.jpg';
 
 interface Props {
   lang: Lang;
@@ -15,7 +17,7 @@ const altText = lang === 'es' ? 'Foto del artista NORAC X' : 'Artist photo of NO
   <div class="bio-grid">
     <aside class="bio-side">
       <div class="bio-side-image">
-        <img src="/artista-4k.jpg" alt={altText} loading="lazy" decoding="async" />
+        <Image src={artistImage} alt={altText} loading="lazy" decoding="async" format="webp" />
       </div>
 
       <div class="bio-meta">

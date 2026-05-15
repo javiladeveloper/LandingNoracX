@@ -26,8 +26,8 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 
       <!-- Estado -->
       <div class="mb-10 text-center">
-        <h3 class="text-bone font-display text-2xl uppercase tracking-wider decrypt md:text-3xl">
-          NO DISPONIBLE AÚN
+        <h3 class="text-bone font-display text-2xl uppercase tracking-wider decrypt md:text-3xl" id="teaser-status">
+          FRAGMENTO INTERCEPTADO
         </h3>
         <p class="text-ink-dim mt-2 font-mono text-[10px] tracking-[0.2em] uppercase">
           ID: NORACX_TSR_001 // ENCRIPTADO
@@ -50,7 +50,7 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
           <!-- Tiempos superpuestos -->
           <div class="absolute inset-0 flex items-center justify-between px-4 pointer-events-none font-mono text-[11px] tracking-[0.2em]">
             <span id="time-current" class="text-bone">00:00</span>
-            <span class="text-ink-dim">00:30</span>
+            <span id="time-total" class="text-ink-dim">00:00</span>
           </div>
 
           <!-- Glitch lines inside progress -->
@@ -64,7 +64,7 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
   </div>
 </div>
 
-  <audio id="teaser-audio" preload="none">
+  <audio id="teaser-audio" preload="metadata">
     <source src={`${apiUrl}/api/teaser`} />
   </audio>
 </section>
@@ -75,17 +75,29 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
   const progressBar = document.getElementById('progress-bar');
   const progressContainer = document.getElementById('progress-container');
   const timeCurrent = document.getElementById('time-current');
+  const timeTotal = document.getElementById('time-total');
+  const teaserStatus = document.getElementById('teaser-status');
 
   let isPlaying = false;
 
   if (playBtn && audio && progressBar && timeCurrent && progressContainer) {
+    audio.addEventListener('loadedmetadata', () => {
+      if (isFinite(audio.duration)) {
+        const dMins = Math.floor(audio.duration / 60);
+        const dSecs = Math.floor(audio.duration % 60);
+        if (timeTotal) timeTotal.innerText = `${dMins.toString().padStart(2, '0')}:${dSecs.toString().padStart(2, '0')}`;
+      }
+    });
+
     playBtn.addEventListener('click', () => {
       if (isPlaying) {
         audio.pause();
         playBtn.innerHTML = '<svg class="w-6 h-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+        if (teaserStatus) teaserStatus.innerText = 'FRAGMENTO INTERCEPTADO';
       } else {
         audio.play();
         playBtn.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        if (teaserStatus) teaserStatus.innerText = 'REPRODUCIENDO...';
       }
       isPlaying = !isPlaying;
       

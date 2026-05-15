@@ -55,6 +55,7 @@
   left: 0;
   right: 0;
   height: 36px;
+  line-height: 36px;
   background: var(--blood-bright);
   color: var(--bone);
   text-decoration: none;
@@ -65,29 +66,25 @@
   overflow: hidden;
   z-index: 1000;
   transition: background 0.3s;
+  display: block;
 }
 .top-banner:hover {
   background: var(--ember);
 }
 .marquee-content {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  width: max-content;
-  animation: marquee-banner 20s linear infinite;
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-banner 15s linear infinite alternate;
 }
 .marquee-content:hover {
   animation-play-state: paused;
 }
 .banner-text {
   padding-right: 50px;
-  display: flex;
-  align-items: center;
-  height: 100%;
 }
 @keyframes marquee-banner {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(calc(-100% + 100vw)); }
 }
 
 /* =========================================================

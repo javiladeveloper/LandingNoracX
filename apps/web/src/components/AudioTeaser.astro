@@ -7,56 +7,57 @@ const { lang } = Astro.props;
 ---
 
 <section id="teaser" class="border-blood/20 bg-coal relative border-y px-6 py-24 md:px-12">
-  <div class="mx-auto max-w-4xl">
-    <div class="mb-8 flex items-center justify-between">
-      <h2 class="font-display text-bone text-4xl uppercase md:text-5xl decrypt">
-        {lang === 'es' ? 'Transmisión Segura' : 'Secure Feed'}
-      </h2>
-      <span class="text-blood-bright animate-pulse font-mono text-[10px] tracking-[0.3em] uppercase">
-        Live
-      </span>
-    </div>
+  <div class="mx-auto max-w-3xl">
+    
+    <div class="border-blood/40 bg-void relative border-2 p-6 md:p-8 shadow-[0_0_30px_rgba(230,10,10,0.05)]">
+      
+      <!-- Cabecera del reproductor -->
+      <div class="mb-8 flex items-center justify-between border-b border-blood/20 pb-4">
+        <h2 class="text-blood-bright font-mono text-[11px] tracking-[0.3em] uppercase decrypt">
+          {lang === 'es' ? 'Transmisión Segura' : 'Secure Feed'}
+        </h2>
+        <div class="flex items-center gap-2">
+          <span class="bg-blood-bright h-2 w-2 animate-pulse rounded-full"></span>
+          <span class="text-bone font-mono text-[10px] tracking-[0.2em] uppercase">Live</span>
+        </div>
+      </div>
 
-    <div class="border-blood/40 bg-black/60 relative border p-6 md:p-10">
-      <!-- Decrypt Target -->
-      <div class="mb-6">
-        <h3 class="text-bone font-display text-xl uppercase tracking-wider decrypt">
-          NO DISPONIBLE AÚN // UNAVAILABLE YET
+      <!-- Estado -->
+      <div class="mb-10 text-center">
+        <h3 class="text-bone font-display text-2xl uppercase tracking-wider decrypt md:text-3xl">
+          NO DISPONIBLE AÚN
         </h3>
         <p class="text-ink-dim mt-2 font-mono text-[10px] tracking-[0.2em] uppercase">
-          ID: NORACX_TSR_001 · ENCRIPTADO
+          ID: NORACX_TSR_001 // ENCRIPTADO
         </p>
       </div>
 
-      <!-- Raw Player Interface -->
-      <div class="border-blood/20 flex flex-col gap-6 border-t pt-6 md:flex-row md:items-center md:gap-10">
-        
-        <button id="play-btn" class="border-blood/50 hover:bg-blood/20 hover:border-blood-bright text-blood-bright flex h-16 w-16 shrink-0 items-center justify-center border-2 transition-colors focus:outline-none">
+      <!-- Player Raw -->
+      <div class="flex flex-col md:flex-row gap-4">
+        <!-- Play Button -->
+        <button id="play-btn" class="bg-blood-bright text-bone hover:bg-bone hover:text-blood-bright flex h-14 w-full md:w-16 shrink-0 items-center justify-center transition-colors focus:outline-none">
           <svg class="h-6 w-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z" />
           </svg>
         </button>
 
-        <div class="flex-1 space-y-4">
-          <div class="flex justify-between font-mono text-[10px] tracking-[0.2em]">
-            <span id="time-current" class="text-blood-bright">00:00</span>
+        <!-- Progress Track -->
+        <div class="bg-ash border-blood/20 relative flex h-14 flex-1 cursor-pointer items-center border" id="progress-container">
+          <div id="progress-bar" class="bg-blood/30 absolute left-0 top-0 h-full w-0 transition-all duration-75 border-r border-blood-bright"></div>
+          
+          <!-- Tiempos superpuestos -->
+          <div class="absolute inset-0 flex items-center justify-between px-4 pointer-events-none font-mono text-[11px] tracking-[0.2em]">
+            <span id="time-current" class="text-bone">00:00</span>
             <span class="text-ink-dim">00:30</span>
           </div>
-          
-          <div class="bg-ash relative h-2 w-full overflow-hidden cursor-pointer" id="progress-container">
-            <div id="progress-bar" class="bg-blood-bright absolute left-0 top-0 h-full w-0 transition-all duration-75"></div>
-            <!-- Glitch lines inside progress -->
-            <div class="absolute left-1/4 top-0 h-full w-px bg-white/20"></div>
-            <div class="absolute left-1/2 top-0 h-full w-px bg-white/20"></div>
-            <div class="absolute left-3/4 top-0 h-full w-px bg-white/20"></div>
-          </div>
-        </div>
 
-        <div class="text-ink-faint hidden font-mono text-[10px] md:block">
-          SYS.REQ. <br />
-          v.2.0.4
+          <!-- Glitch lines inside progress -->
+          <div class="absolute left-1/4 top-0 h-full w-px bg-white/5 pointer-events-none"></div>
+          <div class="absolute left-1/2 top-0 h-full w-px bg-white/5 pointer-events-none"></div>
+          <div class="absolute left-3/4 top-0 h-full w-px bg-white/5 pointer-events-none"></div>
         </div>
       </div>
+
     </div>
   </div>
 

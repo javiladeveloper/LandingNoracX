@@ -292,3 +292,18 @@ export const quotes = sqliteTable(
 
 export type Quote = typeof quotes.$inferSelect;
 export type NewQuote = typeof quotes.$inferInsert;
+
+/**
+ * Settings / Key-Value Store para configuraciones globales.
+ * Usado para guardar el Teaser de Audio recortado (base64) u otras configuraciones.
+ */
+export const settings = sqliteTable('settings', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export type Setting = typeof settings.$inferSelect;
+export type NewSetting = typeof settings.$inferInsert;

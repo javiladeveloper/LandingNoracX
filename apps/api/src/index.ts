@@ -9,6 +9,7 @@ import { campaignsRoute } from './routes/campaigns';
 import { songsPublicRoute } from './routes/songs';
 import { quotesPublicRoute } from './routes/quotes';
 import { artistImageRoute } from './routes/artistImage';
+import { teaserRoute } from './routes/teaser';
 import { runSpotifySnapshot } from './jobs/spotifySnapshot';
 
 export interface Bindings {
@@ -40,7 +41,7 @@ app.use('*', (c, next) => {
     .filter(Boolean);
   return cors({
     origin: (incoming) => (origins.includes(incoming) ? incoming : null),
-    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    allowMethods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowHeaders: ['Content-Type'],
     // Credentials true para que el admin (otro origen) pueda enviar la cookie de sesión
     credentials: true,
@@ -64,6 +65,7 @@ app.route('/api/track', trackRoute);
 app.route('/api/songs', songsPublicRoute);
 app.route('/api/quotes', quotesPublicRoute);
 app.route('/api/artist-image', artistImageRoute);
+app.route('/api/teaser', teaserRoute);
 app.route('/api/admin', adminRoute);
 app.route('/api/admin/campaigns', campaignsRoute);
 

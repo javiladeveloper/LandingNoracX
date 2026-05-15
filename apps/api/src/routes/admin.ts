@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
 import { eq, desc, asc, isNull, isNotNull, sql, and, or, like, gt, type SQL } from 'drizzle-orm';
-import { users, contactMessages, fans, pageViews, songs, quotes } from '../db/schema';
+import { users, contactMessages, fans, pageViews, songs, quotes, settings } from '../db/schema';
 import { verifyPassword, newSessionToken, hashPassword } from '../lib/password';
 import {
   resolveSession,
@@ -542,5 +542,28 @@ adminRoute.delete('/quotes/:id', async (c) => {
   await db.update(quotes).set({ deletedAt: new Date() }).where(eq(quotes.id, id));
 
   c.executionCtx.waitUntil(triggerWebRebuild(c.env));
+  return c.json({ ok: true });
+});
+
+/* ============================================================
+   SETTINGS (Teaser Audio)
+   ============================================================ */
+const teaserSchema = z.object({
+  base64Data: z.string(), // expected "data:audio/mpeg;base64,..." o "data:audio/wav;base64,..."
+});
+
+adminRoute.put('/settings/teaser', zValidator('json', teaserSchema), async (c) => {
+  const { base64Data } = c.req.valid('json');
+  const db = drizzle(c.env.DB);
+  
+  await db.insert(settings).values({
+    key: 'teaser_audio',
+    value: base64Data,
+    updatedAt: new Date()
+  }).onConflictDoUpdate({
+    target: settings.key,
+    set: { value: base64Data, updatedAt: new Date() }
+  });
+
   return c.json({ ok: true });
 });

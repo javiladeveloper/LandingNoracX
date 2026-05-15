@@ -7,6 +7,7 @@ import FansPage from './pages/Fans';
 import CampaignsPage from './pages/Campaigns';
 import SongsPage from './pages/Songs';
 import QuotesPage from './pages/Quotes';
+import SettingsPage from './pages/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -66,6 +67,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <QuotesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <SettingsPage />
           </ProtectedRoute>
         }
       />

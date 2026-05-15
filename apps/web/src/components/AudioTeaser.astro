@@ -4,6 +4,8 @@ interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
+
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 ---
 
 <section id="teaser" class="border-blood/20 bg-coal relative border-y py-24 md:py-32">
@@ -63,7 +65,7 @@ const { lang } = Astro.props;
 </div>
 
   <audio id="teaser-audio" preload="none">
-    <source src="/audio/teaser.mp3" type="audio/mpeg" />
+    <source src={`${apiUrl}/api/teaser`} />
   </audio>
 </section>
 

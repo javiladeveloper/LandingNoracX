@@ -20,6 +20,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/campaigns', label: 'Campañas' },
   { to: '/songs', label: 'Canciones' },
   { to: '/quotes', label: 'Frases' },
+  { to: '/settings', label: 'Settings' },
 ];
 
 export default function AdminLayout({ children }: Props) {

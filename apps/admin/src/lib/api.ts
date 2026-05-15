@@ -106,6 +106,14 @@ export async function patchContactMessage(
   return res.ok;
 }
 
+export async function putTeaser(base64Data: string): Promise<boolean> {
+  const res = await apiFetch<{ ok: boolean }>('/api/admin/settings/teaser', {
+    method: 'PUT',
+    body: JSON.stringify({ base64Data }),
+  });
+  return res.ok;
+}
+
 export interface FanRow {
   id: string;
   email: string;

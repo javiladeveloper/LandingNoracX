@@ -50,7 +50,13 @@
    TOP BANNER
    ========================================================= */
 .top-banner {
-  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
   background: var(--blood-bright);
   color: var(--bone);
   text-decoration: none;
@@ -58,9 +64,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  padding: 8px 0;
   overflow: hidden;
-  position: relative;
   z-index: 1000;
   white-space: nowrap;
   transition: background 0.3s;
@@ -190,7 +194,7 @@ main {
    ========================================================= */
 .nav {
   position: fixed;
-  top: 0;
+  top: 32px;
   left: 0;
   right: 0;
   z-index: 50;

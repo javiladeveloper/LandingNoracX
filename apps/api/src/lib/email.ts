@@ -143,6 +143,7 @@ export function renderContactNotification(args: ContactNotificationArgs): {
     booking: 'Booking',
     press: 'Prensa',
     general: 'General',
+    suggestion: 'Sugerencia',
   } as const;
 
   const subject = `[NORAC X · ${labels[args.type]}] ${args.name}`;

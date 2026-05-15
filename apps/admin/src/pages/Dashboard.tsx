@@ -244,6 +244,43 @@ export default function DashboardPage() {
                 </div>
               </section>
             </div>
+
+            {/* Song Plays */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <section className="border-blood/20 bg-coal border p-5">
+                <p className="text-blood-bright font-mono text-[10px] tracking-[0.3em] uppercase">
+                  Reproducciones por Canción (Totales)
+                </p>
+                <div className="mt-4 space-y-2">
+                  {data.songPlays.length === 0 ? (
+                    <p className="text-ink-dim text-xs">Sin datos todavía.</p>
+                  ) : (
+                    data.songPlays.map((s) => (
+                      <BarRow
+                        key={s.title}
+                        label={s.title}
+                        count={s.count}
+                        max={Math.max(...data.songPlays.map(x => x.count), 1)}
+                      />
+                    ))
+                  )}
+                </div>
+              </section>
+
+              <section className="border-blood/20 bg-coal border p-5">
+                <p className="text-blood-bright font-mono text-[10px] tracking-[0.3em] uppercase">
+                  Reproducciones Teaser Inédito (Totales)
+                </p>
+                <div className="mt-4 flex items-center justify-center h-24 bg-ash">
+                  <div className="text-center">
+                    <p className="font-display text-bone text-4xl">{data.teaserPlays}</p>
+                    <p className="text-ink-dim font-mono text-[9px] tracking-[0.2em] uppercase mt-2">
+                      veces escuchado
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
           </>
         )}
       </div>

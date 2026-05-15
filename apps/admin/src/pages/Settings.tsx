@@ -74,11 +74,19 @@ export default function Settings() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-display uppercase tracking-widest text-bone">Settings</h1>
-        <p className="text-ink-dim mt-2 font-mono text-sm">
-          Configuraciones del sitio y Teaser Inédito.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-display uppercase tracking-widest text-bone">Settings</h1>
+          <p className="text-ink-dim mt-2 font-mono text-sm">
+            Configuraciones del sitio y Teaser Inédito.
+          </p>
+        </div>
+        <button
+          onClick={() => window.history.back()}
+          className="border border-blood/40 px-4 py-2 text-ink-dim font-mono text-xs uppercase hover:text-blood-bright hover:border-blood-bright transition-colors"
+        >
+          ← Volver
+        </button>
       </div>
 
       <div className="bg-coal border border-blood/20 p-6 md:p-8 space-y-6">

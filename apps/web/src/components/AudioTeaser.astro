@@ -37,7 +37,7 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
       <!-- Player Raw -->
       <div class="flex flex-col md:flex-row gap-4">
         <!-- Play Button -->
-        <button id="play-btn" class="bg-blood-bright text-bone hover:bg-bone hover:text-blood-bright flex h-14 w-full md:w-16 shrink-0 items-center justify-center transition-colors focus:outline-none">
+        <button id="play-btn" data-api-url={apiUrl} class="bg-blood-bright text-bone hover:bg-bone hover:text-blood-bright flex h-14 w-full md:w-16 shrink-0 items-center justify-center transition-colors focus:outline-none">
           <svg class="h-6 w-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z" />
           </svg>
@@ -79,8 +79,11 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
   const teaserStatus = document.getElementById('teaser-status');
 
   let isPlaying = false;
+  let hasTrackedPlay = false;
 
   if (playBtn && audio && progressBar && timeCurrent && progressContainer) {
+    const apiUrl = playBtn.getAttribute('data-api-url') || '';
+
     audio.addEventListener('loadedmetadata', () => {
       if (isFinite(audio.duration)) {
         const dMins = Math.floor(audio.duration / 60);
@@ -98,6 +101,15 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
         audio.play();
         playBtn.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
         if (teaserStatus) teaserStatus.innerText = 'REPRODUCIENDO...';
+        
+        if (!hasTrackedPlay && apiUrl) {
+          hasTrackedPlay = true;
+          fetch(`${apiUrl}/api/track/play`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: 'teaser' })
+          }).catch(console.error);
+        }
       }
       isPlaying = !isPlaying;
       

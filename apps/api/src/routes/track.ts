@@ -61,3 +61,46 @@ trackRoute.post('/', zValidator('json', trackSchema), async (c) => {
 
   return c.json({ ok: true });
 });
+
+const playSchema = z.object({
+  id: z.string(), // 'teaser' or song slug
+});
+
+trackRoute.post('/play', zValidator('json', playSchema), async (c) => {
+  const { id } = c.req.valid('json');
+  const db = drizzle(c.env.DB);
+
+  c.executionCtx.waitUntil(
+    (async () => {
+      try {
+        if (id === 'teaser') {
+          // Track teaser plays
+          const { sql } = await import('drizzle-orm');
+          const { settings } = await import('../db/schema');
+          await db.insert(settings).values({
+            key: 'teaser_play_count',
+            value: '1',
+            updatedAt: new Date(),
+          }).onConflictDoUpdate({
+            target: settings.key,
+            set: {
+              value: sql`CAST(CAST(${settings.value} AS INTEGER) + 1 AS TEXT)`,
+              updatedAt: new Date(),
+            }
+          });
+        } else {
+          // Track song plays
+          const { sql } = await import('drizzle-orm');
+          const { songs } = await import('../db/schema');
+          await db.update(songs).set({
+            playCount: sql`${songs.playCount} + 1`
+          }).where(sql`${songs.slug} = ${id}`);
+        }
+      } catch (err) {
+        console.error('[track/play] failed', err);
+      }
+    })()
+  );
+
+  return c.json({ ok: true });
+});

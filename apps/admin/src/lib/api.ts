@@ -167,6 +167,8 @@ export interface AnalyticsOverview {
   byCountry: Array<{ country: string | null; count: number }>;
   byDevice: Array<{ device: string | null; count: number }>;
   byLanguage: Array<{ language: string | null; count: number }>;
+  songPlays: Array<{ title: string; count: number }>;
+  teaserPlays: number;
 }
 
 export async function getAnalyticsOverview(range: string = '7d'): Promise<AnalyticsOverview | null> {

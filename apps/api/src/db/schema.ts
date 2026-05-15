@@ -236,6 +236,7 @@ export const songs = sqliteTable(
     genre: text('genre').notNull(),
     year: integer('year'),
     featured: integer('featured', { mode: 'boolean' }).notNull().default(false),
+    playCount: integer('play_count').notNull().default(0),
     themesEs: text('themes_es').notNull(),
     themesEn: text('themes_en').notNull(),
     quote: text('quote').notNull(),

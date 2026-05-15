@@ -276,6 +276,8 @@ adminRoute.get('/analytics/overview', async (c) => {
     byCountry,
     byDevice,
     byLanguage,
+    songPlays,
+    teaserPlays,
   ] = await Promise.all([
     db
       .select({ count: sql<number>`count(*)` })
@@ -324,7 +326,20 @@ adminRoute.get('/analytics/overview', async (c) => {
       .from(pageViews)
       .where(gt(pageViews.createdAt, startDate))
       .groupBy(pageViews.language)
+      .orderBy(desc(sql`count(*)`))
+      .limit(10)
       .all(),
+    db
+      .select({ title: songs.title, count: songs.playCount })
+      .from(songs)
+      .orderBy(desc(songs.playCount))
+      .limit(10)
+      .all(),
+    db
+      .select({ value: settings.value })
+      .from(settings)
+      .where(eq(settings.key, 'teaser_play_count'))
+      .get(),
   ]);
 
   return c.json({
@@ -338,6 +353,8 @@ adminRoute.get('/analytics/overview', async (c) => {
     byCountry,
     byDevice,
     byLanguage,
+    songPlays: songPlays as Array<{ title: string; count: number }>,
+    teaserPlays: teaserPlays ? parseInt(teaserPlays.value || '0', 10) : 0,
   });
 });
 

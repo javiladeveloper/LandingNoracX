@@ -123,10 +123,12 @@ const spotifyArtistUrl = `https://open.spotify.com/artist/${SPOTIFY_ARTIST_ID}`;
           <div class="track-player">
             {song.spotifyId ? (
               <iframe
+                class="spotify-iframe-tracker"
+                data-song-slug={song.slug}
                 src={`https://open.spotify.com/embed/track/${song.spotifyId}?utm_source=generator&theme=0`}
                 width="100%"
                 height="152"
-                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
                 title={`Spotify player — ${song.title}`}
               />
@@ -145,3 +147,36 @@ const spotifyArtistUrl = `https://open.spotify.com/artist/${SPOTIFY_ARTIST_ID}`;
     }
   </div>
 </section>
+
+<script is:inline define:vars={{ apiUrl: import.meta.env.PUBLIC_API_URL || 'https://api.noracx.com' }}>
+  // Hack para detectar clicks en el iframe de Spotify por falta de API
+  (function() {
+    let hoveredIframeSlug = null;
+    
+    // El script puede inyectarse múltiples veces o en diferentes componentes, evitamos duplicar
+    if (!window.__spotifyTrackerInit) {
+      window.__spotifyTrackerInit = true;
+      
+      window.addEventListener('mouseover', function(e) {
+        if (e.target && e.target.tagName === 'IFRAME' && e.target.classList.contains('spotify-iframe-tracker')) {
+          hoveredIframeSlug = e.target.getAttribute('data-song-slug');
+        }
+      });
+      
+      window.addEventListener('mouseout', function() {
+        hoveredIframeSlug = null;
+      });
+      
+      window.addEventListener('blur', function() {
+        if (hoveredIframeSlug && !window['__tracked_' + hoveredIframeSlug]) {
+          window['__tracked_' + hoveredIframeSlug] = true;
+          fetch(`${apiUrl}/api/track/play`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: hoveredIframeSlug })
+          }).catch(err => console.error('Tracking play error:', err));
+        }
+      });
+    }
+  })();
+</script>

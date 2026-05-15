@@ -568,13 +568,14 @@ adminRoute.put('/settings/teaser', zValidator('json', teaserSchema), async (c) =
 
   // Insertar nuevos chunks
   for (let i = 0; i < chunks.length; i++) {
+    const chunkVal = chunks[i] || '';
     await db.insert(settings).values({
       key: `teaser_audio_${i}`,
-      value: chunks[i],
+      value: chunkVal,
       updatedAt: new Date()
     }).onConflictDoUpdate({
       target: settings.key,
-      set: { value: chunks[i], updatedAt: new Date() }
+      set: { value: chunkVal, updatedAt: new Date() }
     });
   }
   

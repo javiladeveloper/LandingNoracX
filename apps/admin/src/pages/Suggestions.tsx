@@ -7,8 +7,8 @@ import {
   type ContactMessageAction,
 } from '@/lib/api';
 
-function formatDate(timestamp: number): string {
-  const date = new Date(timestamp * 1000);
+function formatDate(timestamp: string | number): string {
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : new Date(timestamp * 1000);
   return date.toLocaleString('es-PE', {
     day: '2-digit',
     month: 'short',

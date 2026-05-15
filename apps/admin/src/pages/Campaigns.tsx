@@ -45,9 +45,10 @@ const DEFAULT_TEMPLATE_TEXT = `Hola.
 —
 Para darte de baja respondé este mail con UNSUBSCRIBE`;
 
-function formatDate(ts: number | null): string {
+function formatDate(ts: string | number | null): string {
   if (!ts) return '—';
-  return new Date(ts * 1000).toLocaleString('es-PE', {
+  const d = typeof ts === 'string' ? new Date(ts) : new Date(ts * 1000);
+  return d.toLocaleString('es-PE', {
     day: '2-digit',
     month: 'short',
     year: '2-digit',

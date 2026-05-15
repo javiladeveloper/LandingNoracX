@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { listFans, type FanRow, type FansSummary } from '@/lib/api';
 
-function formatDate(ts: number): string {
-  const d = new Date(ts * 1000);
+function formatDate(ts: string | number): string {
+  const d = typeof ts === 'string' ? new Date(ts) : new Date(ts * 1000);
   return d.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: '2-digit' });
 }
 

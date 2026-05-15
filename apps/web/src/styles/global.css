@@ -47,9 +47,9 @@
 }
 
 /* =========================================================
-   TOP BANNER
+   GLOBAL ANNOUNCEMENT
    ========================================================= */
-.top-banner {
+.global-announcement {
   position: fixed;
   top: 0;
   left: 0;
@@ -68,25 +68,26 @@
   transition: background 0.3s;
   display: block;
 }
-.top-banner:hover {
+.global-announcement:hover {
   background: var(--ember);
 }
-.marquee-content {
+.sliding-tape {
   position: absolute;
   top: 0;
   left: 0;
   white-space: nowrap;
+  width: max-content;
   /* Scroll from left to right continuously */
-  animation: marquee-banner 20s linear infinite;
+  animation: slide-tape 20s linear infinite;
   will-change: transform;
 }
-.marquee-content:hover {
+.sliding-tape:hover {
   animation-play-state: paused;
 }
-.banner-text {
+.announcement-text {
   padding-right: 50px;
 }
-@keyframes marquee-banner {
+@keyframes slide-tape {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100vw); }
 }

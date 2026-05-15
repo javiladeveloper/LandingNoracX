@@ -54,9 +54,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 32px;
-  display: flex;
-  align-items: center;
+  height: 36px;
   background: var(--blood-bright);
   color: var(--bone);
   text-decoration: none;
@@ -66,14 +64,16 @@
   letter-spacing: 0.1em;
   overflow: hidden;
   z-index: 1000;
-  white-space: nowrap;
   transition: background 0.3s;
 }
 .top-banner:hover {
   background: var(--ember);
 }
 .marquee-content {
-  display: inline-flex;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  width: max-content;
   animation: marquee-banner 20s linear infinite;
 }
 .marquee-content:hover {
@@ -81,6 +81,9 @@
 }
 .banner-text {
   padding-right: 50px;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 @keyframes marquee-banner {
   0% { transform: translateX(0); }
@@ -194,7 +197,7 @@ main {
    ========================================================= */
 .nav {
   position: fixed;
-  top: 32px;
+  top: 36px;
   left: 0;
   right: 0;
   z-index: 50;

@@ -55,3 +55,44 @@ const rows = allQuotes.map((q) => ({
     }
   </div>
 </section>
+
+<script>
+  // Web Audio API: Synth static glitch noise on hover
+  let audioCtx: AudioContext | null = null;
+  
+  const playGlitch = () => {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const bufferSize = audioCtx.sampleRate * 0.15; // 150ms of noise
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1; // White noise
+    }
+    
+    const noiseSource = audioCtx.createBufferSource();
+    noiseSource.buffer = buffer;
+    
+    // Bandpass filter to make it sound like a radio/TV glitch
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 800 + Math.random() * 3000;
+    
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime); // Low volume
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    
+    noiseSource.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    noiseSource.start();
+  };
+
+  document.querySelectorAll('.lyric-row').forEach(row => {
+    row.addEventListener('mouseenter', playGlitch);
+  });
+</script>

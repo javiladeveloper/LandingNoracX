@@ -187,6 +187,17 @@ const listenText = lang === 'es' ? 'Escuchar Ahora' : 'Listen Now';
     )}
   </head>
   <body>
+    <a href={localizePath('/#newsletter', lang)} class="top-banner">
+      <div class="marquee-content">
+        <span class="banner-text">
+          {lang === 'es' ? 'ÚNETE A LA RESISTENCIA: REGÍSTRATE AL MANIFIESTO Y OBTÉN UN DEMO INÉDITO' : 'JOIN THE RESISTANCE: SIGN THE MANIFESTO AND GET AN UNRELEASED DEMO'}
+        </span>
+        <span class="banner-text" aria-hidden="true">
+          {lang === 'es' ? 'ÚNETE A LA RESISTENCIA: REGÍSTRATE AL MANIFIESTO Y OBTÉN UN DEMO INÉDITO' : 'JOIN THE RESISTANCE: SIGN THE MANIFESTO AND GET AN UNRELEASED DEMO'}
+        </span>
+      </div>
+    </a>
+
     <div id="preloader" class="preloader">
       <div class="preloader-terminal">
         <p id="boot-text"></p><span class="blink">_</span>

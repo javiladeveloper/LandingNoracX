@@ -15,6 +15,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard' },
   { to: '/messages', label: 'Mensajes' },
+  { to: '/suggestions', label: 'Sugerencias' },
   { to: '/fans', label: 'Fans' },
   { to: '/campaigns', label: 'Campañas' },
   { to: '/songs', label: 'Canciones' },

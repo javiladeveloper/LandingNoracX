@@ -48,7 +48,7 @@ export const contactMessages = sqliteTable(
       .$defaultFn(() => nanoid()),
     name: text('name').notNull(),
     email: text('email').notNull(),
-    type: text('type', { enum: ['booking', 'press', 'general'] }).notNull(),
+    type: text('type', { enum: ['booking', 'press', 'general', 'suggestion'] }).notNull(),
     message: text('message').notNull(),
     language: text('language', { enum: ['es', 'en'] })
       .notNull()

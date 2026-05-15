@@ -250,8 +250,8 @@ const t = {
           body: JSON.stringify({
             name: alias || (lang === 'es' ? 'Anónimo' : 'Anonymous'),
             email: 'suggestion@noracx.com', // Correo simulado para pasar la validación
-            type: 'general',
-            message: `[SUGERENCIA DE TEMA]: ${topic}`,
+            type: 'suggestion',
+            message: topic,
             language: lang,
           }),
         });

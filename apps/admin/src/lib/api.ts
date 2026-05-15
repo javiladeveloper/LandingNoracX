@@ -68,7 +68,7 @@ export interface ContactMessageRow {
   id: string;
   name: string;
   email: string;
-  type: 'booking' | 'press' | 'general';
+  type: 'booking' | 'press' | 'general' | 'suggestion';
   message: string;
   language: 'es' | 'en';
   country: string | null;

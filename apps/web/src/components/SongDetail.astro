@@ -76,7 +76,8 @@ const labels =
       {song.youtubeId ? (
         <div class="song-detail-youtube">
           <p class="song-detail-section-label">{labels.watch}</p>
-          <div class="song-detail-iframe-wrap">
+          <div class="song-detail-iframe-wrap glitch-container">
+            <div class="glitch-overlay"></div>
             <iframe
               src={`https://www.youtube.com/embed/${song.youtubeId}`}
               title={`YouTube — ${song.title}`}
@@ -231,6 +232,35 @@ const labels =
     aspect-ratio: 16 / 9;
     background: var(--ash);
     border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(179, 7, 7, 0.1);
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .song-detail-iframe-wrap:hover {
+    box-shadow: 0 0 30px rgba(230, 10, 10, 0.4);
+    border-color: var(--blood-bright);
+  }
+  .glitch-container {
+    position: relative;
+  }
+  .glitch-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
+    );
+    z-index: 10;
+    opacity: 0.5;
+    animation: scanlines 10s linear infinite;
+  }
+  @keyframes scanlines {
+    from { background-position: 0 0; }
+    to { background-position: 0 100vh; }
   }
   .song-detail-iframe-wrap iframe {
     position: absolute;

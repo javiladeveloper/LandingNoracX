@@ -1100,7 +1100,19 @@ main {
 .lyric-row:hover .lyric-text {
   color: var(--bone);
   transform: translateX(8px);
+  text-shadow: 2px 0 var(--blood-bright), -2px 0 cyan;
+  animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
 }
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg) translateX(8px); }
+  20% { transform: skew(-5deg) translateX(8px); }
+  40% { transform: skew(5deg) translateX(8px); }
+  60% { transform: skew(-2deg) translateX(8px); }
+  80% { transform: skew(2deg) translateX(8px); }
+  100% { transform: skew(0deg) translateX(8px); }
+}
+
 .lyric-number {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;

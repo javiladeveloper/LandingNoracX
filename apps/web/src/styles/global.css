@@ -72,10 +72,13 @@
   background: var(--ember);
 }
 .marquee-content {
-  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
   white-space: nowrap;
   /* Scroll from left to right continuously */
   animation: marquee-banner 20s linear infinite;
+  will-change: transform;
 }
 .marquee-content:hover {
   animation-play-state: paused;

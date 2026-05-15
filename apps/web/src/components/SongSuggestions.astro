@@ -217,7 +217,7 @@ const t = {
 </style>
 
 <script>
-  const form = document.getElementById('suggestion-form');
+  const form = document.getElementById('suggestion-form') as HTMLFormElement | null;
   const successMsg = document.getElementById('suggestion-success');
   const btnText = form?.querySelector('.btn-text');
 

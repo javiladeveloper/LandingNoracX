@@ -1,0 +1,115 @@
+---
+import { type Lang } from '@/i18n';
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<section id="teaser" class="border-blood/20 bg-coal relative border-y px-6 py-24 md:px-12">
+  <div class="mx-auto max-w-4xl">
+    <div class="mb-8 flex items-center justify-between">
+      <h2 class="font-display text-bone text-4xl uppercase md:text-5xl decrypt">
+        {lang === 'es' ? 'Transmisión Segura' : 'Secure Feed'}
+      </h2>
+      <span class="text-blood-bright animate-pulse font-mono text-[10px] tracking-[0.3em] uppercase">
+        Live
+      </span>
+    </div>
+
+    <div class="border-blood/40 bg-black/60 relative border p-6 md:p-10">
+      <!-- Decrypt Target -->
+      <div class="mb-6">
+        <h3 class="text-bone font-display text-xl uppercase tracking-wider decrypt">
+          NO DISPONIBLE AÚN // UNAVAILABLE YET
+        </h3>
+        <p class="text-ink-dim mt-2 font-mono text-[10px] tracking-[0.2em] uppercase">
+          ID: NORACX_TSR_001 · ENCRIPTADO
+        </p>
+      </div>
+
+      <!-- Raw Player Interface -->
+      <div class="border-blood/20 flex flex-col gap-6 border-t pt-6 md:flex-row md:items-center md:gap-10">
+        
+        <button id="play-btn" class="border-blood/50 hover:bg-blood/20 hover:border-blood-bright text-blood-bright flex h-16 w-16 shrink-0 items-center justify-center border-2 transition-colors focus:outline-none">
+          <svg class="h-6 w-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
+
+        <div class="flex-1 space-y-4">
+          <div class="flex justify-between font-mono text-[10px] tracking-[0.2em]">
+            <span id="time-current" class="text-blood-bright">00:00</span>
+            <span class="text-ink-dim">00:30</span>
+          </div>
+          
+          <div class="bg-ash relative h-2 w-full overflow-hidden cursor-pointer" id="progress-container">
+            <div id="progress-bar" class="bg-blood-bright absolute left-0 top-0 h-full w-0 transition-all duration-75"></div>
+            <!-- Glitch lines inside progress -->
+            <div class="absolute left-1/4 top-0 h-full w-px bg-white/20"></div>
+            <div class="absolute left-1/2 top-0 h-full w-px bg-white/20"></div>
+            <div class="absolute left-3/4 top-0 h-full w-px bg-white/20"></div>
+          </div>
+        </div>
+
+        <div class="text-ink-faint hidden font-mono text-[10px] md:block">
+          SYS.REQ. <br />
+          v.2.0.4
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="teaser-audio" preload="none">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+  </audio>
+</section>
+
+<script>
+  const playBtn = document.getElementById('play-btn');
+  const audio = document.getElementById('teaser-audio') as HTMLAudioElement;
+  const progressBar = document.getElementById('progress-bar');
+  const progressContainer = document.getElementById('progress-container');
+  const timeCurrent = document.getElementById('time-current');
+
+  let isPlaying = false;
+
+  if (playBtn && audio && progressBar && timeCurrent && progressContainer) {
+    playBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        audio.pause();
+        playBtn.innerHTML = '<svg class="w-6 h-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+      } else {
+        audio.play();
+        playBtn.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+      }
+      isPlaying = !isPlaying;
+      
+      // Glitch effect on button click
+      playBtn.style.transform = 'translate(2px, 2px)';
+      setTimeout(() => playBtn.style.transform = 'translate(0, 0)', 50);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = `${pct}%`;
+      
+      const mins = Math.floor(audio.currentTime / 60);
+      const secs = Math.floor(audio.currentTime % 60);
+      timeCurrent.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    });
+
+    progressContainer.addEventListener('click', (e) => {
+      const rect = progressContainer.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pos * audio.duration;
+    });
+
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      playBtn.innerHTML = '<svg class="w-6 h-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+      progressBar.style.width = '0%';
+      timeCurrent.innerText = '00:00';
+    });
+  }
+</script>

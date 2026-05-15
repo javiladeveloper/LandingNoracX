@@ -333,6 +333,57 @@ const listenText = lang === 'es' ? 'Escuchar Ahora' : 'Listen Now';
         }, 300);
       }
 
+      // DECRYPTER EFFECT
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+      const decryptEls = document.querySelectorAll('h2, h3');
+      const decryptObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            if (el.dataset.decrypted) return;
+            el.dataset.decrypted = 'true';
+            
+            const originalText = el.innerText;
+            // Solo aplicamos el efecto a textos cortos (títulos)
+            if (originalText.length > 50) return;
+            
+            let iterations = 0;
+            const interval = setInterval(() => {
+              el.innerText = originalText.split('')
+                .map((letter, index) => {
+                  if (index < iterations) return originalText[index];
+                  if (letter === ' ') return ' ';
+                  return chars[Math.floor(Math.random() * chars.length)];
+                })
+                .join('');
+              if (iterations >= originalText.length) clearInterval(interval);
+              iterations += 1 / 3;
+            }, 30);
+          }
+        });
+      }, { threshold: 0.8 });
+      decryptEls.forEach(el => decryptObserver.observe(el));
+
+      // EASTER EGG: N O R A C
+      let keys = '';
+      const secret = 'norac';
+      document.addEventListener('keydown', (e) => {
+        if (e.key.length !== 1) return; // ignorar shift, ctrl, etc
+        keys += e.key.toLowerCase();
+        if (keys.length > secret.length) keys = keys.slice(-secret.length);
+        if (keys === secret) {
+          document.body.classList.add('easter-egg-active');
+          const glitchDiv = document.createElement('div');
+          glitchDiv.className = 'secret-glitch';
+          glitchDiv.innerHTML = '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; width:100%;"><h1 style="color:var(--blood-bright); font-size: clamp(2rem, 8vw, 6rem); margin:0; font-family:var(--font-display); letter-spacing:-0.05em; line-height:1;">ACCESO CONCEDIDO</h1><p style="margin-top:1rem; font-size:clamp(0.8rem, 3vw, 1.5rem); color:var(--bone); font-family:var(--font-mono); letter-spacing:0.2em;">PREPARANDO EL GRITO...</p></div>';
+          document.body.appendChild(glitchDiv);
+          setTimeout(() => {
+            document.body.classList.remove('easter-egg-active');
+            glitchDiv.remove();
+          }, 3000);
+        }
+      });
+
     </script>
   </body>
 </html>

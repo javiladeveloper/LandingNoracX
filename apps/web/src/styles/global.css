@@ -104,17 +104,62 @@ html {
   scroll-behavior: smooth;
   background: var(--black);
 }
+
 body {
-  background: var(--black);
-  color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
-  overflow-x: hidden;
-  min-height: 100vh;
-  position: relative;
+  background-color: var(--black);
+  color: var(--bone);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* Background Noise / Film Grain */
+body::before {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200vh;
+  background: transparent url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.05;
+  z-index: -10;
+  pointer-events: none;
+  animation: noise-move 0.2s steps(2) infinite;
+  will-change: transform;
+}
+
+@keyframes noise-move {
+  0% { transform: translate(0,0) }
+  20% { transform: translate(-5%,5%) }
+  40% { transform: translate(-10%,-5%) }
+  60% { transform: translate(5%,10%) }
+  80% { transform: translate(-5%,-10%) }
+  100% { transform: translate(0,0) }
+}
+
+/* EASTER EGG GLITCH */
+body.easter-egg-active {
+  animation: body-glitch 0.2s infinite;
+  filter: invert(1) hue-rotate(180deg);
+}
+@keyframes body-glitch {
+  0% { transform: translate(2px, 2px) }
+  25% { transform: translate(-2px, -2px) }
+  50% { transform: translate(2px, -2px) }
+  75% { transform: translate(-2px, 2px) }
+  100% { transform: translate(2px, 2px) }
+}
+.secret-glitch {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 9999;
+  pointer-events: none;
 }
 
 .cursor {

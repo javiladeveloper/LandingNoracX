@@ -153,7 +153,7 @@ export async function listFans(filters: FansFilters = {}): Promise<FansResponse 
 
 export interface AnalyticsOverview {
   ok: true;
-  totals: { views7d: number; uniqueSessions7d: number };
+  totals: { views: number; uniqueSessions: number };
   daily: Array<{ day: string; count: number }>;
   topPaths: Array<{ path: string; count: number }>;
   byCountry: Array<{ country: string | null; count: number }>;
@@ -161,8 +161,8 @@ export interface AnalyticsOverview {
   byLanguage: Array<{ language: string | null; count: number }>;
 }
 
-export async function getAnalyticsOverview(): Promise<AnalyticsOverview | null> {
-  const res = await apiFetch<AnalyticsOverview>('/api/admin/analytics/overview');
+export async function getAnalyticsOverview(range: string = '7d'): Promise<AnalyticsOverview | null> {
+  const res = await apiFetch<AnalyticsOverview>(`/api/admin/analytics/overview?range=${range}`);
   if (!res.ok) return null;
   return res.body as AnalyticsOverview;
 }

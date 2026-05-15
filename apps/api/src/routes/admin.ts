@@ -248,13 +248,29 @@ adminRoute.get('/fans', async (c) => {
 
 adminRoute.get('/analytics/overview', async (c) => {
   const db = drizzle(c.env.DB);
-  const now = Date.now();
-  const sevenDaysAgo = new Date(now - 7 * 24 * 3600 * 1000);
-  const fourteenDaysAgo = new Date(now - 14 * 24 * 3600 * 1000);
+  const range = c.req.query('range') || '7d';
+  const now = new Date();
+  let startDate: Date;
+
+  switch (range) {
+    case 'today':
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case '30d':
+      startDate = new Date(now.getTime() - 30 * 24 * 3600 * 1000);
+      break;
+    case 'all':
+      startDate = new Date(0);
+      break;
+    case '7d':
+    default:
+      startDate = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
+      break;
+  }
 
   const [
-    totalViews7d,
-    uniqueSessions7d,
+    totalViews,
+    uniqueSessions,
     daily,
     topPaths,
     byCountry,
@@ -264,12 +280,12 @@ adminRoute.get('/analytics/overview', async (c) => {
     db
       .select({ count: sql<number>`count(*)` })
       .from(pageViews)
-      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .where(gt(pageViews.createdAt, startDate))
       .get(),
     db
       .select({ count: sql<number>`count(distinct ${pageViews.sessionId})` })
       .from(pageViews)
-      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .where(gt(pageViews.createdAt, startDate))
       .get(),
     db
       .select({
@@ -277,14 +293,14 @@ adminRoute.get('/analytics/overview', async (c) => {
         count: sql<number>`count(*)`,
       })
       .from(pageViews)
-      .where(gt(pageViews.createdAt, fourteenDaysAgo))
+      .where(gt(pageViews.createdAt, startDate))
       .groupBy(sql`date(${pageViews.createdAt}, 'unixepoch')`)
       .orderBy(sql`date(${pageViews.createdAt}, 'unixepoch')`)
       .all(),
     db
       .select({ path: pageViews.path, count: sql<number>`count(*)` })
       .from(pageViews)
-      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .where(gt(pageViews.createdAt, startDate))
       .groupBy(pageViews.path)
       .orderBy(desc(sql`count(*)`))
       .limit(10)
@@ -292,7 +308,7 @@ adminRoute.get('/analytics/overview', async (c) => {
     db
       .select({ country: pageViews.country, count: sql<number>`count(*)` })
       .from(pageViews)
-      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .where(gt(pageViews.createdAt, startDate))
       .groupBy(pageViews.country)
       .orderBy(desc(sql`count(*)`))
       .limit(10)
@@ -300,13 +316,13 @@ adminRoute.get('/analytics/overview', async (c) => {
     db
       .select({ device: pageViews.deviceClass, count: sql<number>`count(*)` })
       .from(pageViews)
-      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .where(gt(pageViews.createdAt, startDate))
       .groupBy(pageViews.deviceClass)
       .all(),
     db
       .select({ language: pageViews.language, count: sql<number>`count(*)` })
       .from(pageViews)
-      .where(gt(pageViews.createdAt, sevenDaysAgo))
+      .where(gt(pageViews.createdAt, startDate))
       .groupBy(pageViews.language)
       .all(),
   ]);
@@ -314,8 +330,8 @@ adminRoute.get('/analytics/overview', async (c) => {
   return c.json({
     ok: true,
     totals: {
-      views7d: totalViews7d?.count ?? 0,
-      uniqueSessions7d: uniqueSessions7d?.count ?? 0,
+      views: totalViews?.count ?? 0,
+      uniqueSessions: uniqueSessions?.count ?? 0,
     },
     daily,
     topPaths,

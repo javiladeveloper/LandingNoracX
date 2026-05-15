@@ -34,8 +34,8 @@ function BarRow({ label, count, max }: { label: string; count: number; max: numb
   );
 }
 
-function Sparkline({ daily }: { daily: Array<{ day: string; count: number }> }) {
-  const padded = fillMissingDays(daily, 14);
+function Sparkline({ daily, days }: { daily: Array<{ day: string; count: number }>; days: number }) {
+  const padded = fillMissingDays(daily, days);
   const values = padded.map((d) => d.count);
   const max = Math.max(...values, 1);
   const W = 600;
@@ -77,30 +77,57 @@ function Sparkline({ daily }: { daily: Array<{ day: string; count: number }> }) 
 }
 
 export default function DashboardPage() {
+  const [range, setRange] = useState<string>('7d');
   const [data, setData] = useState<AnalyticsOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAnalyticsOverview()
+    setLoading(true);
+    getAnalyticsOverview(range)
       .then((res) => {
         if (!res) setError('No se pudieron cargar las stats.');
         else setData(res);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [range]);
 
   const maxPath = Math.max(...(data?.topPaths.map((p) => p.count) ?? [0]), 1);
   const maxCountry = Math.max(...(data?.byCountry.map((c) => c.count) ?? [0]), 1);
 
+  const rangeDays = range === 'today' ? 1 : range === '30d' ? 30 : range === 'all' ? 90 : 14;
+  const rangeLabels: Record<string, string> = {
+    today: 'Hoy',
+    '7d': '7 días',
+    '30d': '30 días',
+    all: 'Todo',
+  };
+
   return (
     <AdminLayout>
       <div className="max-w-6xl space-y-6">
-        <header>
-          <p className="text-blood-bright font-mono text-[10px] tracking-[0.3em] uppercase">
-            Dashboard
-          </p>
-          <h2 className="font-display text-bone mt-2 text-3xl">Visitas últimos 7 días</h2>
+        <header className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-blood-bright font-mono text-[10px] tracking-[0.3em] uppercase">
+              Dashboard
+            </p>
+            <h2 className="font-display text-bone mt-2 text-3xl">Visitas</h2>
+          </div>
+          <div className="border-blood/40 bg-coal flex gap-1 border p-1">
+            {Object.entries(rangeLabels).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setRange(key)}
+                className={`px-3 py-1.5 font-mono text-[10px] tracking-[0.2em] uppercase transition-colors ${
+                  range === key
+                    ? 'bg-blood text-bone'
+                    : 'text-ink-dim hover:text-bone hover:bg-black/40'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </header>
 
         {error && (
@@ -119,29 +146,31 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="border-blood/20 bg-coal border p-5">
                 <p className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">
-                  Page views · 7d
+                  Page views
                 </p>
-                <p className="font-display text-bone mt-2 text-4xl">{data.totals.views7d}</p>
+                <p className="font-display text-bone mt-2 text-4xl">{data.totals.views}</p>
               </div>
               <div className="border-blood/20 bg-coal border p-5">
                 <p className="text-ink-dim font-mono text-[9px] tracking-[0.3em] uppercase">
-                  Sesiones únicas · 7d
+                  Sesiones únicas
                 </p>
                 <p className="font-display text-bone mt-2 text-4xl">
-                  {data.totals.uniqueSessions7d}
+                  {data.totals.uniqueSessions}
                 </p>
               </div>
             </div>
 
             {/* Sparkline */}
-            <section className="border-blood/20 bg-coal border p-5">
-              <p className="text-blood-bright font-mono text-[10px] tracking-[0.3em] uppercase">
-                Tendencia · últimos 14 días
-              </p>
-              <div className="mt-4">
-                <Sparkline daily={data.daily} />
-              </div>
-            </section>
+            {range !== 'today' && (
+              <section className="border-blood/20 bg-coal border p-5">
+                <p className="text-blood-bright font-mono text-[10px] tracking-[0.3em] uppercase">
+                  Tendencia ({rangeLabels[range]})
+                </p>
+                <div className="mt-4">
+                  <Sparkline daily={data.daily} days={rangeDays} />
+                </div>
+              </section>
+            )}
 
             {/* Top paths + countries */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

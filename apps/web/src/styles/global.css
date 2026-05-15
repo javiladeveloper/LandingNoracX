@@ -1284,6 +1284,22 @@ main {
 .platforms-section {
   background: var(--black);
 }
+.platforms-group {
+  margin-top: 40px;
+}
+.platforms-group:first-of-type {
+  margin-top: 0;
+}
+.platforms-group-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--blood);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 8px;
+}
 .platforms-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -1097,22 +1097,6 @@ main {
 .lyric-row:hover::before {
   transform: scaleY(1);
 }
-.lyric-row:hover .lyric-text {
-  color: var(--bone);
-  transform: translateX(8px);
-  text-shadow: 2px 0 var(--blood-bright), -2px 0 cyan;
-  animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-}
-
-@keyframes glitch-skew {
-  0% { transform: skew(0deg) translateX(8px); }
-  20% { transform: skew(-5deg) translateX(8px); }
-  40% { transform: skew(5deg) translateX(8px); }
-  60% { transform: skew(-2deg) translateX(8px); }
-  80% { transform: skew(2deg) translateX(8px); }
-  100% { transform: skew(0deg) translateX(8px); }
-}
-
 .lyric-number {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
@@ -1121,6 +1105,7 @@ main {
   font-weight: 700;
 }
 .lyric-text {
+  position: relative;
   font-family: 'Archivo Black', sans-serif;
   font-size: clamp(18px, 2.5vw, 32px);
   line-height: 1.2;
@@ -1128,6 +1113,52 @@ main {
   color: var(--ink);
   font-style: italic;
   transition: all 0.4s;
+}
+
+.lyric-row:hover .lyric-text {
+  color: var(--bone);
+  transform: translateX(8px);
+}
+
+.lyric-row:hover .lyric-text::before,
+.lyric-row:hover .lyric-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.lyric-row:hover .lyric-text::before {
+  color: cyan;
+  z-index: -1;
+  animation: glitch-anim-1 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite both alternate;
+}
+
+.lyric-row:hover .lyric-text::after {
+  color: var(--blood-bright);
+  z-index: -2;
+  animation: glitch-anim-2 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite both alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+  40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+  100% { clip-path: inset(30% 0 50% 0); transform: translate(1px, -1px); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+  20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
+  40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, 1px); }
+  60% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, -1px); }
+  80% { clip-path: inset(50% 0 30% 0); transform: translate(1px, 2px); }
+  100% { clip-path: inset(20% 0 40% 0); transform: translate(-1px, -2px); }
 }
 .lyric-source {
   font-family: 'JetBrains Mono', monospace;

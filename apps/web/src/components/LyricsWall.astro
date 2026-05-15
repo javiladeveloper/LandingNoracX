@@ -48,7 +48,7 @@ const rows = allQuotes.map((q) => ({
       rows.map((row) => (
         <div class="lyric-row">
           <span class="lyric-number">{row.order.toString().padStart(2, '0')}</span>
-          <div class="lyric-text">{row.text}</div>
+          <div class="lyric-text" data-text={row.text}>{row.text}</div>
           <span class="lyric-source">{row.source}</span>
         </div>
       ))

@@ -74,7 +74,8 @@
 .marquee-content {
   display: inline-block;
   white-space: nowrap;
-  animation: marquee-banner 15s linear infinite alternate;
+  /* Scroll from left to right continuously */
+  animation: marquee-banner 20s linear infinite;
 }
 .marquee-content:hover {
   animation-play-state: paused;
@@ -83,8 +84,8 @@
   padding-right: 50px;
 }
 @keyframes marquee-banner {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-100% + 100vw)); }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
 }
 
 /* =========================================================

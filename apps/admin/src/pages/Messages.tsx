@@ -11,6 +11,7 @@ const TYPE_LABELS = {
   booking: 'Booking',
   press: 'Prensa',
   general: 'General',
+  suggestion: 'Sugerencia',
 } as const;
 
 function formatDate(timestamp: number): string {

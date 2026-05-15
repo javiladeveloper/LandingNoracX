@@ -453,6 +453,53 @@ main {
 }
 
 /* =========================================================
+   FLOATING MUSIC BUTTON
+   ========================================================= */
+.floating-music {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: linear-gradient(135deg, var(--blood) 0%, var(--blood-deep) 100%);
+  border: 1px solid var(--blood-bright);
+  color: var(--bone);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-radius: 50px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  z-index: 999;
+  box-shadow: 0 10px 30px rgba(179, 7, 7, 0.4);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
+}
+.floating-music:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(230, 10, 10, 0.6);
+  border-color: var(--ember);
+  color: var(--bone);
+}
+.floating-music svg {
+  width: 24px;
+  height: 24px;
+}
+@media (max-width: 768px) {
+  .floating-music {
+    bottom: 20px;
+    right: 20px;
+    padding: 14px;
+    border-radius: 50%;
+  }
+  .floating-music .fs-text {
+    display: none;
+  }
+}
+
+/* =========================================================
    FOLLOW DROPDOWN (hero CTA)
    ========================================================= */
 .follow-dropdown {

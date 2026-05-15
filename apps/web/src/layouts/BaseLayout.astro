@@ -52,6 +52,10 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 // la foto en Spotify, todos los previews sociales se actualizan en el siguiente
 // rebuild sin tocar código.
 const artistImage = await getArtistImage();
+const pixelId = import.meta.env.PUBLIC_META_PIXEL_ID;
+
+const platformsHref = localizePath('/#plataformas', lang);
+const listenText = lang === 'es' ? 'Escuchar Ahora' : 'Listen Now';
 ---
 
 <!doctype html>
@@ -158,6 +162,26 @@ const artistImage = await getArtistImage();
         }
       })();
     </script>
+
+    {pixelId && (
+      <!-- Meta Pixel Code -->
+      <script is:inline define:vars={{ pixelId }}>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', pixelId);
+        fbq('track', 'PageView');
+      </script>
+      <noscript><img height="1" width="1" style="display:none"
+        src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+      /></noscript>
+      <!-- End Meta Pixel Code -->
+    )}
   </head>
   <body>
     <div id="preloader" class="preloader">
@@ -175,6 +199,13 @@ const artistImage = await getArtistImage();
     </main>
 
     <Footer lang={lang} />
+
+    <a href={platformsHref} class="floating-music" aria-label={listenText}>
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-2.5-13.5v7l6-3.5-6-3.5z"/>
+      </svg>
+      <span class="fs-text">{listenText}</span>
+    </a>
 
     <script is:inline define:vars={{ apiUrl, lang }}>
       // Tracking de pageview — server-side, sin cookies de terceros.

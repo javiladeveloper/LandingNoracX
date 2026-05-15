@@ -1,0 +1,244 @@
+---
+interface Props {
+  lang: 'es' | 'en';
+}
+
+const { lang } = Astro.props;
+
+const t = {
+  es: {
+    title: 'LÍNEA ABIERTA',
+    subtitle: 'La resistencia se construye en conjunto. ¿Sobre qué temática social, personal o del sistema deberíamos escribir nuestra próxima canción?',
+    aliasLabel: 'ALIAS / NOMBRE EN CLAVE (OPCIONAL)',
+    aliasPlaceholder: 'Ej: Cipher...',
+    topicLabel: 'TU SUGERENCIA DE TEMA',
+    topicPlaceholder: 'Escribe tu idea aquí. Sé directo.',
+    submit: 'ENVIAR TRANSMISIÓN',
+    success: 'TRANSMISIÓN ENCRIPTADA Y ENVIADA. GRACIAS POR APORTAR.',
+  },
+  en: {
+    title: 'SECURE CHANNEL',
+    subtitle: 'The resistance is built together. What social, personal, or systemic theme should we write our next song about?',
+    aliasLabel: 'ALIAS / CODENAME (OPTIONAL)',
+    aliasPlaceholder: 'Ex: Cipher...',
+    topicLabel: 'YOUR TOPIC SUGGESTION',
+    topicPlaceholder: 'Write your idea here. Be direct.',
+    submit: 'SEND TRANSMISSION',
+    success: 'TRANSMISSION ENCRYPTED AND SENT. THANKS FOR CONTRIBUTING.',
+  }
+}[lang];
+---
+
+<section id="suggestions" class="suggestions-section">
+  <div class="suggestions-container">
+    <div class="suggestions-header">
+      <h2 class="glitch-text" data-text={t.title}>{t.title}</h2>
+      <p>{t.subtitle}</p>
+    </div>
+
+    <form id="suggestion-form" class="hacker-form">
+      <div class="form-group">
+        <label for="alias">{t.aliasLabel}</label>
+        <div class="input-wrapper">
+          <span class="prompt-symbol">{'>'}</span>
+          <input type="text" id="alias" name="alias" placeholder={t.aliasPlaceholder} autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="topic">{t.topicLabel}</label>
+        <div class="input-wrapper textarea-wrapper">
+          <span class="prompt-symbol">{'>'}</span>
+          <textarea id="topic" name="topic" rows="4" required placeholder={t.topicPlaceholder}></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="cyber-button">
+        <span class="btn-text">{t.submit}</span>
+        <span class="btn-glitch"></span>
+      </button>
+
+      <div id="suggestion-success" class="success-message hidden">
+        <p class="typewriter-text">{t.success}</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .suggestions-section {
+    padding: 100px 20px;
+    background: var(--black);
+    position: relative;
+    border-top: 1px dashed var(--border);
+  }
+
+  .suggestions-container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .suggestions-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .suggestions-header h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(32px, 5vw, 48px);
+    color: var(--bone);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .suggestions-header p {
+    color: var(--ash);
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .hacker-form {
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid var(--border);
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(230, 57, 70, 0.05);
+    position: relative;
+  }
+
+  .hacker-form::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--blood-bright);
+  }
+
+  .form-group {
+    margin-bottom: 30px;
+  }
+
+  .form-group label {
+    display: block;
+    color: var(--blood-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    background: #050505;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+
+  .input-wrapper:focus-within {
+    border-color: var(--blood-bright);
+  }
+
+  .prompt-symbol {
+    color: var(--blood-bright);
+    font-family: 'JetBrains Mono', monospace;
+    padding: 15px 0 15px 15px;
+    user-select: none;
+  }
+
+  .textarea-wrapper .prompt-symbol {
+    padding-top: 15px;
+  }
+
+  input, textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--bone);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    padding: 15px;
+    outline: none;
+    resize: none;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #333;
+  }
+
+  .cyber-button {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--blood-bright);
+    color: var(--blood-bright);
+    padding: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .cyber-button:hover {
+    background: var(--blood-bright);
+    color: var(--bone);
+    box-shadow: 0 0 15px var(--blood-bright);
+  }
+
+  .success-message {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(230, 57, 70, 0.1);
+    border-left: 3px solid var(--blood-bright);
+  }
+
+  .success-message p {
+    color: var(--bone);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .hacker-form {
+      padding: 20px;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('suggestion-form');
+  const successMsg = document.getElementById('suggestion-success');
+  const btnText = form?.querySelector('.btn-text');
+
+  if (form && successMsg && btnText) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Simulando envío seguro
+      const originalText = btnText.textContent;
+      btnText.textContent = 'ENCRIPTANDO...';
+      
+      setTimeout(() => {
+        // Aquí puedes conectar tu API real en el futuro
+        form.reset();
+        successMsg.classList.remove('hidden');
+        btnText.textContent = originalText;
+        
+        setTimeout(() => {
+          successMsg.classList.add('hidden');
+        }, 5000);
+      }, 1500);
+    });
+  }
+</script>

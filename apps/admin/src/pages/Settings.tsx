@@ -47,28 +47,56 @@ export default function Settings() {
 
       const renderedBuffer = await offlineCtx.startRendering();
 
-      // Convert AudioBuffer to WAV Blob
-      const wavBlob = bufferToWav(renderedBuffer, offlineCtx.sampleRate);
+      // Convert AudioBuffer to compressed webm/mp4 using MediaRecorder
+      const streamDest = ctx.createMediaStreamDestination();
+      const playbackSource = ctx.createBufferSource();
+      playbackSource.buffer = renderedBuffer;
+      playbackSource.connect(streamDest);
 
-      setStatus('uploading');
-      
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Data = reader.result as string;
-        // Check size: roughly length * 0.75
-        const sizeKb = (base64Data.length * 0.75) / 1024;
-        if (sizeKb > 950) {
-          throw new Error(`El archivo cortado es demasiado grande (${Math.round(sizeKb)}KB). Intenta un segmento más corto (ej. 15-20s) o usa un archivo base MP3.`);
-        }
+      let mimeType = 'audio/webm;codecs=opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'audio/mp4'; // Fallback for Safari
+      }
 
-        const success = await putTeaser(base64Data);
-        if (success) {
-          setStatus('success');
-        } else {
-          throw new Error("Error guardando el archivo en la base de datos.");
-        }
+      const recorder = new MediaRecorder(streamDest.stream, { mimeType });
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
       };
-      reader.readAsDataURL(wavBlob);
+
+      recorder.onstop = () => {
+        const compressedBlob = new Blob(chunks, { type: mimeType });
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64Data = reader.result as string;
+          const sizeKb = (base64Data.length * 0.75) / 1024;
+          
+          if (sizeKb > 950) {
+            setStatus('error');
+            setErrorMessage(`El archivo cortado es demasiado grande (${Math.round(sizeKb)}KB). D1 solo soporta 1MB. Intenta un segmento más corto.`);
+            return;
+          }
+
+          const success = await putTeaser(base64Data);
+          if (success) {
+            setStatus('success');
+          } else {
+            setStatus('error');
+            setErrorMessage("Error guardando el archivo en la base de datos.");
+          }
+        };
+        reader.readAsDataURL(compressedBlob);
+      };
+
+      setStatus('processing');
+      recorder.start();
+      playbackSource.start(0);
+      
+      playbackSource.onended = () => {
+        recorder.stop();
+        setStatus('uploading');
+      };
 
     } catch (err: any) {
       setStatus('error');
@@ -150,54 +178,4 @@ export default function Settings() {
   );
 }
 
-// Utility function to convert AudioBuffer to WAV format
-function bufferToWav(abuffer: AudioBuffer, len: number) {
-  let numOfChan = abuffer.numberOfChannels,
-      length = len * numOfChan * 2 + 44,
-      buffer = new ArrayBuffer(length),
-      view = new DataView(buffer),
-      channels = [], i, sample,
-      offset = 0,
-      pos = 0;
 
-  setUint32(0x46464952);                         // "RIFF"
-  setUint32(length - 8);                         // file length - 8
-  setUint32(0x45564157);                         // "WAVE"
-
-  setUint32(0x20746d66);                         // "fmt " chunk
-  setUint32(16);                                 // length = 16
-  setUint16(1);                                  // PCM (uncompressed)
-  setUint16(numOfChan);
-  setUint32(abuffer.sampleRate);
-  setUint32(abuffer.sampleRate * 2 * numOfChan); // avg. bytes/sec
-  setUint16(numOfChan * 2);                      // block-align
-  setUint16(16);                                 // 16-bit (hardcoded in this demo)
-
-  setUint32(0x61746164);                         // "data" - chunk
-  setUint32(length - pos - 4);                   // chunk length
-
-  for(i = 0; i < abuffer.numberOfChannels; i++)
-    channels.push(abuffer.getChannelData(i));
-
-  while(pos < length) {
-    for(i = 0; i < numOfChan; i++) {
-      sample = Math.max(-1, Math.min(1, channels[i]![offset] as number));
-      sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767)|0;
-      view.setInt16(pos, sample, true);          // write 16-bit sample
-      pos += 2;
-    }
-    offset++
-  }
-
-  function setUint16(data: number) {
-    view.setUint16(pos, data, true);
-    pos += 2;
-  }
-
-  function setUint32(data: number) {
-    view.setUint32(pos, data, true);
-    pos += 4;
-  }
-
-  return new Blob([buffer], { type: "audio/wav" });
-}

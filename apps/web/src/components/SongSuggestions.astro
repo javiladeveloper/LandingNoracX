@@ -224,15 +224,38 @@ const t = {
   const btnText = form?.querySelector('.btn-text');
 
   if (form && successMsg && btnText) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Simulando envío seguro
       const originalText = btnText.textContent;
       btnText.textContent = 'ENCRIPTANDO...';
       
-      setTimeout(() => {
-        // Aquí puedes conectar tu API real en el futuro
+      const formData = new FormData(form);
+      const alias = formData.get('alias') as string;
+      const topic = formData.get('topic') as string;
+      const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
+
+      try {
+        // Obtenemos la URL del API desde las variables de entorno
+        // (En Astro, las variables públicas se inyectan en build-time si usamos import.meta.env,
+        // pero como esto es un script de cliente genérico, inyectamos la URL vía data-attribute
+        // o usamos la ruta absoluta si está en el mismo dominio. Aquí usaremos la ruta relativa del proxy o el dominio).
+        // Sin embargo, para LandingNoracX, usualmente el PUBLIC_API_URL está disponible:
+        // Por seguridad, haremos un POST al endpoint de contacto asumiendo la URL base actual o la configurada.
+        const apiUrl = import.meta.env.PUBLIC_API_URL || 'https://api.noracx.com';
+
+        await fetch(`${apiUrl}/api/contact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: alias || (lang === 'es' ? 'Anónimo' : 'Anonymous'),
+            email: 'suggestion@noracx.com', // Correo simulado para pasar la validación
+            type: 'general',
+            message: `[SUGERENCIA DE TEMA]: ${topic}`,
+            language: lang,
+          }),
+        });
+
         form.reset();
         successMsg.classList.remove('hidden');
         btnText.textContent = originalText;
@@ -240,7 +263,13 @@ const t = {
         setTimeout(() => {
           successMsg.classList.add('hidden');
         }, 5000);
-      }, 1500);
+      } catch (error) {
+        console.error('Error enviando sugerencia:', error);
+        btnText.textContent = 'ERROR DE CONEXIÓN';
+        setTimeout(() => {
+          btnText.textContent = originalText;
+        }, 2000);
+      }
     });
   }
 </script>

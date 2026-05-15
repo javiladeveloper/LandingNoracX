@@ -25,6 +25,7 @@ const { lang, song } = Astro.props;
 
 const backHref = localizePath('/#musica', lang);
 const theme = lang === 'es' ? song.themesEs : song.themesEn;
+const apiUrl = import.meta.env.PUBLIC_API_URL || 'https://api.noracx.com';
 
 const labels =
   lang === 'es'
@@ -50,7 +51,7 @@ const labels =
       };
 ---
 
-<article class="song-detail">
+<article class="song-detail" data-api-url={apiUrl} data-song-slug={song.slug}>
   <div class="song-detail-inner">
     <a href={backHref} class="song-detail-back">{labels.back}</a>
 
@@ -146,6 +147,27 @@ const labels =
     ...(song.lyrics ? { lyrics: { '@type': 'CreativeWork', text: song.lyrics } } : {}),
   })}
 ></script>
+
+<script is:inline>
+  // Contamos la carga de esta página como una reproducción/interés
+  (function() {
+    const article = document.querySelector('article.song-detail');
+    if (article) {
+      const apiUrl = article.getAttribute('data-api-url');
+      const songSlug = article.getAttribute('data-song-slug');
+      
+      // Evitar doble tracking si Astro re-evalúa el script
+      if (apiUrl && songSlug && !window['__tracked_' + songSlug]) {
+        window['__tracked_' + songSlug] = true;
+        fetch(`${apiUrl}/api/track/play`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: songSlug })
+        }).catch(err => console.error('Tracking play error:', err));
+      }
+    }
+  })();
+</script>
 
 <style>
   .song-detail {

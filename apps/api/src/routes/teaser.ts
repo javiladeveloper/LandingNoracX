@@ -9,15 +9,23 @@ export const teaserRoute = new Hono<{ Bindings: Bindings }>();
 teaserRoute.get('/', async (c) => {
   const db = drizzle(c.env.DB);
   
-  const setting = await db.select().from(settings).where(eq(settings.key, 'teaser_audio')).get();
+  const countSetting = await db.select().from(settings).where(eq(settings.key, 'teaser_audio_count')).get();
   
-  if (!setting || !setting.value) {
+  if (!countSetting || !countSetting.value) {
     return c.json({ ok: false, error: 'not_found' }, 404);
   }
 
-  const base64Data = setting.value;
-  
-  // Format: "data:audio/mpeg;base64,....."
+  const chunkCount = parseInt(countSetting.value, 10);
+  let base64Data = '';
+
+  for (let i = 0; i < chunkCount; i++) {
+    const chunk = await db.select().from(settings).where(eq(settings.key, `teaser_audio_${i}`)).get();
+    if (chunk && chunk.value) {
+      base64Data += chunk.value;
+    }
+  }
+
+  // Format: "data:audio/webm;base64,....." or "data:audio/mp4;base64,....."
   const matches = base64Data.match(/^data:([^;]+);base64,(.+)$/);
   if (!matches) {
     return c.json({ ok: false, error: 'invalid_format' }, 500);

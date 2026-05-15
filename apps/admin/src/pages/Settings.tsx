@@ -70,13 +70,6 @@ export default function Settings() {
         const reader = new FileReader();
         reader.onloadend = async () => {
           const base64Data = reader.result as string;
-          const sizeKb = (base64Data.length * 0.75) / 1024;
-          
-          if (sizeKb > 950) {
-            setStatus('error');
-            setErrorMessage(`El archivo cortado es demasiado grande (${Math.round(sizeKb)}KB). D1 solo soporta 1MB. Intenta un segmento más corto.`);
-            return;
-          }
 
           const success = await putTeaser(base64Data);
           if (success) {

@@ -13,6 +13,7 @@ import '@fontsource/jetbrains-mono/500.css';
 import '@fontsource/jetbrains-mono/700.css';
 import Nav from '@/components/Nav.astro';
 import Footer from '@/components/Footer.astro';
+import RadioPlayer from '@/components/RadioPlayer.astro';
 import { getDict, type Lang, altLang, localizePath } from '@/i18n';
 import { getArtistImage } from '@/lib/artistImage';
 
@@ -210,6 +211,8 @@ const listenText = lang === 'es' ? 'Escuchar Ahora' : 'Listen Now';
     </main>
 
     <Footer lang={lang} />
+
+    <RadioPlayer lang={lang} />
 
     <a href={platformsHref} class="floating-music" aria-label={listenText}>
       <svg viewBox="0 0 24 24" fill="currentColor">

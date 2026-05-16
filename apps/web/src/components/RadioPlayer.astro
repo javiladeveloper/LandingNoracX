@@ -1,0 +1,470 @@
+---
+import { type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
+
+interface SongRow {
+  slug: string;
+  title: string;
+  trackNumber: number | null;
+  spotifyId: string | null;
+  duration: string | null;
+  genre: string;
+  featured: boolean;
+}
+
+let songs: SongRow[] = [];
+try {
+  const res = await fetch(`${apiUrl}/api/songs`);
+  const json = (await res.json()) as { ok: boolean; data: SongRow[] };
+  if (json.ok) songs = json.data.filter((s) => s.spotifyId);
+} catch {
+  // build-time fetch failed — player won't render
+}
+---
+
+{songs.length > 0 && (
+<div id="radio-player" class="radio-player radio-player--collapsed">
+
+  <!-- Toggle tab -->
+  <button id="radio-toggle" class="radio-toggle" aria-label="Toggle Radio NORAC X">
+    <span class="radio-toggle-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+      </svg>
+    </span>
+    <span class="radio-toggle-label">RADIO NORAC X</span>
+    <span class="radio-toggle-live">
+      <span class="live-dot"></span>
+      LIVE
+    </span>
+    <span class="radio-toggle-chevron" id="radio-chevron">▲</span>
+  </button>
+
+  <!-- Player body -->
+  <div class="radio-body">
+
+    <!-- Left: Spotify iframe -->
+    <div class="radio-iframe-wrap">
+      <iframe
+        id="radio-spotify-iframe"
+        src={`https://open.spotify.com/embed/track/${songs[0]?.spotifyId}?utm_source=generator&theme=0&autoplay=0`}
+        width="100%"
+        height="152"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        title="NORAC X Radio Player"
+        loading="lazy"
+      ></iframe>
+    </div>
+
+    <!-- Right: Controls + Playlist -->
+    <div class="radio-controls-wrap">
+
+      <!-- Now Playing -->
+      <div class="radio-now-playing">
+        <span class="radio-np-label">// REPRODUCIENDO</span>
+        <span class="radio-np-title" id="radio-np-title">{songs[0]?.title ?? '---'}</span>
+        <span class="radio-np-meta" id="radio-np-meta">
+          TRACK {(songs[0]?.trackNumber ?? 1).toString().padStart(2,'0')} · {songs[0]?.genre}
+        </span>
+      </div>
+
+      <!-- Buttons -->
+      <div class="radio-buttons">
+        <button id="radio-prev" class="radio-btn" aria-label="Canción anterior">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+          </svg>
+        </button>
+        <button id="radio-next" class="radio-btn radio-btn--next" aria-label="Siguiente canción">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="m6 18 8.5-6L6 6v12zm2.5-6 5.5 3.9V8.1z"/>
+            <path d="M16 6h2v12h-2z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Playlist -->
+      <div class="radio-playlist" id="radio-playlist">
+        {songs.map((song, idx) => (
+          <button
+            class={`radio-track-item ${idx === 0 ? 'active' : ''}`}
+            data-idx={idx}
+            data-spotify-id={song.spotifyId}
+            data-title={song.title}
+            data-meta={`TRACK ${(song.trackNumber ?? idx + 1).toString().padStart(2,'0')} · ${song.genre}`}
+            aria-label={`Reproducir ${song.title}`}
+          >
+            <span class="rti-num">{(idx + 1).toString().padStart(2, '0')}</span>
+            <span class="rti-title">{song.title}</span>
+            {song.duration && <span class="rti-dur">{song.duration}</span>}
+          </button>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</div>
+)}
+
+<style>
+  .radio-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    font-family: 'JetBrains Mono', monospace;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .radio-player--collapsed .radio-body {
+    display: none;
+  }
+
+  /* ── Toggle Tab ── */
+  .radio-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #0a0a0a;
+    border: 1px solid rgba(230,10,10,0.5);
+    border-bottom: none;
+    color: #e60a0a;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-left: 20px;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 -4px 20px rgba(230,10,10,0.15);
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .radio-toggle:hover {
+    background: #111;
+  }
+
+  .radio-toggle-icon {
+    color: #e60a0a;
+  }
+
+  .radio-toggle-label {
+    color: #f5f0e8;
+    font-weight: 700;
+  }
+
+  .radio-toggle-live {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #e60a0a;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    background: #e60a0a;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 6px #e60a0a;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .radio-toggle-chevron {
+    color: #555;
+    font-size: 10px;
+    transition: transform 0.3s;
+  }
+
+  .radio-player:not(.radio-player--collapsed) .radio-toggle-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* ── Body ── */
+  .radio-body {
+    background: #050505;
+    border-top: 1px solid rgba(230,10,10,0.4);
+    display: flex;
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+  }
+
+  /* scanline effect */
+  .radio-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── Spotify iframe column ── */
+  .radio-iframe-wrap {
+    width: 340px;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(230,10,10,0.2);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .radio-iframe-wrap iframe {
+    display: block;
+    height: 160px;
+  }
+
+  /* ── Controls column ── */
+  .radio-controls-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px;
+    gap: 8px;
+    min-width: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Now Playing */
+  .radio-now-playing {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(230,10,10,0.15);
+  }
+
+  .radio-np-label {
+    font-size: 9px;
+    color: #e60a0a;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  .radio-np-title {
+    font-size: 14px;
+    color: #f5f0e8;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .radio-np-meta {
+    font-size: 9px;
+    color: #555;
+    letter-spacing: 0.2em;
+  }
+
+  /* Prev/Next buttons */
+  .radio-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .radio-btn {
+    background: rgba(230,10,10,0.1);
+    border: 1px solid rgba(230,10,10,0.3);
+    color: #e60a0a;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .radio-btn:hover {
+    background: rgba(230,10,10,0.25);
+    border-color: #e60a0a;
+    box-shadow: 0 0 12px rgba(230,10,10,0.3);
+  }
+
+  .radio-btn--next {
+    background: rgba(230,10,10,0.2);
+  }
+
+  /* Playlist */
+  .radio-playlist {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e60a0a #111;
+    padding-bottom: 4px;
+    flex: 1;
+    align-items: flex-start;
+  }
+
+  .radio-playlist::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .radio-playlist::-webkit-scrollbar-track {
+    background: #111;
+  }
+
+  .radio-playlist::-webkit-scrollbar-thumb {
+    background: #e60a0a;
+  }
+
+  .radio-track-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    border-radius: 2px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .radio-track-item:hover {
+    border-color: rgba(230,10,10,0.5);
+    background: rgba(230,10,10,0.1);
+  }
+
+  .radio-track-item.active {
+    border-color: #e60a0a;
+    background: rgba(230,10,10,0.15);
+    box-shadow: 0 0 10px rgba(230,10,10,0.2);
+  }
+
+  .rti-num {
+    font-size: 9px;
+    color: #555;
+    letter-spacing: 0.1em;
+  }
+
+  .radio-track-item.active .rti-num {
+    color: #e60a0a;
+  }
+
+  .rti-title {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .radio-track-item.active .rti-title {
+    color: #f5f0e8;
+  }
+
+  .rti-dur {
+    font-size: 9px;
+    color: #444;
+    margin-left: 4px;
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .radio-body {
+      flex-direction: column;
+      height: auto;
+    }
+    .radio-iframe-wrap {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid rgba(230,10,10,0.2);
+    }
+    .radio-controls-wrap {
+      padding: 10px 12px;
+    }
+  }
+</style>
+
+<script>
+  const player = document.getElementById('radio-player');
+  const toggleBtn = document.getElementById('radio-toggle');
+  const iframe = document.getElementById('radio-spotify-iframe') as HTMLIFrameElement | null;
+  const npTitle = document.getElementById('radio-np-title');
+  const npMeta = document.getElementById('radio-np-meta');
+  const playlist = document.getElementById('radio-playlist');
+  const prevBtn = document.getElementById('radio-prev');
+  const nextBtn = document.getElementById('radio-next');
+
+  if (!player || !toggleBtn || !iframe || !playlist) {
+    // No songs — player not rendered
+  } else {
+    const items = Array.from(playlist.querySelectorAll<HTMLButtonElement>('.radio-track-item'));
+    let currentIdx = 0;
+
+    // Toggle open/close
+    toggleBtn.addEventListener('click', () => {
+      player.classList.toggle('radio-player--collapsed');
+    });
+
+    function loadTrack(idx: number) {
+      if (idx < 0) idx = items.length - 1;
+      if (idx >= items.length) idx = 0;
+      currentIdx = idx;
+
+      const item = items[idx];
+      if (!item) return;
+
+      const spotifyId = item.dataset.spotifyId;
+      const title = item.dataset.title ?? '';
+      const meta = item.dataset.meta ?? '';
+
+      // Update iframe src (autoplay=1 so it plays immediately when user clicks next/prev)
+      if (iframe && spotifyId) {
+        iframe.src = `https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0&autoplay=1`;
+      }
+
+      // Update now playing text
+      if (npTitle) npTitle.textContent = title;
+      if (npMeta) npMeta.textContent = meta;
+
+      // Update active class
+      items.forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+
+      // Scroll active into view in the playlist
+      item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    // Click on playlist item
+    items.forEach((item, idx) => {
+      item.addEventListener('click', () => loadTrack(idx));
+    });
+
+    // Prev / Next
+    prevBtn?.addEventListener('click', () => loadTrack(currentIdx - 1));
+    nextBtn?.addEventListener('click', () => loadTrack(currentIdx + 1));
+  }
+</script>

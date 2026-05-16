@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
+import { Buffer } from 'node:buffer';
 import { settings } from '../db/schema';
 import type { Bindings } from '../index';
 
@@ -34,16 +35,14 @@ teaserRoute.get('/', async (c) => {
   const contentType = matches[1] || 'audio/mpeg';
   const base64String = matches[2] || '';
 
-  // Convert base64 to Uint8Array
-  const binaryString = atob(base64String);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
+  // Usar Buffer (nativo en C++ en Workers) en vez del loop lento de JS
+  const buffer = Buffer.from(base64String, 'base64');
 
-  return c.body(bytes.buffer, 200, {
-    'Content-Type': contentType,
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Accept-Ranges': 'bytes'
+  return new Response(buffer, {
+    headers: {
+      'Content-Type': contentType,
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Accept-Ranges': 'bytes'
+    }
   });
 });

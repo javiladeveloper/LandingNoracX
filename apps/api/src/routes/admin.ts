@@ -14,6 +14,7 @@ import {
 } from '../lib/session';
 import type { User } from '../db/schema';
 import type { Bindings } from '../index';
+import { Buffer } from 'node:buffer';
 
 type Vars = {
   user: User;
@@ -562,17 +563,26 @@ adminRoute.delete('/quotes/:id', async (c) => {
   return c.json({ ok: true });
 });
 
-/* ============================================================
-   SETTINGS (Teaser Audio)
-   ============================================================ */
-const teaserSchema = z.object({
-  base64Data: z.string(), // expected "data:audio/mpeg;base64,..." o "data:audio/wav;base64,..."
-});
-
-adminRoute.put('/settings/teaser', zValidator('json', teaserSchema), async (c) => {
-  const { base64Data } = c.req.valid('json');
+adminRoute.put('/settings/teaser', async (c) => {
   const db = drizzle(c.env.DB);
   
+  let base64Data = '';
+  
+  try {
+    if (c.req.header('content-type')?.includes('application/json')) {
+      const body = await c.req.json();
+      base64Data = body.base64Data;
+    } else {
+      const arrayBuffer = await c.req.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const contentType = c.req.header('content-type') || 'audio/wav';
+      base64Data = `data:${contentType};base64,${buffer.toString('base64')}`;
+    }
+  } catch (err: any) {
+    console.error('Error parsing body:', err);
+    return c.json({ ok: false, error: 'invalid_body' }, 400);
+  }
+
   // Cloudflare D1 limit per row is 1MB. We chunk the base64 string into 250KB pieces to be completely safe from query size limits.
   const chunkSize = 250 * 1024; // 250 KB
   const chunks = [];

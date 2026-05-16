@@ -8,61 +8,174 @@ const { lang } = Astro.props;
 const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 ---
 
+<style>
+  /* Premium Terminal Effects */
+  .terminal-box {
+    position: relative;
+    overflow: hidden;
+    background: #050505;
+    box-shadow: 0 0 40px rgba(230, 10, 10, 0.1), inset 0 0 20px rgba(230, 10, 10, 0.05);
+  }
+  
+  .terminal-box::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 2;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+  }
+
+  .scanline {
+    width: 100%;
+    height: 100px;
+    z-index: 3;
+    position: absolute;
+    pointer-events: none;
+    background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(230,10,10,0.1) 50%, rgba(0,0,0,0) 100%);
+    opacity: 0.1;
+    animation: scanline 8s linear infinite;
+  }
+
+  @keyframes scanline {
+    0% { top: -100px; }
+    100% { top: 100%; }
+  }
+
+  .glitch-text {
+    position: relative;
+  }
+  .glitch-text::before, .glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  .glitch-text::before {
+    left: 2px;
+    text-shadow: -1px 0 red;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim 5s infinite linear alternate-reverse;
+  }
+  .glitch-text::after {
+    left: -2px;
+    text-shadow: -1px 0 blue;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim2 5s infinite linear alternate-reverse;
+  }
+
+  @keyframes glitch-anim {
+    0% { clip: rect(11px, 9999px, 83px, 0); }
+    20% { clip: rect(72px, 9999px, 14px, 0); }
+    40% { clip: rect(8px, 9999px, 86px, 0); }
+    60% { clip: rect(66px, 9999px, 3px, 0); }
+    80% { clip: rect(93px, 9999px, 11px, 0); }
+    100% { clip: rect(11px, 9999px, 72px, 0); }
+  }
+  @keyframes glitch-anim2 {
+    0% { clip: rect(65px, 9999px, 100px, 0); }
+    20% { clip: rect(1px, 9999px, 5px, 0); }
+    40% { clip: rect(89px, 9999px, 55px, 0); }
+    60% { clip: rect(14px, 9999px, 88px, 0); }
+    80% { clip: rect(76px, 9999px, 32px, 0); }
+    100% { clip: rect(43px, 9999px, 91px, 0); }
+  }
+
+  .waveform {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+  }
+  .wave-bar {
+    width: 4px;
+    background-color: rgba(230, 10, 10, 0.3);
+    height: 10%;
+    transition: height 0.1s ease, background-color 0.3s ease;
+  }
+  .wave-bar.active {
+    background-color: rgba(230, 10, 10, 0.9);
+    box-shadow: 0 0 10px rgba(230, 10, 10, 0.5);
+    animation: wave 1s infinite alternate ease-in-out;
+  }
+  @keyframes wave {
+    0% { height: 10%; }
+    100% { height: 100%; }
+  }
+</style>
+
 <section id="teaser" class="border-blood/20 bg-coal relative border-y py-24 md:py-32">
   <div class="section flex w-full flex-col items-center justify-center" style="padding-top: 0; padding-bottom: 0;">
     <div class="w-full max-w-4xl">
-      <div class="border-blood/40 bg-void relative w-full border-2 p-6 md:p-10 shadow-[0_0_30px_rgba(230,10,10,0.05)]">
-      
-      <!-- Cabecera del reproductor -->
-      <div class="mb-8 flex items-center justify-between border-b border-blood/20 pb-4">
-        <h2 class="text-blood-bright font-mono text-[11px] tracking-[0.3em] uppercase decrypt">
-          {lang === 'es' ? 'Transmisión Segura' : 'Secure Feed'}
-        </h2>
-        <div class="flex items-center gap-2">
-          <span class="bg-blood-bright h-2 w-2 animate-pulse rounded-full"></span>
-          <span class="text-bone font-mono text-[10px] tracking-[0.2em] uppercase">Live</span>
-        </div>
-      </div>
-
-      <!-- Estado -->
-      <div class="mb-10 text-center">
-        <h3 class="text-bone font-display text-2xl uppercase tracking-wider decrypt md:text-3xl" id="teaser-status">
-          FRAGMENTO INTERCEPTADO
-        </h3>
-        <p class="text-ink-dim mt-2 font-mono text-[10px] tracking-[0.2em] uppercase">
-          ID: NORACX_TSR_001 // ENCRIPTADO
-        </p>
-      </div>
-
-      <!-- Player Raw -->
-      <div class="flex flex-col md:flex-row gap-4">
-        <!-- Play Button -->
-        <button id="play-btn" data-api-url={apiUrl} class="bg-blood-bright text-bone hover:bg-bone hover:text-blood-bright flex h-14 w-full md:w-16 shrink-0 items-center justify-center transition-colors focus:outline-none">
-          <svg class="h-6 w-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </button>
-
-        <!-- Progress Track -->
-        <div class="bg-ash border-blood/20 relative flex h-14 flex-1 cursor-pointer items-center border" id="progress-container">
-          <div id="progress-bar" class="bg-blood/30 absolute left-0 top-0 h-full w-0 transition-all duration-75 border-r border-blood-bright"></div>
-          
-          <!-- Tiempos superpuestos -->
-          <div class="absolute inset-0 flex items-center justify-between px-4 pointer-events-none font-mono text-[11px] tracking-[0.2em]">
-            <span id="time-current" class="text-bone">00:00</span>
-            <span id="time-total" class="text-ink-dim">00:00</span>
+      <div class="terminal-box border-blood/50 relative w-full border-2 p-6 md:p-10">
+        <div class="scanline"></div>
+        
+        <!-- Cabecera del reproductor -->
+        <div class="mb-8 flex items-center justify-between border-b border-blood/30 pb-4 relative z-10">
+          <h2 class="text-blood-bright font-mono text-[11px] tracking-[0.3em] uppercase glitch-text" data-text={lang === 'es' ? 'Transmisión Segura' : 'Secure Feed'}>
+            {lang === 'es' ? 'Transmisión Segura' : 'Secure Feed'}
+          </h2>
+          <div class="flex items-center gap-2">
+            <span class="bg-blood-bright h-2 w-2 animate-pulse rounded-full shadow-[0_0_10px_red]"></span>
+            <span class="text-bone font-mono text-[10px] tracking-[0.2em] uppercase">Live</span>
           </div>
-
-          <!-- Glitch lines inside progress -->
-          <div class="absolute left-1/4 top-0 h-full w-px bg-white/5 pointer-events-none"></div>
-          <div class="absolute left-1/2 top-0 h-full w-px bg-white/5 pointer-events-none"></div>
-          <div class="absolute left-3/4 top-0 h-full w-px bg-white/5 pointer-events-none"></div>
         </div>
-      </div>
 
+        <!-- Estado -->
+        <div class="mb-10 text-center relative z-10 flex flex-col items-center">
+          <h3 class="text-bone font-display text-3xl uppercase tracking-wider md:text-4xl" id="teaser-status" style="text-shadow: 0 0 20px rgba(255,255,255,0.3);">
+            FRAGMENTO INTERCEPTADO
+          </h3>
+          <p class="text-blood mt-3 font-mono text-[11px] tracking-[0.3em] uppercase">
+            ID: NORACX_TSR_001 // ENCRIPTADO // CLASE S
+          </p>
+          
+          <!-- Waveform (Visual only) -->
+          <div class="waveform justify-center mt-8 w-full max-w-md" id="waveform-container">
+            {Array.from({ length: 40 }).map((_, i) => (
+              <div class="wave-bar" style={`animation-delay: ${Math.random() * 0.5}s; height: ${Math.random() * 40 + 10}%`}></div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Player Raw -->
+        <div class="flex flex-col md:flex-row gap-4 relative z-10">
+          <!-- Play Button -->
+          <button id="play-btn" data-api-url={apiUrl} class="bg-blood-bright text-bone hover:bg-bone hover:text-blood-bright hover:shadow-[0_0_20px_red] flex h-14 w-full md:w-20 shrink-0 items-center justify-center transition-all duration-300 focus:outline-none uppercase font-bold tracking-widest text-sm">
+            <svg class="h-6 w-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24" id="play-icon">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+
+          <!-- Progress Track -->
+          <div class="bg-black/50 border-blood/40 relative flex h-14 flex-1 cursor-pointer items-center border overflow-hidden" id="progress-container">
+            <div id="progress-bar" class="bg-blood-bright/20 absolute left-0 top-0 h-full w-0 transition-all duration-75 border-r-2 border-blood-bright shadow-[0_0_15px_red]"></div>
+            
+            <!-- Tiempos superpuestos -->
+            <div class="absolute inset-0 flex items-center justify-between px-4 pointer-events-none font-mono text-[12px] tracking-[0.2em] font-bold">
+              <span id="time-current" class="text-bone drop-shadow-md">00:00</span>
+              <span id="time-total" class="text-blood drop-shadow-md">00:00</span>
+            </div>
+
+            <!-- Glitch lines inside progress -->
+            <div class="absolute left-1/4 top-0 h-full w-px bg-blood-bright/20 pointer-events-none"></div>
+            <div class="absolute left-1/2 top-0 h-full w-px bg-blood-bright/20 pointer-events-none"></div>
+            <div class="absolute left-3/4 top-0 h-full w-px bg-blood-bright/20 pointer-events-none"></div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
-</div>
 
   <audio id="teaser-audio" preload="metadata">
     <source src={`${apiUrl}/api/teaser`} />
@@ -71,12 +184,14 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 
 <script>
   const playBtn = document.getElementById('play-btn');
+  const playIcon = document.getElementById('play-icon');
   const audio = document.getElementById('teaser-audio') as HTMLAudioElement;
   const progressBar = document.getElementById('progress-bar');
   const progressContainer = document.getElementById('progress-container');
   const timeCurrent = document.getElementById('time-current');
   const timeTotal = document.getElementById('time-total');
   const teaserStatus = document.getElementById('teaser-status');
+  const waveBars = document.querySelectorAll('.wave-bar');
 
   let isPlaying = false;
   let hasTrackedPlay = false;
@@ -84,11 +199,11 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
   if (playBtn && audio && progressBar && timeCurrent && progressContainer) {
     const apiUrl = playBtn.getAttribute('data-api-url') || '';
 
-    // Cache buster dinámico: obligar al navegador a no usar la versión en caché del audio
+    // Cache buster dinámico
     const sourceEl = audio.querySelector('source');
     if (sourceEl && !sourceEl.src.includes('?t=')) {
       sourceEl.src = sourceEl.src + '?t=' + Date.now();
-      audio.load(); // Forzar recarga del source modificado
+      audio.load();
     }
 
     audio.addEventListener('loadedmetadata', () => {
@@ -102,12 +217,14 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
     playBtn.addEventListener('click', () => {
       if (isPlaying) {
         audio.pause();
-        playBtn.innerHTML = '<svg class="w-6 h-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+        if (playIcon) playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
         if (teaserStatus) teaserStatus.innerText = 'FRAGMENTO INTERCEPTADO';
+        waveBars.forEach(bar => bar.classList.remove('active'));
       } else {
-        audio.play();
-        playBtn.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-        if (teaserStatus) teaserStatus.innerText = 'REPRODUCIENDO...';
+        audio.play().catch(e => console.error("Play error:", e));
+        if (playIcon) playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        if (teaserStatus) teaserStatus.innerText = 'DECODIFICANDO AUDIO...';
+        waveBars.forEach(bar => bar.classList.add('active'));
         
         if (!hasTrackedPlay && apiUrl) {
           hasTrackedPlay = true;
@@ -121,8 +238,8 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
       isPlaying = !isPlaying;
       
       // Glitch effect on button click
-      playBtn.style.transform = 'translate(2px, 2px)';
-      setTimeout(() => playBtn.style.transform = 'translate(0, 0)', 50);
+      playBtn.style.transform = 'scale(0.95)';
+      setTimeout(() => playBtn.style.transform = 'scale(1)', 100);
     });
 
     audio.addEventListener('timeupdate', () => {
@@ -142,9 +259,11 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 
     audio.addEventListener('ended', () => {
       isPlaying = false;
-      playBtn.innerHTML = '<svg class="w-6 h-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+      if (playIcon) playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
       progressBar.style.width = '0%';
       timeCurrent.innerText = '00:00';
+      if (teaserStatus) teaserStatus.innerText = 'TRANSMISIÓN FINALIZADA';
+      waveBars.forEach(bar => bar.classList.remove('active'));
     });
   }
 </script>

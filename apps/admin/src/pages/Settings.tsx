@@ -33,11 +33,11 @@ export default function Settings() {
       const duration = endSec - startSec;
       if (duration <= 0) throw new Error("El tiempo de fin debe ser mayor al de inicio.");
 
-      // Use OfflineAudioContext to render the slice
+      // Use OfflineAudioContext to render the slice (Mono, 22050Hz para simular transmisión de radio y reducir peso al 25%)
       const offlineCtx = new OfflineAudioContext(
-        audioBuffer.numberOfChannels,
-        ctx.sampleRate * duration,
-        ctx.sampleRate
+        1, // 1 channel (Mono)
+        22050 * duration,
+        22050
       );
 
       const source = offlineCtx.createBufferSource();
@@ -52,24 +52,19 @@ export default function Settings() {
 
       setStatus('uploading');
       
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Data = reader.result as string;
-
-        const res = await apiFetch<{ ok: boolean, error?: string }>('/api/admin/settings/teaser', {
-          method: 'PUT',
-          body: JSON.stringify({ base64Data }),
-        });
-        
-        if (res.ok) {
-          setStatus('success');
-        } else {
-          setStatus('error');
-          const data = res.body as { error?: string };
-          setErrorMessage(data?.error ? `Error: ${data.error}` : "Error guardando el archivo en la base de datos.");
-        }
-      };
-      reader.readAsDataURL(wavBlob);
+      const res = await apiFetch<{ ok: boolean, error?: string }>('/api/admin/settings/teaser', {
+        method: 'PUT',
+        body: wavBlob,
+        headers: { 'Content-Type': 'audio/wav' }
+      });
+      
+      if (res.ok) {
+        setStatus('success');
+      } else {
+        setStatus('error');
+        const data = res.body as { error?: string };
+        setErrorMessage(data?.error ? `Error: ${data.error}` : "Error guardando el archivo en la base de datos.");
+      }
 
     } catch (err: any) {
       setStatus('error');

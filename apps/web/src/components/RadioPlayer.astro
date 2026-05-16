@@ -198,18 +198,8 @@ try {
     let wasPlaying     = false;
     let advancing      = false;
     let waitingForLoad = false;
-    // If tab is hidden when play() is needed, we queue it and fire when user returns
-    let pendingPlay    = false;
 
     toggleBtn.addEventListener('click', () => player.classList.toggle('radio-player--collapsed'));
-
-    // Fire queued play() when user returns to the tab
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && pendingPlay && ctrl) {
-        pendingPlay = false;
-        ctrl.play();
-      }
-    });
 
     function updateUI(idx: number) {
       const item = items[idx];
@@ -220,22 +210,14 @@ try {
       item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
-    // play() respecting visibility — queues if tab is hidden
-    function safePlay() {
-      if (document.hidden) {
-        pendingPlay = true;
-      } else {
-        ctrl?.play();
-      }
-    }
-
     function onPlaybackUpdate(e: SpotifyPlaybackEvent) {
       const { isPaused, position, duration } = e.data;
 
-      // New track loaded after loadUri — fire play
+      // New track loaded after loadUri — fire play directly
+      // User activation from initial play() persists across hidden/visible state
       if (waitingForLoad && isPaused && position === 0 && duration > 0) {
         waitingForLoad = false;
-        safePlay();
+        ctrl?.play();
         return;
       }
 
@@ -257,7 +239,7 @@ try {
       if (idx < 0) idx = items.length - 1;
       if (idx >= items.length) idx = 0;
       currentIdx = idx;
-      lastPos = 0; lastDur = 0; wasPlaying = false; pendingPlay = false;
+      lastPos = 0; lastDur = 0; wasPlaying = false;
 
       const item = items[idx];
       if (!item) return;
@@ -271,7 +253,7 @@ try {
         ctrl.loadUri(`spotify:track:${spotifyId}`);
         // Fallback if playback_update never fires within 3s
         setTimeout(() => {
-          if (waitingForLoad) { waitingForLoad = false; safePlay(); }
+          if (waitingForLoad) { waitingForLoad = false; ctrl?.play(); }
           advancing = false;
         }, 3000);
       } else {

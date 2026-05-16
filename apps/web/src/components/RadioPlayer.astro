@@ -1,11 +1,4 @@
 ---
-import { type Lang } from '@/i18n';
-
-interface Props {
-  lang: Lang;
-}
-const { lang } = Astro.props;
-
 const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
 
 interface SongRow {

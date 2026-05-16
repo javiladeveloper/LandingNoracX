@@ -36,7 +36,7 @@ try {
       <span class="live-dot"></span>
       LIVE
     </span>
-    <span class="radio-toggle-chevron" id="radio-chevron">▲</span>
+    <span class="radio-toggle-chevron">▲</span>
   </button>
 
   <!-- Player body -->
@@ -113,7 +113,6 @@ try {
     right: 0;
     z-index: 999;
     font-family: 'JetBrains Mono', monospace;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .radio-player--collapsed .radio-body {
@@ -139,21 +138,11 @@ try {
     border-radius: 4px 4px 0 0;
     box-shadow: 0 -4px 20px rgba(230,10,10,0.15);
     transition: background 0.2s;
-    position: relative;
   }
 
-  .radio-toggle:hover {
-    background: #111;
-  }
-
-  .radio-toggle-icon {
-    color: #e60a0a;
-  }
-
-  .radio-toggle-label {
-    color: #f5f0e8;
-    font-weight: 700;
-  }
+  .radio-toggle:hover { background: #111; }
+  .radio-toggle-icon { color: #e60a0a; }
+  .radio-toggle-label { color: #f5f0e8; font-weight: 700; }
 
   .radio-toggle-live {
     display: flex;
@@ -175,7 +164,7 @@ try {
 
   @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
+    50%       { opacity: 0.4; transform: scale(0.8); }
   }
 
   .radio-toggle-chevron {
@@ -183,7 +172,6 @@ try {
     font-size: 10px;
     transition: transform 0.3s;
   }
-
   .radio-player:not(.radio-player--collapsed) .radio-toggle-chevron {
     transform: rotate(180deg);
   }
@@ -194,23 +182,16 @@ try {
     border-top: 1px solid rgba(230,10,10,0.4);
     display: flex;
     height: 160px;
-    position: relative;
     overflow: hidden;
     box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    position: relative;
   }
 
-  /* scanline effect */
   .radio-body::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.08) 4px
-    );
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
     pointer-events: none;
     z-index: 1;
   }
@@ -221,13 +202,8 @@ try {
     flex-shrink: 0;
     border-right: 1px solid rgba(230,10,10,0.2);
     overflow: hidden;
-    position: relative;
   }
-
-  .radio-iframe-wrap iframe {
-    display: block;
-    height: 160px;
-  }
+  .radio-iframe-wrap iframe { display: block; height: 160px; }
 
   /* ── Controls column ── */
   .radio-controls-wrap {
@@ -241,7 +217,6 @@ try {
     z-index: 2;
   }
 
-  /* Now Playing */
   .radio-now-playing {
     display: flex;
     flex-direction: column;
@@ -250,61 +225,29 @@ try {
     border-bottom: 1px solid rgba(230,10,10,0.15);
   }
 
-  .radio-np-label {
-    font-size: 9px;
-    color: #e60a0a;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-  }
+  .radio-np-label { font-size: 9px; color: #e60a0a; letter-spacing: 0.3em; text-transform: uppercase; }
+  .radio-np-title { font-size: 14px; color: #f5f0e8; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .radio-np-meta  { font-size: 9px; color: #555; letter-spacing: 0.2em; }
 
-  .radio-np-title {
-    font-size: 14px;
-    color: #f5f0e8;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .radio-np-meta {
-    font-size: 9px;
-    color: #555;
-    letter-spacing: 0.2em;
-  }
-
-  /* Prev/Next buttons */
-  .radio-buttons {
-    display: flex;
-    gap: 8px;
-  }
+  .radio-buttons { display: flex; gap: 8px; }
 
   .radio-btn {
     background: rgba(230,10,10,0.1);
     border: 1px solid rgba(230,10,10,0.3);
     color: #e60a0a;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 2px;
   }
-
   .radio-btn:hover {
     background: rgba(230,10,10,0.25);
     border-color: #e60a0a;
     box-shadow: 0 0 12px rgba(230,10,10,0.3);
   }
+  .radio-btn--next { background: rgba(230,10,10,0.2); }
 
-  .radio-btn--next {
-    background: rgba(230,10,10,0.2);
-  }
-
-  /* Playlist */
   .radio-playlist {
     display: flex;
     flex-direction: row;
@@ -317,23 +260,12 @@ try {
     flex: 1;
     align-items: flex-start;
   }
-
-  .radio-playlist::-webkit-scrollbar {
-    height: 3px;
-  }
-
-  .radio-playlist::-webkit-scrollbar-track {
-    background: #111;
-  }
-
-  .radio-playlist::-webkit-scrollbar-thumb {
-    background: #e60a0a;
-  }
+  .radio-playlist::-webkit-scrollbar       { height: 3px; }
+  .radio-playlist::-webkit-scrollbar-track  { background: #111; }
+  .radio-playlist::-webkit-scrollbar-thumb  { background: #e60a0a; }
 
   .radio-track-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    display: flex; align-items: center; gap: 6px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.07);
     padding: 5px 10px;
@@ -344,68 +276,30 @@ try {
     transition: all 0.2s;
     flex-shrink: 0;
   }
+  .radio-track-item:hover  { border-color: rgba(230,10,10,0.5); background: rgba(230,10,10,0.1); }
+  .radio-track-item.active { border-color: #e60a0a; background: rgba(230,10,10,0.15); box-shadow: 0 0 10px rgba(230,10,10,0.2); }
 
-  .radio-track-item:hover {
-    border-color: rgba(230,10,10,0.5);
-    background: rgba(230,10,10,0.1);
-  }
+  .rti-num  { font-size: 9px; color: #555; letter-spacing: 0.1em; }
+  .radio-track-item.active .rti-num   { color: #e60a0a; }
+  .rti-title { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+  .radio-track-item.active .rti-title { color: #f5f0e8; }
+  .rti-dur   { font-size: 9px; color: #444; margin-left: 4px; }
 
-  .radio-track-item.active {
-    border-color: #e60a0a;
-    background: rgba(230,10,10,0.15);
-    box-shadow: 0 0 10px rgba(230,10,10,0.2);
-  }
-
-  .rti-num {
-    font-size: 9px;
-    color: #555;
-    letter-spacing: 0.1em;
-  }
-
-  .radio-track-item.active .rti-num {
-    color: #e60a0a;
-  }
-
-  .rti-title {
-    font-size: 11px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .radio-track-item.active .rti-title {
-    color: #f5f0e8;
-  }
-
-  .rti-dur {
-    font-size: 9px;
-    color: #444;
-    margin-left: 4px;
-  }
-
-  /* Mobile */
   @media (max-width: 640px) {
-    .radio-body {
-      flex-direction: column;
-      height: auto;
-    }
-    .radio-iframe-wrap {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid rgba(230,10,10,0.2);
-    }
-    .radio-controls-wrap {
-      padding: 10px 12px;
-    }
+    .radio-body { flex-direction: column; height: auto; }
+    .radio-iframe-wrap { width: 100%; border-right: none; border-bottom: 1px solid rgba(230,10,10,0.2); }
+    .radio-controls-wrap { padding: 10px 12px; }
   }
 </style>
 
 <script>
-  // Minimal type stubs for the Spotify IFrame Embed API
+  // ── Spotify IFrame API type stubs ─────────────────────────────────────────
+  interface SpotifyPlaybackEvent {
+    data: { isPaused: boolean; position: number; duration: number };
+  }
   interface SpotifyEmbedController {
-    addListener(event: string, cb: (e: { data: { isPaused: boolean; position: number; duration: number } }) => void): void;
-    loadUri(uri: string): void;
-    play(): void;
+    addListener(event: string, cb: (e: SpotifyPlaybackEvent) => void): void;
+    destroy(): void;
   }
   interface SpotifyIFrameAPI {
     createController(
@@ -414,45 +308,87 @@ try {
       cb: (controller: SpotifyEmbedController) => void
     ): void;
   }
+  type WinSpotify = Window & {
+    onSpotifyIframeApiReady?: (api: SpotifyIFrameAPI) => void;
+    _spotifyApi?: SpotifyIFrameAPI;
+  };
 
-  const player = document.getElementById('radio-player');
+  const player    = document.getElementById('radio-player');
   const toggleBtn = document.getElementById('radio-toggle');
-  const iframeEl = document.getElementById('radio-spotify-iframe') as HTMLIFrameElement | null;
-  const npTitle = document.getElementById('radio-np-title');
-  const npMeta = document.getElementById('radio-np-meta');
-  const playlist = document.getElementById('radio-playlist');
-  const prevBtn = document.getElementById('radio-prev');
-  const nextBtn = document.getElementById('radio-next');
+  const iframeEl  = document.getElementById('radio-spotify-iframe') as HTMLIFrameElement | null;
+  const npTitle   = document.getElementById('radio-np-title');
+  const npMeta    = document.getElementById('radio-np-meta');
+  const playlist  = document.getElementById('radio-playlist');
+  const prevBtn   = document.getElementById('radio-prev');
+  const nextBtn   = document.getElementById('radio-next');
 
   if (player && toggleBtn && iframeEl && playlist) {
     const items = Array.from(playlist.querySelectorAll<HTMLButtonElement>('.radio-track-item'));
     let currentIdx = 0;
-    let embedController: SpotifyEmbedController | null = null;
-    let lastPosition = 0;
-    let lastDuration = 0;
+    let ctrl: SpotifyEmbedController | null = null;
+    let lastPos = 0;
+    let lastDur = 0;
     let wasPlaying = false;
+    let advancing  = false; // guard against double-advance
 
-    // Toggle open/close
-    toggleBtn.addEventListener('click', () => {
-      player.classList.toggle('radio-player--collapsed');
-    });
+    // ── Toggle ───────────────────────────────────────────────────────────────
+    toggleBtn.addEventListener('click', () => player.classList.toggle('radio-player--collapsed'));
 
+    // ── UI update ────────────────────────────────────────────────────────────
     function updateUI(idx: number) {
       const item = items[idx];
       if (!item) return;
       if (npTitle) npTitle.textContent = item.dataset.title ?? '';
-      if (npMeta) npMeta.textContent = item.dataset.meta ?? '';
+      if (npMeta)  npMeta.textContent  = item.dataset.meta  ?? '';
       items.forEach((el, i) => el.classList.toggle('active', i === idx));
       item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
-    function loadTrack(idx: number, autoplay = true) {
+    // ── Attach IFrame API controller ─────────────────────────────────────────
+    // Called after every iframe src change (the new iframe needs a new controller).
+    function attachController(spotifyId: string) {
+      const api = (window as WinSpotify)._spotifyApi;
+      if (!api) return;
+
+      if (ctrl) { try { ctrl.destroy(); } catch { /* ignore */ } ctrl = null; }
+
+      api.createController(
+        iframeEl!,
+        { uri: `spotify:track:${spotifyId}`, width: '100%', height: 160 },
+        (c) => {
+          ctrl = c;
+          c.addListener('playback_update', (e) => {
+            const { isPaused, position, duration } = e.data;
+
+            // Song finished = isPaused:true + position:0 AFTER we were near the end.
+            // The 90% threshold avoids false-positives from manual pause+seek-to-start.
+            const nearEnd = lastDur > 0 && lastPos > lastDur * 0.9;
+            if (isPaused && position === 0 && nearEnd && wasPlaying && !advancing) {
+              advancing = true;
+              setTimeout(() => {
+                loadTrack(currentIdx + 1, true);
+                advancing = false;
+              }, 800);
+              return;
+            }
+
+            lastPos    = position;
+            lastDur    = duration;
+            wasPlaying = !isPaused;
+          });
+        }
+      );
+    }
+
+    // ── Load a track ─────────────────────────────────────────────────────────
+    // We always change the iframe src because it's the ONLY way browsers will
+    // honour autoplay on the new track (reuses the existing autoplay permission
+    // the user granted when they first pressed Play in the iframe).
+    function loadTrack(idx: number, autoplay = false) {
       if (idx < 0) idx = items.length - 1;
       if (idx >= items.length) idx = 0;
       currentIdx = idx;
-      lastPosition = 0;
-      lastDuration = 0;
-      wasPlaying = false;
+      lastPos = 0; lastDur = 0; wasPlaying = false;
 
       const item = items[idx];
       if (!item) return;
@@ -461,52 +397,27 @@ try {
 
       updateUI(idx);
 
-      if (embedController) {
-        embedController.loadUri(`spotify:track:${spotifyId}`);
-        if (autoplay) embedController.play();
-      } else {
-        // Fallback before API loads
-        const src = `https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0&autoplay=${autoplay ? 1 : 0}`;
-        iframeEl!.src = src;
-      }
+      iframeEl!.src = `https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0&autoplay=${autoplay ? 1 : 0}`;
+
+      // Re-attach controller after the new iframe page finishes loading (~700ms)
+      setTimeout(() => attachController(spotifyId), 700);
     }
 
-    // ── Spotify IFrame API ──────────────────────────────────────────────────
-    (window as Window & { onSpotifyIframeApiReady?: (api: SpotifyIFrameAPI) => void }).onSpotifyIframeApiReady = (IFrameAPI) => {
+    // ── Spotify IFrame API init ───────────────────────────────────────────────
+    (window as WinSpotify).onSpotifyIframeApiReady = (api) => {
+      (window as WinSpotify)._spotifyApi = api;
       const firstId = items[0]?.dataset.spotifyId ?? '';
-      IFrameAPI.createController(
-        iframeEl!,
-        { uri: `spotify:track:${firstId}`, width: '100%', height: 160 },
-        (controller) => {
-          embedController = controller;
-
-          controller.addListener('playback_update', (e) => {
-            const { isPaused, position, duration } = e.data;
-            const nearEnd = lastDuration > 0 && lastPosition > lastDuration * 0.95;
-            if (isPaused && position === 0 && nearEnd && wasPlaying) {
-              loadTrack(currentIdx + 1, true);
-              return;
-            }
-            lastPosition = position;
-            lastDuration = duration;
-            wasPlaying = !isPaused;
-          });
-        }
-      );
+      if (firstId) attachController(firstId);
     };
 
-    // Inject Spotify IFrame API script
-    const script = document.createElement('script');
-    script.src = 'https://open.spotify.com/embed/iframe-api/v1';
-    script.async = true;
-    document.head.appendChild(script);
+    const s = document.createElement('script');
+    s.src = 'https://open.spotify.com/embed/iframe-api/v1';
+    s.async = true;
+    document.head.appendChild(s);
 
-    // ── Controls ────────────────────────────────────────────────────────────
-    items.forEach((item, idx) => {
-      item.addEventListener('click', () => loadTrack(idx, true));
-    });
+    // ── Controls ─────────────────────────────────────────────────────────────
+    items.forEach((item, idx) => item.addEventListener('click', () => loadTrack(idx, true)));
     prevBtn?.addEventListener('click', () => loadTrack(currentIdx - 1, true));
     nextBtn?.addEventListener('click', () => loadTrack(currentIdx + 1, true));
   }
 </script>
-

@@ -401,63 +401,112 @@ try {
 </style>
 
 <script>
+  // Minimal type stubs for the Spotify IFrame Embed API
+  interface SpotifyEmbedController {
+    addListener(event: string, cb: (e: { data: { isPaused: boolean; position: number; duration: number } }) => void): void;
+    loadUri(uri: string): void;
+    play(): void;
+  }
+  interface SpotifyIFrameAPI {
+    createController(
+      el: HTMLElement,
+      options: { uri: string; width: string | number; height: number },
+      cb: (controller: SpotifyEmbedController) => void
+    ): void;
+  }
+
   const player = document.getElementById('radio-player');
   const toggleBtn = document.getElementById('radio-toggle');
-  const iframe = document.getElementById('radio-spotify-iframe') as HTMLIFrameElement | null;
+  const iframeEl = document.getElementById('radio-spotify-iframe') as HTMLIFrameElement | null;
   const npTitle = document.getElementById('radio-np-title');
   const npMeta = document.getElementById('radio-np-meta');
   const playlist = document.getElementById('radio-playlist');
   const prevBtn = document.getElementById('radio-prev');
   const nextBtn = document.getElementById('radio-next');
 
-  if (!player || !toggleBtn || !iframe || !playlist) {
-    // No songs — player not rendered
-  } else {
+  if (player && toggleBtn && iframeEl && playlist) {
     const items = Array.from(playlist.querySelectorAll<HTMLButtonElement>('.radio-track-item'));
     let currentIdx = 0;
+    let embedController: SpotifyEmbedController | null = null;
+    let lastPosition = 0;
+    let lastDuration = 0;
+    let wasPlaying = false;
 
     // Toggle open/close
     toggleBtn.addEventListener('click', () => {
       player.classList.toggle('radio-player--collapsed');
     });
 
-    function loadTrack(idx: number) {
-      if (idx < 0) idx = items.length - 1;
-      if (idx >= items.length) idx = 0;
-      currentIdx = idx;
-
+    function updateUI(idx: number) {
       const item = items[idx];
       if (!item) return;
-
-      const spotifyId = item.dataset.spotifyId;
-      const title = item.dataset.title ?? '';
-      const meta = item.dataset.meta ?? '';
-
-      // Update iframe src (autoplay=1 so it plays immediately when user clicks next/prev)
-      if (iframe && spotifyId) {
-        iframe.src = `https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0&autoplay=1`;
-      }
-
-      // Update now playing text
-      if (npTitle) npTitle.textContent = title;
-      if (npMeta) npMeta.textContent = meta;
-
-      // Update active class
-      items.forEach((el, i) => {
-        el.classList.toggle('active', i === idx);
-      });
-
-      // Scroll active into view in the playlist
+      if (npTitle) npTitle.textContent = item.dataset.title ?? '';
+      if (npMeta) npMeta.textContent = item.dataset.meta ?? '';
+      items.forEach((el, i) => el.classList.toggle('active', i === idx));
       item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
-    // Click on playlist item
-    items.forEach((item, idx) => {
-      item.addEventListener('click', () => loadTrack(idx));
-    });
+    function loadTrack(idx: number, autoplay = true) {
+      if (idx < 0) idx = items.length - 1;
+      if (idx >= items.length) idx = 0;
+      currentIdx = idx;
+      lastPosition = 0;
+      lastDuration = 0;
+      wasPlaying = false;
 
-    // Prev / Next
-    prevBtn?.addEventListener('click', () => loadTrack(currentIdx - 1));
-    nextBtn?.addEventListener('click', () => loadTrack(currentIdx + 1));
+      const item = items[idx];
+      if (!item) return;
+      const spotifyId = item.dataset.spotifyId;
+      if (!spotifyId) return;
+
+      updateUI(idx);
+
+      if (embedController) {
+        embedController.loadUri(`spotify:track:${spotifyId}`);
+        if (autoplay) embedController.play();
+      } else {
+        // Fallback before API loads
+        const src = `https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0&autoplay=${autoplay ? 1 : 0}`;
+        iframeEl!.src = src;
+      }
+    }
+
+    // ── Spotify IFrame API ──────────────────────────────────────────────────
+    (window as Window & { onSpotifyIframeApiReady?: (api: SpotifyIFrameAPI) => void }).onSpotifyIframeApiReady = (IFrameAPI) => {
+      const firstId = items[0]?.dataset.spotifyId ?? '';
+      IFrameAPI.createController(
+        iframeEl!,
+        { uri: `spotify:track:${firstId}`, width: '100%', height: 160 },
+        (controller) => {
+          embedController = controller;
+
+          controller.addListener('playback_update', (e) => {
+            const { isPaused, position, duration } = e.data;
+            const nearEnd = lastDuration > 0 && lastPosition > lastDuration * 0.95;
+            if (isPaused && position === 0 && nearEnd && wasPlaying) {
+              loadTrack(currentIdx + 1, true);
+              return;
+            }
+            lastPosition = position;
+            lastDuration = duration;
+            wasPlaying = !isPaused;
+          });
+        }
+      );
+    };
+
+    // Inject Spotify IFrame API script
+    const script = document.createElement('script');
+    script.src = 'https://open.spotify.com/embed/iframe-api/v1';
+    script.async = true;
+    document.head.appendChild(script);
+
+    // ── Controls ────────────────────────────────────────────────────────────
+    items.forEach((item, idx) => {
+      item.addEventListener('click', () => loadTrack(idx, true));
+    });
+    prevBtn?.addEventListener('click', () => loadTrack(currentIdx - 1, true));
+    nextBtn?.addEventListener('click', () => loadTrack(currentIdx + 1, true));
   }
 </script>
+

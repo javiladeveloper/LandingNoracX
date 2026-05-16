@@ -84,6 +84,13 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
   if (playBtn && audio && progressBar && timeCurrent && progressContainer) {
     const apiUrl = playBtn.getAttribute('data-api-url') || '';
 
+    // Cache buster dinámico: obligar al navegador a no usar la versión en caché del audio
+    const sourceEl = audio.querySelector('source');
+    if (sourceEl && !sourceEl.src.includes('?t=')) {
+      sourceEl.src = sourceEl.src + '?t=' + Date.now();
+      audio.load(); // Forzar recarga del source modificado
+    }
+
     audio.addEventListener('loadedmetadata', () => {
       if (isFinite(audio.duration)) {
         const dMins = Math.floor(audio.duration / 60);

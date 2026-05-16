@@ -43,7 +43,7 @@ teaserRoute.get('/', async (c) => {
 
   return c.body(bytes.buffer, 200, {
     'Content-Type': contentType,
-    'Cache-Control': 'public, max-age=3600',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
     'Accept-Ranges': 'bytes'
   });
 });

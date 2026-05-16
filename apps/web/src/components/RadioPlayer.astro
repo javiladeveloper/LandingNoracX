@@ -1,27 +1,14 @@
 ---
-const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
-
-interface SongRow {
-  slug: string;
-  title: string;
-  trackNumber: number | null;
-  spotifyId: string | null;
-  duration: string | null;
-  genre: string;
-  featured: boolean;
-}
-
-let songs: SongRow[] = [];
-try {
-  const res = await fetch(`${apiUrl}/api/songs`);
-  const json = (await res.json()) as { ok: boolean; data: SongRow[] };
-  if (json.ok) songs = json.data.filter((s) => s.spotifyId);
-} catch {
-  // build-time fetch failed
-}
+// Playlist público en Spotify con todas las canciones de NORAC X.
+// Para agregar/quitar/reordenar canciones: editar la playlist directamente
+// en Spotify, no requiere deploy. El embed de playlist maneja el
+// auto-advance internamente — esto resuelve el problema de que la
+// siguiente canción no arrancaba en pestañas ocultas: ahora Spotify
+// hace el cambio de track dentro del propio iframe, sin depender de
+// llamadas play() externas que el browser bloquea en background tabs.
+const playlistId = '25MZuM2WpO8BpPIZMncSzR';
 ---
 
-{songs.length > 0 && (
 <div id="radio-player" class="radio-player radio-player--collapsed">
   <button id="radio-toggle" class="radio-toggle" aria-label="Toggle Radio NORAC X">
     <span class="radio-toggle-icon">
@@ -35,55 +22,15 @@ try {
   </button>
 
   <div class="radio-body">
-    <div class="radio-iframe-wrap">
-      <iframe
-        id="radio-spotify-iframe"
-        src={`https://open.spotify.com/embed/track/${songs[0]?.spotifyId}?utm_source=generator&theme=0&autoplay=0`}
-        width="100%" height="152"
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        title="NORAC X Radio Player"
-      ></iframe>
-    </div>
-
-    <div class="radio-controls-wrap">
-      <div class="radio-now-playing">
-        <span class="radio-np-label">// REPRODUCIENDO</span>
-        <span class="radio-np-title" id="radio-np-title">{songs[0]?.title ?? '---'}</span>
-        <span class="radio-np-meta" id="radio-np-meta">
-          TRACK {(songs[0]?.trackNumber ?? 1).toString().padStart(2,'0')} · {songs[0]?.genre}
-        </span>
-      </div>
-
-      <div class="radio-buttons">
-        <button id="radio-prev" class="radio-btn" aria-label="Canción anterior">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
-        </button>
-        <button id="radio-next" class="radio-btn radio-btn--next" aria-label="Siguiente canción">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="m6 18 8.5-6L6 6v12zm2.5-6 5.5 3.9V8.1z"/><path d="M16 6h2v12h-2z"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="radio-playlist" id="radio-playlist">
-        {songs.map((song, idx) => (
-          <button
-            class={`radio-track-item ${idx === 0 ? 'active' : ''}`}
-            data-spotify-id={song.spotifyId}
-            data-title={song.title}
-            data-meta={`TRACK ${(song.trackNumber ?? idx + 1).toString().padStart(2,'0')} · ${song.genre}`}
-            aria-label={`Reproducir ${song.title}`}
-          >
-            <span class="rti-num">{(idx + 1).toString().padStart(2, '0')}</span>
-            <span class="rti-title">{song.title}</span>
-            {song.duration && <span class="rti-dur">{song.duration}</span>}
-          </button>
-        ))}
-      </div>
-    </div>
+    <iframe
+      id="radio-spotify-iframe"
+      src={`https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`}
+      width="100%" height="352"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      title="NORAC X Radio Player"
+    ></iframe>
   </div>
 </div>
-)}
 
 <style>
   .radio-player { position: fixed; bottom: 0; left: 0; right: 0; z-index: 999; font-family: 'JetBrains Mono', monospace; }
@@ -107,178 +54,16 @@ try {
 
   .radio-body {
     background: #050505; border-top: 1px solid rgba(230,10,10,0.4);
-    display: flex; height: 160px; overflow: hidden;
-    box-shadow: 0 -10px 40px rgba(0,0,0,0.8); position: relative;
+    overflow: hidden;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
   }
-  .radio-body::before {
-    content: ''; position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-    pointer-events: none; z-index: 1;
-  }
-
-  .radio-iframe-wrap { width: 340px; flex-shrink: 0; border-right: 1px solid rgba(230,10,10,0.2); overflow: hidden; }
-  .radio-iframe-wrap iframe { display: block; height: 160px; }
-
-  .radio-controls-wrap { flex: 1; display: flex; flex-direction: column; padding: 10px 16px; gap: 8px; min-width: 0; position: relative; z-index: 2; }
-
-  .radio-now-playing { display: flex; flex-direction: column; gap: 2px; padding-bottom: 8px; border-bottom: 1px solid rgba(230,10,10,0.15); }
-  .radio-np-label { font-size: 9px; color: #e60a0a; letter-spacing: 0.3em; text-transform: uppercase; }
-  .radio-np-title { font-size: 14px; color: #f5f0e8; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .radio-np-meta  { font-size: 9px; color: #555; letter-spacing: 0.2em; }
-
-  .radio-buttons { display: flex; gap: 8px; }
-  .radio-btn {
-    background: rgba(230,10,10,0.1); border: 1px solid rgba(230,10,10,0.3); color: #e60a0a;
-    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.2s; border-radius: 2px;
-  }
-  .radio-btn:hover { background: rgba(230,10,10,0.25); border-color: #e60a0a; box-shadow: 0 0 12px rgba(230,10,10,0.3); }
-  .radio-btn--next { background: rgba(230,10,10,0.2); }
-
-  .radio-playlist { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 6px; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #e60a0a #111; padding-bottom: 4px; flex: 1; align-items: flex-start; }
-  .radio-playlist::-webkit-scrollbar { height: 3px; }
-  .radio-playlist::-webkit-scrollbar-track { background: #111; }
-  .radio-playlist::-webkit-scrollbar-thumb { background: #e60a0a; }
-
-  .radio-track-item {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-    padding: 5px 10px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
-    white-space: nowrap; border-radius: 2px; transition: all 0.2s; flex-shrink: 0;
-  }
-  .radio-track-item:hover  { border-color: rgba(230,10,10,0.5); background: rgba(230,10,10,0.1); }
-  .radio-track-item.active { border-color: #e60a0a; background: rgba(230,10,10,0.15); box-shadow: 0 0 10px rgba(230,10,10,0.2); }
-  .rti-num  { font-size: 9px; color: #555; letter-spacing: 0.1em; }
-  .radio-track-item.active .rti-num { color: #e60a0a; }
-  .rti-title { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
-  .radio-track-item.active .rti-title { color: #f5f0e8; }
-  .rti-dur { font-size: 9px; color: #444; margin-left: 4px; }
-
-  @media (max-width: 640px) {
-    .radio-body { flex-direction: column; height: auto; }
-    .radio-iframe-wrap { width: 100%; border-right: none; border-bottom: 1px solid rgba(230,10,10,0.2); }
-    .radio-controls-wrap { padding: 10px 12px; }
-  }
+  .radio-body iframe { display: block; width: 100%; border: none; }
 </style>
 
 <script>
-  interface SpotifyPlaybackEvent {
-    data: { isPaused: boolean; position: number; duration: number };
-  }
-  interface SpotifyEmbedController {
-    addListener(event: string, cb: (e: SpotifyPlaybackEvent) => void): void;
-    loadUri(uri: string): void;
-    play(): void;
-    pause(): void;
-  }
-  interface SpotifyIFrameAPI {
-    createController(
-      el: HTMLElement,
-      options: { uri: string; width: string | number; height: number },
-      cb: (controller: SpotifyEmbedController) => void
-    ): void;
-  }
-  type WinSpotify = Window & { onSpotifyIframeApiReady?: (api: SpotifyIFrameAPI) => void; };
-
-  const player    = document.getElementById('radio-player');
+  const player = document.getElementById('radio-player');
   const toggleBtn = document.getElementById('radio-toggle');
-  const iframeEl  = document.getElementById('radio-spotify-iframe') as HTMLIFrameElement | null;
-  const npTitle   = document.getElementById('radio-np-title');
-  const npMeta    = document.getElementById('radio-np-meta');
-  const playlist  = document.getElementById('radio-playlist');
-  const prevBtn   = document.getElementById('radio-prev');
-  const nextBtn   = document.getElementById('radio-next');
-
-  if (player && toggleBtn && iframeEl && playlist) {
-    const items = Array.from(playlist.querySelectorAll<HTMLButtonElement>('.radio-track-item'));
-    let currentIdx     = 0;
-    let ctrl: SpotifyEmbedController | null = null;
-    let lastPos        = 0;
-    let lastDur        = 0;
-    let wasPlaying     = false;
-    let advancing      = false;
-    let waitingForLoad = false;
-
+  if (player && toggleBtn) {
     toggleBtn.addEventListener('click', () => player.classList.toggle('radio-player--collapsed'));
-
-    function updateUI(idx: number) {
-      const item = items[idx];
-      if (!item) return;
-      if (npTitle) npTitle.textContent = item.dataset.title ?? '';
-      if (npMeta)  npMeta.textContent  = item.dataset.meta  ?? '';
-      items.forEach((el, i) => el.classList.toggle('active', i === idx));
-      item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    }
-
-    function onPlaybackUpdate(e: SpotifyPlaybackEvent) {
-      const { isPaused, position, duration } = e.data;
-
-      // New track loaded after loadUri — fire play directly
-      // User activation from initial play() persists across hidden/visible state
-      if (waitingForLoad && isPaused && position === 0 && duration > 0) {
-        waitingForLoad = false;
-        ctrl?.play();
-        return;
-      }
-
-      // End-of-track: Spotify resets position to 0 after finishing
-      const nearEnd = lastDur > 0 && lastPos > lastDur * 0.88;
-      if (!advancing && !waitingForLoad && isPaused && position === 0 && nearEnd && wasPlaying) {
-        advancing = true;
-        goToTrack(currentIdx + 1);
-        return;
-      }
-
-      lastPos    = position;
-      lastDur    = duration;
-      wasPlaying = !isPaused;
-    }
-
-    // Change track inside the SAME iframe (preserves autoplay permission)
-    function goToTrack(idx: number) {
-      if (idx < 0) idx = items.length - 1;
-      if (idx >= items.length) idx = 0;
-      currentIdx = idx;
-      lastPos = 0; lastDur = 0; wasPlaying = false;
-
-      const item = items[idx];
-      if (!item) return;
-      const spotifyId = item.dataset.spotifyId;
-      if (!spotifyId) return;
-
-      updateUI(idx);
-
-      if (ctrl) {
-        waitingForLoad = true;
-        ctrl.loadUri(`spotify:track:${spotifyId}`);
-        // Fallback if playback_update never fires within 3s
-        setTimeout(() => {
-          if (waitingForLoad) { waitingForLoad = false; ctrl?.play(); }
-          advancing = false;
-        }, 3000);
-      } else {
-        iframeEl!.src = `https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0&autoplay=1`;
-        advancing = false;
-      }
-    }
-
-    // One controller, kept alive for the entire session
-    (window as WinSpotify).onSpotifyIframeApiReady = (IFrameAPI) => {
-      const firstId = items[0]?.dataset.spotifyId ?? '';
-      IFrameAPI.createController(
-        iframeEl!,
-        { uri: `spotify:track:${firstId}`, width: '100%', height: 160 },
-        (c) => { ctrl = c; c.addListener('playback_update', onPlaybackUpdate); }
-      );
-    };
-
-    const s = document.createElement('script');
-    s.src = 'https://open.spotify.com/embed/iframe-api/v1';
-    s.async = true;
-    document.head.appendChild(s);
-
-    items.forEach((item, idx) => item.addEventListener('click', () => goToTrack(idx)));
-    prevBtn?.addEventListener('click', () => goToTrack(currentIdx - 1));
-    nextBtn?.addEventListener('click', () => goToTrack(currentIdx + 1));
   }
 </script>

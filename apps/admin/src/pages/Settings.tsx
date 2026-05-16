@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { putTeaser } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 export default function Settings() {
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -56,12 +56,17 @@ export default function Settings() {
       reader.onloadend = async () => {
         const base64Data = reader.result as string;
 
-        const success = await putTeaser(base64Data);
-        if (success) {
+        const res = await apiFetch<{ ok: boolean, error?: string }>('/api/admin/settings/teaser', {
+          method: 'PUT',
+          body: JSON.stringify({ base64Data }),
+        });
+        
+        if (res.ok) {
           setStatus('success');
         } else {
           setStatus('error');
-          setErrorMessage("Error guardando el archivo en la base de datos.");
+          const data = res.body as { error?: string };
+          setErrorMessage(data?.error ? `Error: ${data.error}` : "Error guardando el archivo en la base de datos.");
         }
       };
       reader.readAsDataURL(wavBlob);

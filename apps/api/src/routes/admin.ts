@@ -573,38 +573,43 @@ adminRoute.put('/settings/teaser', zValidator('json', teaserSchema), async (c) =
   const { base64Data } = c.req.valid('json');
   const db = drizzle(c.env.DB);
   
-  // Cloudflare D1 limit per row is 1MB. We chunk the base64 string into 800KB pieces.
-  const chunkSize = 800 * 1024; // 800 KB
+  // Cloudflare D1 limit per row is 1MB. We chunk the base64 string into 250KB pieces to be completely safe from query size limits.
+  const chunkSize = 250 * 1024; // 250 KB
   const chunks = [];
   for (let i = 0; i < base64Data.length; i += chunkSize) {
     chunks.push(base64Data.slice(i, i + chunkSize));
   }
 
-  // Borrar chunks viejos primero
-  await db.delete(settings).where(like(settings.key, 'teaser_audio_%'));
+  try {
+    // Borrar chunks viejos primero
+    await db.delete(settings).where(like(settings.key, 'teaser_audio_%'));
 
-  // Insertar nuevos chunks
-  for (let i = 0; i < chunks.length; i++) {
-    const chunkVal = chunks[i] || '';
+    // Insertar nuevos chunks
+    for (let i = 0; i < chunks.length; i++) {
+      const chunkVal = chunks[i] || '';
+      await db.insert(settings).values({
+        key: `teaser_audio_${i}`,
+        value: chunkVal,
+        updatedAt: new Date()
+      }).onConflictDoUpdate({
+        target: settings.key,
+        set: { value: chunkVal, updatedAt: new Date() }
+      });
+    }
+    
+    // Guardar el total de chunks para saber cuántos leer
     await db.insert(settings).values({
-      key: `teaser_audio_${i}`,
-      value: chunkVal,
+      key: 'teaser_audio_count',
+      value: chunks.length.toString(),
       updatedAt: new Date()
     }).onConflictDoUpdate({
       target: settings.key,
-      set: { value: chunkVal, updatedAt: new Date() }
+      set: { value: chunks.length.toString(), updatedAt: new Date() }
     });
-  }
-  
-  // Guardar el total de chunks para saber cuántos leer
-  await db.insert(settings).values({
-    key: 'teaser_audio_count',
-    value: chunks.length.toString(),
-    updatedAt: new Date()
-  }).onConflictDoUpdate({
-    target: settings.key,
-    set: { value: chunks.length.toString(), updatedAt: new Date() }
-  });
 
-  return c.json({ ok: true });
+    return c.json({ ok: true });
+  } catch (err: any) {
+    console.error('Error in putTeaser D1 logic:', err);
+    return c.json({ ok: false, error: err.message }, 500);
+  }
 });

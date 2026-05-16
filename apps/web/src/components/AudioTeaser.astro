@@ -141,7 +141,7 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8787';
           
           <!-- Waveform (Visual only) -->
           <div class="waveform justify-center mt-8 w-full max-w-md" id="waveform-container">
-            {Array.from({ length: 40 }).map((_, i) => (
+            {Array.from({ length: 40 }).map(() => (
               <div class="wave-bar" style={`animation-delay: ${Math.random() * 0.5}s; height: ${Math.random() * 40 + 10}%`}></div>
             ))}
           </div>

@@ -5,7 +5,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["@cloudflare/workers-types/2023-07-01"],
+    "types": ["@cloudflare/workers-types/2023-07-01", "node"],
     "noEmit": true
   },
   "include": ["src/**/*", "drizzle.config.ts"],
